@@ -1,0 +1,6 @@
+opencv-python==4.10.0.82
+dipy==1.9.0
+numpy==1.26.4
+pandas==2.2.2
+tifffile==2023.4.12
+scikit-image==0.24.0

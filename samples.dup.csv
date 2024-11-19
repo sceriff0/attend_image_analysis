@@ -1,0 +1,7 @@
+patient_id,image,fixed
+patient1,/hpcscratch/ieo/DIMA/chiodin/work/image_registration_pipeline/run_20241113/data/input/image_registration/2024.10.14_DAPI_p53_CD3/19S30_DAPI_p53_CD3.nd2,false
+patient1,/hpcscratch/ieo/DIMA/chiodin/work/image_registration_pipeline/run_20241113/data/input/image_registration/2024.09.30_DAPI_MLH1_panCK/19S30_DAPI_MLH1_panCK.nd2,true
+patient1,/hpcscratch/ieo/DIMA/chiodin/work/image_registration_pipeline/run_20241113/data/input/image_registration/2024.10.16_DAPI_ARID1A_PDL1/19S30_DAPI_ARID1A_PDL1.nd2,false
+patient2,/hpcscratch/ieo/DIMA/chiodin/work/image_registration_pipeline/run_20241113/data/input/image_registration/2024.10.14_DAPI_p53_CD3/19S30_DAPI_p53_CD3.nd2,false
+patient2,/hpcscratch/ieo/DIMA/chiodin/work/image_registration_pipeline/run_20241113/data/input/image_registration/2024.09.30_DAPI_MLH1_panCK/19S30_DAPI_MLH1_panCK.nd2,true
+patient2,/hpcscratch/ieo/DIMA/chiodin/work/image_registration_pipeline/run_20241113/data/input/image_registration/2024.10.16_DAPI_ARID1A_PDL1/19S30_DAPI_ARID1A_PDL1.nd2,false
