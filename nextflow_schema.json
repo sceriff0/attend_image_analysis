@@ -22,29 +22,33 @@
             "type": "object",
             "description": "Define user input parameters that can be set through the command line.",
             "required": [
-                "work_dir",
-                "sample_sheet_path"
+                "input"
             ],
             "properties": {
-                "work_dir": {
+                "input": {
                     "type": "string",
-                    "description": "Working directory for the pipeline (not nextflow's 'work' directory).",
-                    "examples": ["/path/to/dir"]
-                },
-                "sample_sheet_path": {
-                    "type": "string",
-                    "description": "Path to the sample sheet CSV file.",
+                    "description": "Path to csv file containing the images to be processed.",
                     "examples": ["/path/to/file.csv"]
                 },
-                "output_dir_conv": {
-                    "type": "string",
-                    "description": "Publish directory for conversion.",
-                    "examples": ["/path/to/dir"]
+                "crop_size_affine": {
+                    "type": "integer",
+                    "description": "Width of crop for image registration.",
+                    "examples": [900]
                 },
-                "output_dir_reg": {
-                    "type": "string",
-                    "description": "Publish directory for registration.",
-                    "examples": ["/path/to/dir"]
+                "crop_size_diffeo": {
+                    "type": "integer",
+                    "description": "Height of crop for image registration.",
+                    "examples": [900]
+                },
+                "overlap_size_affine": {
+                    "type": "integer",
+                    "description": "Horizontal overlap for image registration.",
+                    "examples": [300]
+                },
+                "overlap_size_diffeo": {
+                    "type": "integer",
+                    "description": "Vertical overlap for image registration.",
+                    "examples": [300]
                 },
                 "tilex": {
                     "type": "integer",
@@ -65,36 +69,6 @@
                     "type": "integer",
                     "description": "Pyramid scale factor for image conversion.",
                     "examples": [2]
-                },
-                "crop_width_x": {
-                    "type": "integer",
-                    "description": "Width of crop for image registration.",
-                    "examples": [900]
-                },
-                "crop_width_y": {
-                    "type": "integer",
-                    "description": "Height of crop for image registration.",
-                    "examples": [900]
-                },
-                "overlap_x": {
-                    "type": "integer",
-                    "description": "Horizontal overlap for image registration.",
-                    "examples": [300]
-                },
-                "overlap_y": {
-                    "type": "integer",
-                    "description": "Vertical overlap for image registration.",
-                    "examples": [300]
-                },
-                "max_workers": {
-                    "type": "integer",
-                    "description": "Number of cores used by the process for parallelization.",
-                    "examples": [4]
-                },
-                "delete_checkpoints": {
-                    "type": "boolean",
-                    "description": "Setting to delete checkpoints.",
-                    "examples": [true, false]
                 }
             }
         },

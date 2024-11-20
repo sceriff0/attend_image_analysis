@@ -70,7 +70,7 @@ process affine{
 
     script:
     """
-        affine.py --moving $moving --fixed $fixed --crop_size ${params.crop_size} --overlap_size ${params.overlap_size}
+        affine.py --moving $moving --fixed $fixed --crop_size ${params.crop_size_affine} --overlap_size ${params.overlap_size_affine}
     """
 }
 
@@ -89,6 +89,7 @@ process diffeomorphic{
     """
 }
 
+
 process stitching{
     cpus 1
     memory "40G"
@@ -99,13 +100,9 @@ process stitching{
 
     script:
     """
-        stitching.py --crops $crops --original_file $moving
+        stitching.py --crops $crops --crop_size ${params.crop_size_diffeo} --overlap_size ${params.overlap_size_diffeo} --original_file $moving
     """
 }
-
-//process stiching{
-
-//}
 
 workflow {
 
@@ -133,7 +130,7 @@ workflow {
                 }
             }
             
-
+            
             // Map each record to the new structure
             records.collect { record ->
                 [patient, record, trueFile] 
@@ -149,69 +146,17 @@ workflow {
                 def fixed_image = it[2]
                 def crops_paths = it[3]  // Paths to *.pkl files
                 
-                
                 return crops_paths.collect { crops_path ->                    
                     return [patient_id, moving_image, fixed_image, crops_path]
                 }
             } 
             .flatMap { it }
+        
     diffeomorphic(crops_data)
-    collapsed = diffeomorphic.out.groupTuple(by:1)
-    collapsed.view()
+    diffeo_out = diffeomorphic.out.groupTuple(by:1)
+    diffeo_out.view()
 
-    
-
-    // get_diffeomorphic from crop
-
-    // apply_diffeomorphic to crop
-
-    // combine
-
-    // Prepare parameters from parsed CSV data
-//  params_parsed = parsed_lines.map { row ->
-//      tuple(
-//          row.patient_id,
-//          row.cycle_id,
-//          row.fixed_image_path,
-//          row.input_path,
-//          row.output_path
-//      )
-//  }
-
-
-//  // convert_to_h5(params_parsed)
-//  pad_image(params_parsed)
-//  affine_registration(pad_image.out)
-//  export_image_1(affine_registration.out)
-//  stack_dapi_crops(export_image_1.out)
-
-//  crops_data = stack_dapi_crops.out
-//          .map { it ->
-//              def patient_id = it[0]
-//              def cycle_id = it[1]
-//              def fixed_image_path = it[2]
-//              def input_path = it[3]
-//              def output_path = it[4]
-//              def crops_paths = it[5]  // Paths to *.pkl files
-//              
-//              return crops_paths.collect { crops_path ->                    
-//                  return [patient_id, cycle_id, fixed_image_path, input_path, output_path, crops_path]
-//              }
-//          } 
-//          .flatMap { it }
-
-//  diffeomorphic_registration(crops_data)
-
-//  unique_diffeo_out = diffeomorphic_registration.out
-//      .toList()
-//      .map { tuples ->
-//          tuples.unique() 
-//      }
-//      .flatMap()
-
-//  apply_mappings(unique_diffeo_out)
-
-//  export_image_2(apply_mappings.out)
+    // stitching(diffeo_out)
 
     /*
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -219,7 +164,7 @@ workflow {
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     */
 
-    // stack_images(export_image_2.out)
+    // stack_images(stitching.out)
 
     /*
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
