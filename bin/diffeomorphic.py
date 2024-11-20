@@ -109,9 +109,23 @@ def main():
     args = _parse_args()
 
     fixed, moving = load_pickle(args.crop_image)
-    mapping = compute_diffeomorphic_mapping_dipy(y=fixed, x=moving)
-    registered_moving = apply_mapping(mapping, moving)
-    save_pickle(registered_moving, f"registered_{os.path.basename(args.crop_image)}")
+
+    if len(np.unique(moving)) != 1:
+        mapping = compute_diffeomorphic_mapping_dipy(
+            y=fixed[:, :, 2].squeeze(), x=moving[:, :, 2].squeeze()
+        )
+
+        registered_images = []
+        for ch in range(moving.shape[-1]):
+            registered_images.append(apply_mapping(mapping, moving[:, :, ch]))
+        registered_images = np.stack(registered_images, axis=-1)
+
+        registered_images.astype(np.uint16)
+        save_pickle(
+            registered_images, f"registered_{os.path.basename(args.crop_image)}"
+        )
+    else:
+        save_pickle(moving, f"registered_{os.path.basename(args.crop_image)}")
 
 
 if __name__ == "__main__":

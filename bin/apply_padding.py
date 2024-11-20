@@ -91,14 +91,6 @@ def _parse_args():
         required=True,
         help="Padding file containing a single line with shape in text format. E.g. (10, 10).",
     )
-    parser.add_argument(
-        "-u",
-        "--unit",
-        type=int,
-        default=1,
-        required=False,
-        help="Pad the image such that the output is a multiple shape of the unit",
-    )
 
     args = parser.parse_args()
     return args
@@ -112,7 +104,6 @@ def main():
 
     padding_shape = ast.literal_eval(data)
     image = load_nd2(args.image)
-    padding_shape = (np.array(padding_shape) // args.unit + 1) * args.unit
     padded_images = pad_image_to_shape(image, padding_shape)
 
     del image

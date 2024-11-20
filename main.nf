@@ -62,11 +62,11 @@ process apply_padding{
 
 process affine{
     cpus 2
-    memory "50G"
+    memory "80G"
     input:
         tuple val(patient_id), path(moving), path(fixed)
     output:
-        tuple val(patient_id), path("*pkl"), path(fixed)
+        tuple val(patient_id), path(moving), path(fixed), path("*pkl")
 
     script:
     """
@@ -79,15 +79,33 @@ process diffeomorphic{
     cpus 1
     memory "5G"
     input:
-        tuple val(patient_id), path(fixed), path(crop)
+        tuple val(patient_id), path(moving), path(fixed), path(crop)
     output:
-        tuple val(patient_id), path(fixed), path("registered_${crop}")
+        tuple val(patient_id), path(moving), path(fixed), path("registered_${crop}")
 
     script:
     """
         diffeomorphic.py --crop_image $crop
     """
 }
+
+process stitching{
+    cpus 1
+    memory "40G"
+    input:
+        tuple val(patient_id), path(moving), path(fixed), path(crops)
+    output:
+        tuple val(patient_id), path(moving), path(fixed), path("registered_${moving}")
+
+    script:
+    """
+        stitching.py --crops $crops --original_file $moving
+    """
+}
+
+//process stiching{
+
+//}
 
 workflow {
 
@@ -127,17 +145,19 @@ workflow {
     affine(moving_fixed_ch)
     crops_data = affine.out.map { it ->
                 def patient_id = it[0]
-                def crops_paths = it[1]  // Paths to *.pkl files
+                def moving_image = it[1]
                 def fixed_image = it[2]
+                def crops_paths = it[3]  // Paths to *.pkl files
+                
                 
                 return crops_paths.collect { crops_path ->                    
-                    return [patient_id, fixed_image, crops_path]
+                    return [patient_id, moving_image, fixed_image, crops_path]
                 }
             } 
             .flatMap { it }
     diffeomorphic(crops_data)
-    collapsed = diffeomorphic.out.groupTuple()
-
+    collapsed = diffeomorphic.out.groupTuple(by:1)
+    collapsed.view()
 
     
 

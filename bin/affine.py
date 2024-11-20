@@ -225,7 +225,8 @@ def reconstruct_image(crops, positions, original_shape, crop_size, overlap_size)
             x_end = x + crop.shape[0] - overlap_size // 2
             crop = crop[(overlap_size // 2) : (crop.shape[0] - overlap_size // 2), :, :]
         reconstructed[x_start:x_end, y_start:y_end, :] += crop
-
+        del crop
+        gc.collect()
     # Convert back to uint16
     return reconstructed
 
@@ -270,7 +271,7 @@ def save_pickle(object, path):
         pickle.dump(object, file)
 
 
-def create_crops2save(fixed, moving, crop_size, overlap_size):
+def create_crops2save(fixed, moving, crop_size, overlap_size, outname):
     """
     Create overlapping crops from a 3D image.
 
@@ -294,10 +295,10 @@ def create_crops2save(fixed, moving, crop_size, overlap_size):
             # Ensure crop dimensions don't exceed the image dimensions
             x_end = min(x + crop_size, X)
             y_end = min(y + crop_size, Y)
-            crop_fixed = fixed[x:x_end, y:y_end, :]
-            crop_moving = moving[x:x_end, y:y_end, :]
-            together = (crop_fixed, crop_moving)
-            save_pickle(together, f"{x}_{y}.{os.path.basename(moving)}.pkl")
+            save_pickle(
+                (fixed[x:x_end, y:y_end, :], moving[x:x_end, y:y_end, :]),
+                f"{x}_{y}_{os.path.basename(outname)}.pkl",
+            )
 
 
 def main():
@@ -323,19 +324,28 @@ def main():
     for crop in crops:
         registered_crops.append(apply_mapping(matrix, crop, method="cv2"))
 
-    del crops
+    del crops, crop
     gc.collect()
 
     reconstructed_image = reconstruct_image(
         registered_crops,
         positions,
-        original_shape=moving.shape,
+        original_shape=moving_shape,
         crop_size=args.crop_size,
         overlap_size=args.overlap_size,
     )
 
-    fixed = load_h5(args.fixed)
-    create_crops2save(fixed, reconstructed_image, args.crop_size, args.overlap_size)
+    del registered_crops
+    gc.collect()
+
+    fixed = load_h5(args.fixed_image)
+    create_crops2save(
+        fixed,
+        reconstructed_image,
+        2000,
+        200,
+        outname=args.moving_image,
+    )
 
 
 if __name__ == "__main__":
