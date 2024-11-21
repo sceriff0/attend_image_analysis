@@ -2,7 +2,6 @@
 # Compute affine transformation matrix
 
 import argparse
-import h5py
 import os
 from utils.io import save_h5, load_pickle
 from utils.cropping import reconstruct_image
@@ -46,18 +45,6 @@ def _parse_args():
     )
     args = parser.parse_args()
     return args
-
-
-def get_shape_h5file(path, format=".h5"):
-    """
-    Get the width and height of a h5.
-    """
-
-    with h5py.File(path, "r") as f:
-        shape = f["dataset"].shape
-        f.close()
-
-    return shape
 
 
 def main():
