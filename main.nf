@@ -8,14 +8,11 @@ nextflow.enable.dsl=2
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { convert_to_ome_tiff } from './modules/local/image_conversion/main.nf'
-include { affine_registration } from './modules/local/image_registration/main.nf' 
-include { diffeomorphic_registration } from './modules/local/image_registration/main.nf'
-include { apply_mappings } from './modules/local/image_registration/main.nf'
-include { export_image_1 } from './modules/local/export_image/main.nf'
-include { export_image_2 } from './modules/local/export_image/main.nf'
-include { stack_dapi_crops } from './modules/local/image_stacking/main.nf'
-include { pad_image } from './modules/local/image_padding/main.nf'
+include { get_padding } from './modules/local/image_padding/main.nf'
+include { apply_padding } from './modules/local/image_padding/main.nf'
+include { affine } from './modules/local/image_registration/main.nf' 
+include { diffeomorphic} from './modules/local/image_registration/main.nf'
+include { stitching } from './modules/local/image_stitching/main.nf'
 // include { stack_images } from './modules/local/image_stacking/main.nf'
 
 def parse_csv(csv_file_path) {
@@ -29,79 +26,6 @@ def parse_csv(csv_file_path) {
                 row.fixed,           // Patient identifier
             ]
         }
-}
-
-process get_padding{
-    cpus 1
-    memory "1G"
-    input:
-        tuple val(patient_id), path(files), val(metadata)
-    output:
-        tuple val(patient_id), path("pad.txt")
-
-    script:
-    """
-        get_padding.py --input "$files"
-    """ 
-}
-
-process apply_padding{
-    cpus 2
-    memory "40G"
-    input:
-        tuple val(patient_id), path(img), val(metadata), path(padding)
-    output:
-        tuple val(patient_id), path("${img.simpleName}.h5"), val(metadata)
-
-    script:
-    """
-        apply_padding.py --image $img --padding $padding
-    """
-}
-
-
-process affine{
-    cpus 2
-    memory "80G"
-    input:
-        tuple val(patient_id), path(moving), path(fixed)
-    output:
-        tuple val(patient_id), path(moving), path(fixed), path("*pkl")
-
-    script:
-    """
-        affine.py --moving $moving --fixed $fixed --crop_size ${params.crop_size_affine} --overlap_size ${params.overlap_size_affine}
-    """
-}
-
-
-process diffeomorphic{
-    cpus 1
-    memory "5G"
-    input:
-        tuple val(patient_id), path(moving), path(fixed), path(crop)
-    output:
-        tuple val(patient_id), path(moving), path(fixed), path("registered_${crop}")
-
-    script:
-    """
-        diffeomorphic.py --crop_image $crop
-    """
-}
-
-
-process stitching{
-    cpus 1
-    memory "40G"
-    input:
-        tuple val(patient_id), path(moving), path(fixed), path(crops)
-    output:
-        tuple val(patient_id), path(moving), path(fixed), path("registered_${moving}")
-
-    script:
-    """
-        stitching.py --crops $crops --crop_size ${params.crop_size_diffeo} --overlap_size ${params.overlap_size_diffeo} --original_file $moving
-    """
 }
 
 workflow {

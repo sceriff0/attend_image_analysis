@@ -2,45 +2,30 @@
     Zero-pad images
 */
 
-process pad_image {
-    cpus 2
-    memory "80G"
-    conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
-    publishDir "${params.input_dir}", mode: "copy"
-    // container "docker://yinxiu/bftools:latest"
-    tag "conversion_h5"
-
+process get_padding{
+    cpus 1
+    memory "1G"
     input:
-    tuple val(patient_id),
-        val(cycle_id),
-        val(fixed_image_path),
-        val(input_path),
-        val(output_path)
-    
+        tuple val(patient_id), path(files), val(metadata)
     output:
-    tuple val(patient_id),
-        val(cycle_id),
-        val(fixed_image_path),
-        val(input_path),
-        val(output_path)
+        tuple val(patient_id), path("pad.txt")
 
     script:
     """
-    pad_image.py \
-        --patient-id "${patient_id}" \
-        --input-dir "${params.input_dir}" \
-        --input-path "${input_path}" \
-        --crop-width-x 1000 \
-        --crop-width-y 1000 \
-        --logs-dir "${params.logs_dir}" 
-
-    pad_image.py \
-        --patient-id "${patient_id}" \
-        --input-dir "${params.input_dir}" \
-        --input-path "${fixed_image_path}" \
-        --crop-width-x 1000 \
-        --crop-width-y 1000 \
-        --logs-dir "${params.logs_dir}" 
-    """
+        get_padding.py --input "$files"
+    """ 
 }
 
+process apply_padding{
+    cpus 2
+    memory "40G"
+    input:
+        tuple val(patient_id), path(img), val(metadata), path(padding)
+    output:
+        tuple val(patient_id), path("${img.simpleName}.h5"), val(metadata)
+
+    script:
+    """
+        apply_padding.py --image $img --padding $padding
+    """
+}
