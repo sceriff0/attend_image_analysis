@@ -48,7 +48,7 @@ def reconstruct_image(crops, positions, original_shape, crop_size, overlap_size)
     """
     X, Y, Z = original_shape
     reconstructed = np.zeros(
-        original_shape, dtype=np.uint16
+        original_shape, dtype=crops[0].dtype
     )  # Use uint16 for intermediate sums
 
     for crop, (x, y) in zip(crops, positions):

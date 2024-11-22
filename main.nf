@@ -69,18 +69,20 @@ workflow {
                 def moving_image = it[1]
                 def fixed_image = it[2]
                 def crops_paths = it[3]  // Paths to *.pkl files
-                
+
                 return crops_paths.collect { crops_path ->                    
                     return [patient_id, moving_image, fixed_image, crops_path]
                 }
             } 
             .flatMap { it }
-        
     diffeomorphic(crops_data)
-    diffeo_out = diffeomorphic.out.groupTuple(by:1)
-    diffeo_out.view()
-
-    // stitching(diffeo_out)
+    collapsed = diffeomorphic.out.map{
+        return [it[0], it[1].getName(), it[1], it[2], it[3]]
+    }.groupTuple(by:1).map{
+        return [it[0][0], it[2][0], it[3][0], it[4]]
+    }
+    //collapsed.view()
+    stitching(collapsed)
 
     /*
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

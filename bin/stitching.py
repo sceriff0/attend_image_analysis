@@ -20,7 +20,7 @@ def _parse_args():
         help="A list of crops",
     )
     parser.add_argument(
-        "-c",
+        "-cs",
         "--crop_size",
         type=int,
         default=2000,
@@ -50,10 +50,11 @@ def _parse_args():
 def main():
     args = _parse_args()
     original_shape = get_image_file_shape(args.original_file, format='.h5')
+    crops_files = args.crops.split(" ")
 
     crops = []
     positions = []
-    for crop in crops:
+    for crop in crops_files:
         crops.append(load_pickle(crop))
         x, y = map(int, crop.split("_")[1:3])
         positions.append((x, y))
