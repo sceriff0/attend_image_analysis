@@ -109,7 +109,7 @@ def compute_affine_mapping_cv2(
 
 
 def compute_diffeomorphic_mapping_dipy(
-    y: np.ndarray, x: np.ndarray, sigma_diff=5, radius=4
+    y: np.ndarray, x: np.ndarray, sigma_diff=20, radius=4
 ):
     """
     Compute diffeomorphic mapping using DIPY.
@@ -131,7 +131,7 @@ def compute_diffeomorphic_mapping_dipy(
 
     # Define the metric and create the Symmetric Diffeomorphic Registration object
     metric = CCMetric(2, sigma_diff=sigma_diff, radius=radius)
-    sdr = SymmetricDiffeomorphicRegistration(metric, opt_tol=1e-03, inv_tol=0.1)
+    sdr = SymmetricDiffeomorphicRegistration(metric, opt_tol=1e-04, inv_tol=0.01)
 
     # Perform the diffeomorphic registration using the pre-alignment from affine registration
     mapping = sdr.optimize(y, x)

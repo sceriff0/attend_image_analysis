@@ -13,8 +13,8 @@ process stitching{
     """
         stitching.py \
             --crops $crops \
-            --crop_size "${params.crop_size_diffeo}" \
-            --overlap_size "${params.overlap_size_diffeo}" \
+            --crop_size ${params.crop_size_diffeo} \
+            --overlap_size ${params.overlap_size_diffeo} \
             --original_file $moving 
     """
 }

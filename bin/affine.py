@@ -138,6 +138,5 @@ def main():
         outname=args.moving_image,
     )
 
-
 if __name__ == "__main__":
     main()

@@ -29,7 +29,8 @@ def main():
 
     if len(np.unique(moving)) != 1:
         mapping = compute_diffeomorphic_mapping_dipy(
-            y=fixed[:, :, 2].squeeze(), x=moving[:, :, 2].squeeze()
+            y=fixed[:, :, 2].squeeze(), 
+            x=moving[:, :, 2].squeeze()
         )
 
         registered_images = []
