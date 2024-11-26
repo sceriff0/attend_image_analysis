@@ -1,12 +1,17 @@
 #!/usr/bin/env python
 # Compute affine transformation matrix
 
+import logging
 import argparse
 import os
 from utils.io import save_h5, load_pickle
 from utils.cropping import reconstruct_image
 from utils.read_metadata import get_image_file_shape
+from utils import logging_config
 
+# Set up logging configuration
+logging_config.setup_logging()
+logger = logging.getLogger(__name__)
 
 def _parse_args():
     """Parse command-line arguments."""
@@ -17,6 +22,7 @@ def _parse_args():
         type=str,
         default=None,
         required=True,
+        nargs='+',
         help="A list of crops",
     )
     parser.add_argument(
@@ -48,14 +54,21 @@ def _parse_args():
 
 
 def main():
+    handler = logging.FileHandler('/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/LOG.log')
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+
     args = _parse_args()
     original_shape = get_image_file_shape(args.original_file, format='.h5')
-    crops_files = args.crops.split(" ")
+    # crops_files = args.crops.split(" ")
+    crops_files = args.crops
 
     crops = []
     positions = []
     for crop in crops_files:
         crops.append(load_pickle(crop))
+        logger.info(f"Loaded crop: {crop}")
         x, y = map(int, crop.split("_")[1:3])
         positions.append((x, y))
 
