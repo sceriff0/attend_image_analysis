@@ -18,7 +18,7 @@ def _parse_args():
         type=str,
         default=None,
         required=True,
-        help="nd5 image file",
+        help="h5 image file",
     )
     parser.add_argument(
         "-f",
@@ -26,21 +26,37 @@ def _parse_args():
         type=str,
         default=None,
         required=True,
-        help="nd5 image file",
+        help="h5 image file",
     )
     parser.add_argument(
-        "-c",
-        "--crop_size",
+        "-ca",
+        "--crop_size_affine",
         type=int,
         default=8000,
         required=False,
         help="Size of the crop",
     )
     parser.add_argument(
-        "-o",
-        "--overlap_size",
+        "-oa",
+        "--overlap_size_affine",
         type=int,
         default=2000,
+        required=False,
+        help="Size of the overlap",
+    )
+    parser.add_argument(
+        "-cd",
+        "--crop_size_diffeo",
+        type=int,
+        default=2000,
+        required=False,
+        help="Size of the crop",
+    )
+    parser.add_argument(
+        "-od",
+        "--overlap_size_diffeo",
+        type=int,
+        default=200,
         required=False,
         help="Size of the overlap",
     )
@@ -89,7 +105,7 @@ def main():
 
     del fixed
     gc.collect()
-    crops, positions = create_crops(moving, args.crop_size, args.overlap_size)
+    crops, positions = create_crops(moving, args.crop_size_affine, args.overlap_size_affine)
 
     del moving
     gc.collect()
@@ -106,8 +122,8 @@ def main():
         registered_crops,
         positions,
         original_shape=moving_shape,
-        crop_size=args.crop_size,
-        overlap_size=args.overlap_size,
+        crop_size=args.crop_size_affine,
+        overlap_size=args.overlap_size_affine,
     )
 
     del registered_crops
@@ -117,8 +133,8 @@ def main():
     create_crops2save(
         fixed,
         reconstructed_image,
-        2000,
-        200,
+        crop_size=args.crop_size_diffeo,
+        overlap_size=args.overlap_size_diffeo,
         outname=args.moving_image,
     )
 

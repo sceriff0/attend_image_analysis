@@ -5,7 +5,7 @@
 process affine{
     cpus 2
     maxRetries = 3
-    memory { 70.GB + 10.GB * task.attempt }
+    memory { 20.GB + 10.GB * task.attempt }
     input:
         tuple val(patient_id), path(moving), path(fixed)
     output:
@@ -13,7 +13,13 @@ process affine{
  
     script:
     """
-        affine.py --moving $moving --fixed $fixed --crop_size ${params.crop_size_affine} --overlap_size ${params.overlap_size_affine}
+        affine.py \
+            --moving $moving \
+            --fixed $fixed \
+            --crop_size_affine ${params.crop_size_affine} \
+            --overlap_size_affine ${params.overlap_size_affine} \
+            --crop_size_diffeo ${params.crop_size_diffeo} \
+            --overlap_size_diffeo ${params.overlap_size_diffeo}
     """
 }
  

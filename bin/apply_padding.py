@@ -10,40 +10,42 @@ import numpy as np
 from utils.io import load_nd2, save_h5
 
 def pad_image_to_shape(image, target_shape, constant_values=0):
+    if image.shape[:2] != target_shape:
+        x, y = image.shape[:2]
+        w, z = target_shape
 
-    x, y = image.shape[:2]
-    w, z = target_shape
+        if w < x or z < y:
+            raise ValueError(
+                "Target shape must be greater than or equal to the image shape."
+            )
 
-    if w < x or z < y:
-        raise ValueError(
-            "Target shape must be greater than or equal to the image shape."
+        pad_height = w - x
+        pad_width = z - y
+
+        # Distribute padding equally on both sides
+        pad_top = pad_height // 2
+        pad_bottom = pad_height - pad_top
+        pad_left = pad_width // 2
+        pad_right = pad_width - pad_left
+
+        # Determine padding for each dimension
+        if image.ndim == 2:
+            # Grayscale image
+            pad_widths = ((pad_top, pad_bottom), (pad_left, pad_right))
+        elif image.ndim == 3:
+            # Color image (e.g., RGB)
+            pad_widths = ((pad_top, pad_bottom), (pad_left, pad_right), (0, 0))
+        else:
+            raise ValueError("Image must be 2D or 3D array.")
+
+        # Apply padding
+        padded_image = np.pad(
+            image, pad_width=pad_widths, mode="constant", constant_values=constant_values
         )
 
-    pad_height = w - x
-    pad_width = z - y
-
-    # Distribute padding equally on both sides
-    pad_top = pad_height // 2
-    pad_bottom = pad_height - pad_top
-    pad_left = pad_width // 2
-    pad_right = pad_width - pad_left
-
-    # Determine padding for each dimension
-    if image.ndim == 2:
-        # Grayscale image
-        pad_widths = ((pad_top, pad_bottom), (pad_left, pad_right))
-    elif image.ndim == 3:
-        # Color image (e.g., RGB)
-        pad_widths = ((pad_top, pad_bottom), (pad_left, pad_right), (0, 0))
+        return padded_image
     else:
-        raise ValueError("Image must be 2D or 3D array.")
-
-    # Apply padding
-    padded_image = np.pad(
-        image, pad_width=pad_widths, mode="constant", constant_values=constant_values
-    )
-
-    return padded_image
+        return image
 
 
 def _parse_args():
@@ -71,7 +73,6 @@ def _parse_args():
 
 
 def main():
-
     args = _parse_args()
     with open(args.padding, "r") as file:
         data = file.read()

@@ -40,7 +40,8 @@ workflow {
     get_padding(input_ch.groupTuple())
     joined_channel = input_ch.combine(get_padding.out, by:0)
     apply_padding(joined_channel)
-    
+    // apply_padding.out.view()
+
     moving_fixed_ch = apply_padding.out.groupTuple().flatMap { tuple ->
             def patient = tuple[0]       // Patient ID
             def records = tuple[1]      // List of records for the patient
@@ -54,7 +55,6 @@ workflow {
                 }
             }
             
-            
             // Map each record to the new structure
             records.collect { record ->
                 [patient, record, trueFile] 
@@ -62,7 +62,8 @@ workflow {
         }.filter { tuple ->
             tuple[1..-1].unique().size() == tuple[1..-1].size() // Check for uniqueness in the list of files
         }
-    
+
+    // moving_fixed_ch.view()
     affine(moving_fixed_ch)
     crops_data = affine.out.map { it ->
                 def patient_id = it[0]
