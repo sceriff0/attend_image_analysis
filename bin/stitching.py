@@ -76,7 +76,6 @@ def main():
         crops,
         positions,
         original_shape=original_shape,
-        crop_size=args.crop_size,
         overlap_size=args.overlap_size,
     )
 

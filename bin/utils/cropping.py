@@ -32,7 +32,7 @@ def create_crops(image, crop_size, overlap_size):
     return crops, positions
 
 
-def reconstruct_image(crops, positions, original_shape, crop_size, overlap_size):
+def reconstruct_image(crops, positions, original_shape, overlap_size):
     """
     Reconstruct the original image from overlapping crops.
 
