@@ -109,7 +109,7 @@ def compute_affine_mapping_cv2(
 
 
 def compute_diffeomorphic_mapping_dipy(
-    y: np.ndarray, x: np.ndarray, sigma_diff=20, radius=4
+    y: np.ndarray, x: np.ndarray, sigma_diff=20, radius=15
 ):
     """
     Compute diffeomorphic mapping using DIPY.

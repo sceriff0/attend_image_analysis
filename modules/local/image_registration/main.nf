@@ -5,7 +5,7 @@
 process affine{
     cpus 2
     maxRetries = 3
-    memory { 20.GB + 10.GB * task.attempt }
+    memory { 60.GB + 10.GB * task.attempt }
     input:
         tuple val(patient_id), path(moving), path(fixed)
     output:

@@ -44,7 +44,6 @@ def main():
         )
     else:
         save_pickle(moving, f"registered_{os.path.basename(args.crop_image)}")
-
-
+##
 if __name__ == "__main__":
     main()
