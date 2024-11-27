@@ -86,8 +86,14 @@ def create_crops2save(fixed, moving, crop_size, overlap_size, outname):
             # Ensure crop dimensions don't exceed the image dimensions
             x_end = min(x + crop_size, X)
             y_end = min(y + crop_size, Y)
+            matrix = compute_affine_mapping_cv2(
+                y=fixed[x:x_end, y:y_end, 2], x=moving[x:x_end, y:y_end, 2].squeeze()
+            )
             save_pickle(
-                (fixed[x:x_end, y:y_end, :], moving[x:x_end, y:y_end, :]),
+                (
+                    fixed[x:x_end, y:y_end, :],
+                    apply_mapping(matrix, moving[x:x_end, y:y_end, :], method="cv2"),
+                ),
                 f"{x}_{y}_{os.path.basename(outname)}.pkl",
             )
 
@@ -105,7 +111,9 @@ def main():
 
     del fixed
     gc.collect()
-    crops, positions = create_crops(moving, args.crop_size_affine, args.overlap_size_affine)
+    crops, positions = create_crops(
+        moving, args.crop_size_affine, args.overlap_size_affine
+    )
 
     del moving
     gc.collect()
@@ -137,6 +145,7 @@ def main():
         overlap_size=args.overlap_size_diffeo,
         outname=args.moving_image,
     )
+
 
 if __name__ == "__main__":
     main()
