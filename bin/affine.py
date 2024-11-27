@@ -86,12 +86,15 @@ def create_crops2save(fixed, moving, crop_size, overlap_size, outname):
             # Ensure crop dimensions don't exceed the image dimensions
             x_end = min(x + crop_size, X)
             y_end = min(y + crop_size, Y)
+
+            # Computing local affine transformation matrix
             matrix = compute_affine_mapping_cv2(
                 y=fixed[x:x_end, y:y_end, 2], x=moving[x:x_end, y:y_end, 2].squeeze()
             )
             save_pickle(
-                (
+                (  
                     fixed[x:x_end, y:y_end, :],
+                    # Apply local affine transformation
                     apply_mapping(matrix, moving[x:x_end, y:y_end, :], method="cv2"),
                 ),
                 f"{x}_{y}_{os.path.basename(outname)}.pkl",
@@ -111,6 +114,7 @@ def main():
 
     del fixed
     gc.collect()
+    
     crops, positions = create_crops(
         moving, args.crop_size_affine, args.overlap_size_affine
     )
@@ -118,33 +122,30 @@ def main():
     del moving
     gc.collect()
 
-    registered_crops = []
-
-    for crop in crops:
-        registered_crops.append(apply_mapping(matrix, crop, method="cv2"))
-
-    del crops, crop
-    gc.collect()
+    for i, crop in enumerate(crops):
+        crops[i] = apply_mapping(matrix, crop, method="cv2")
 
     reconstructed_image = reconstruct_image(
-        registered_crops,
+        crops,
         positions,
         original_shape=moving_shape,
         crop_size=args.crop_size_affine,
         overlap_size=args.overlap_size_affine,
     )
 
-    del registered_crops
+    del crops
     gc.collect()
 
     fixed = load_h5(args.fixed_image)
     create_crops2save(
         fixed,
         reconstructed_image,
-        crop_size=args.crop_size_diffeo,
         overlap_size=args.overlap_size_diffeo,
         outname=args.moving_image,
     )
+
+    del reconstructed_image, fixed
+    gc.collect()
 
 
 if __name__ == "__main__":
