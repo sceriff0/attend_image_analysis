@@ -4,6 +4,7 @@
 import logging
 import argparse
 import os
+import numpy as np
 from utils.io import save_h5, load_pickle
 from utils.cropping import reconstruct_image
 from utils.read_metadata import get_image_file_shape
@@ -60,24 +61,16 @@ def main():
     logger.addHandler(handler)
 
     args = _parse_args()
-    original_shape = get_image_file_shape(args.original_file, format='.h5')
-    # crops_files = args.crops.split(" ")
+    original_shape = get_image_file_shape(args.original_file, format='.h5') #+ (3,)
     crops_files = args.crops
+    reconstructed_image = np.zeros(original_shape, dtype='float32')
+    for crop_file in crops_files:
+        crop = load_pickle(crop_file)
+        logger.info(f"Loaded crop: {crop_file}")
 
-    crops = []
-    positions = []
-    for crop in crops_files:
-        crops.append(load_pickle(crop))
-        logger.info(f"Loaded crop: {crop}")
-        x, y = map(int, crop.split("_")[1:3])
-        positions.append((x, y))
-
-    reconstructed_image = reconstruct_image(
-        crops,
-        positions,
-        original_shape=original_shape,
-        overlap_size=args.overlap_size,
-    )
+        x, y = map(int, os.path.basename(crop_file).split("_")[1:3])
+        position = (x, y)
+        reconstructed_image = reconstruct_image(reconstructed_image, crop, position, original_shape, args.overlap_size)
 
     save_h5(reconstructed_image, f"registered_{os.path.basename(args.original_file)}")
 

@@ -21,7 +21,7 @@ def parse_csv(csv_file_path) {
         .splitCsv(header: true)
         .map { row ->
             return [
-                row.patient_id,           // Patient identifier
+                row.patient_id,      // Patient identifier
                 row.image,           // Patient identifier
                 row.fixed,           // Patient identifier
             ]
@@ -63,7 +63,6 @@ workflow {
             tuple[1..-1].unique().size() == tuple[1..-1].size() // Check for uniqueness in the list of files
         }
 
-    // moving_fixed_ch.view()
     affine(moving_fixed_ch)
     crops_data = affine.out.map { it ->
                 def patient_id = it[0]
@@ -82,7 +81,7 @@ workflow {
     }.groupTuple(by:1).map{
         return [it[0][0], it[2][0], it[3][0], it[4]]
     }
-    //collapsed.view()
+
     stitching(collapsed)
 
     /*

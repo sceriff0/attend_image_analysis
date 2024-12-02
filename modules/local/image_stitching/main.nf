@@ -2,7 +2,7 @@ process stitching{
     cpus 1
     maxRetries = 3
     memory { 95.GB }
-    // memory { 20.GB }
+    // memory { 80.GB }
     input:
         tuple val(patient_id), path(moving), path(fixed), path(crops)
     output:

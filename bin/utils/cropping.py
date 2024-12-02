@@ -31,8 +31,7 @@ def create_crops(image, crop_size, overlap_size):
 
     return crops, positions
 
-
-def reconstruct_image(crops, positions, original_shape, overlap_size):
+def reconstruct_image(reconstructed, crop, position, original_shape, overlap_size):
     """
     Reconstruct the original image from overlapping crops.
 
@@ -47,45 +46,40 @@ def reconstruct_image(crops, positions, original_shape, overlap_size):
         numpy.ndarray: The reconstructed image of dtype uint16.
     """
     X, Y, Z = original_shape
-    reconstructed = np.zeros(
-        original_shape, dtype=crops[0].dtype
-    )  # Use uint16 for intermediate sums
+    x, y = position
 
-    for crop, (x, y) in zip(crops, positions):
+    # Shape crops
+    c_x, c_y, _ = crop.shape
+    # border
+    if y == 0:
+        y_start = y
+        y_end = y + crop.shape[1] - overlap_size // 2
+        crop = crop[:, : (crop.shape[1] - overlap_size // 2), :]
 
-        # Shape crops
-        c_x, c_y, _ = crop.shape
-        # border
-        if y == 0:
-            y_start = y
-            y_end = y + crop.shape[1] - overlap_size // 2
-            crop = crop[:, : (crop.shape[1] - overlap_size // 2), :]
+    elif y == Y - c_y:  # border
+        y_start = y + overlap_size // 2
+        y_end = y + crop.shape[1]
+        crop = crop[:, (overlap_size // 2) :, :]
 
-        elif y == Y - c_y:  # border
-            y_start = y + overlap_size // 2
-            y_end = y + crop.shape[1]
-            crop = crop[:, (overlap_size // 2) :, :]
+    else:  # no border
+        y_start = y + overlap_size // 2
+        y_end = y + crop.shape[1] - overlap_size // 2
+        crop = crop[:, (overlap_size // 2) : (crop.shape[1] - overlap_size // 2), :]
 
-        else:  # no border
-            y_start = y + overlap_size // 2
-            y_end = y + crop.shape[1] - overlap_size // 2
-            crop = crop[:, (overlap_size // 2) : (crop.shape[1] - overlap_size // 2), :]
+    # border
+    if x == 0:
+        x_start = x
+        x_end = x + crop.shape[0] - overlap_size // 2
+        crop = crop[: (crop.shape[0] - overlap_size // 2), :, :]
+    elif x == X - c_x:  # border
+        x_start = x + overlap_size // 2
+        x_end = x + crop.shape[0]
+        crop = crop[(overlap_size // 2) :, :, :]
+    else:  # no border
+        x_start = x + overlap_size // 2
+        x_end = x + crop.shape[0] - overlap_size // 2
+        crop = crop[(overlap_size // 2) : (crop.shape[0] - overlap_size // 2), :, :]
 
-        # border
-        if x == 0:
-            x_start = x
-            x_end = x + crop.shape[0] - overlap_size // 2
-            crop = crop[: (crop.shape[0] - overlap_size // 2), :, :]
-        elif x == X - c_x:  # border
-            x_start = x + overlap_size // 2
-            x_end = x + crop.shape[0]
-            crop = crop[(overlap_size // 2) :, :, :]
-        else:  # no border
-            x_start = x + overlap_size // 2
-            x_end = x + crop.shape[0] - overlap_size // 2
-            crop = crop[(overlap_size // 2) : (crop.shape[0] - overlap_size // 2), :, :]
-        reconstructed[x_start:x_end, y_start:y_end, :] += crop
-        del crop
-        gc.collect()
-    # Convert back to uint16
+    reconstructed[x_start:x_end, y_start:y_end, :] += crop
+
     return reconstructed

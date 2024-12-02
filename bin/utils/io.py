@@ -5,15 +5,20 @@ import pickle
 import nd2
 
 ## H5
-def load_h5(path, channels_to_load=None):
-    with h5py.File(path, "r") as hdf5_file:
-        data = hdf5_file["dataset"]
-
+def load_h5(path, loading_region=None, channels_to_load=None):
+    with h5py.File(path, 'r') as hdf5_file:
+        dataset = hdf5_file['dataset']
+        
+        # Select region to load if loading_region is provided
+        if loading_region is not None:
+            start_row, end_row, start_col, end_col = loading_region
+            data = dataset[start_row:end_row, start_col:end_col, :]
+        else:
+            data = dataset[:, :, :]
+        
         # Select channels if channels_to_load is provided
         if channels_to_load is not None:
-            data = data[:, :, channels_to_load].squeeze()
-        else:
-            data = data[:, :, :]
+            data = data[:, :, channels_to_load]
 
     return data
 

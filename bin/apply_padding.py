@@ -78,12 +78,16 @@ def main():
         data = file.read()
 
     padding_shape = ast.literal_eval(data)
-    padded_image = pad_image_to_shape(load_nd2(args.image), padding_shape)
+    padded_image = pad_image_to_shape(
+        load_nd2(args.image), 
+        padding_shape
+    )
 
-    del image
-    gc.collect()
     outname = str.replace(os.path.basename(args.image), "nd2", "h5")
     save_h5(padded_image, outname)
+
+    del padded_image
+    gc.collect()
 
 
 if __name__ == "__main__":
