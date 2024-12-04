@@ -5,6 +5,7 @@ import argparse
 import gc
 import os
 import numpy as np
+from utils.io import load_h5
 
 from utils.io import save_pickle
 from utils.cropping import create_crops, reconstruct_image

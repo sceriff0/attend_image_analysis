@@ -10,15 +10,16 @@ def load_h5(path, loading_region=None, channels_to_load=None):
         dataset = hdf5_file['dataset']
         
         # Select region to load if loading_region is provided
-        if loading_region is not None:
+        if loading_region is not None and channels_to_load is not None:
+            start_row, end_row, start_col, end_col = loading_region
+            data = dataset[start_row:end_row, start_col:end_col, channels_to_load]
+        elif loading_region is None and channels_to_load is not None:
+            data = dataset[:, :, channels_to_load]
+        elif loading_region is not None and channels_to_load is None:
             start_row, end_row, start_col, end_col = loading_region
             data = dataset[start_row:end_row, start_col:end_col, :]
         else:
             data = dataset[:, :, :]
-        
-        # Select channels if channels_to_load is provided
-        if channels_to_load is not None:
-            data = data[:, :, channels_to_load]
 
     return data
 
