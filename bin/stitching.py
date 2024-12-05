@@ -61,7 +61,7 @@ def main():
     logger.addHandler(handler)
 
     args = _parse_args()
-    original_shape = get_image_file_shape(args.original_file, format='.h5') #+ (3,)
+    original_shape = get_image_file_shape(args.original_file, format='.h5')
     crops_files = args.crops
     reconstructed_image = np.zeros(original_shape, dtype='float32')
     for crop_file in crops_files:
