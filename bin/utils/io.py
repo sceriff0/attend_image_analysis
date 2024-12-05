@@ -23,10 +23,14 @@ def load_h5(path, loading_region=None, channels_to_load=None):
 
     return data
 
-def save_h5(data, path, chunks=None):
-    # Save the NumPy array to an HDF5 file
-    with h5py.File(path, "w") as hdf5_file:
-        hdf5_file.create_dataset("dataset", data=data, chunks=chunks)
+def save_h5(data, path):
+    with h5py.File(path, 'w') as hdf5_file:
+        hdf5_file.create_dataset(
+            'dataset', 
+            data=data, 
+            chunks=True, 
+            maxshape=(None, None, None)
+        )
         hdf5_file.flush()
 
 
