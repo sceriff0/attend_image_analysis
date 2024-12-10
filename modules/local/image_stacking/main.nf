@@ -1,33 +1,21 @@
-process stack_images {
+process stacking {
     cpus 20
-    memory "100G"
+    memory "20G"
     conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
-    // cpus 32
-    // memory "170G"
-    // errorStrategy 'retry'
-    // maxRetries = 1
-    // memory { 80.GB * task.attempt }
-    publishDir "${params.output_dir_stack}", mode: "copy"
-    // container "docker://tuoprofilo/toolname:versione"
     tag "image_stacking"
     
     input:
-    tuple val(patient_id),
-        val(fixed_image_path),
-        val(input_path),
-        val(output_path)
+    tuple val(patient_id), path(fixed), path(registered), path(metadata)
 
     output:
-     tuple val(patient_id),
-        val(fixed_image_path),
-        val(input_path),
-        val(output_path)
-    
+    tuple val(patient_id), path("*tiff")
+
     script:
     """
-    stack_images.py \
-        --output-dir "${params.output_dir_stack}" \
-        --fixed-image-path "${fixed_image_path}" \
-        --logs-dir "${params.logs_dir}" 
+    stacking.py \
+        --patient_id "$patient_id" \
+        --fixed "$fixed" \
+        --registered "$registered" \
+        --metadata "$metadata" 
     """
 }

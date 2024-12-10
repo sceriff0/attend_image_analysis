@@ -4,7 +4,7 @@
 
 process get_padding{
     cpus 1
-
+    conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
     maxRetries = 3
     memory { 1.GB * task.attempt }
     input:
@@ -21,7 +21,8 @@ process get_padding{
 process apply_padding{
     cpus 2
     maxRetries = 3
-    memory { 50.GB + 10.GB * task.attempt }
+    memory { 10.GB + 10.GB * task.attempt }
+    conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
     input:
         tuple val(patient_id), path(img), val(metadata), path(padding)
     output:

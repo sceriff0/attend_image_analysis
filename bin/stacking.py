@@ -1,36 +1,17 @@
+#!/usr/bin/env python
+
 import os
 import argparse
 import numpy as np
-import re
 import h5py
 import gc
 import tifffile as tiff
 import logging
-from utils.io import save_h5, load_h5
-from datetime import datetime
+from utils.io import save_h5, load_h5, load_pickle
 from utils import logging_config
 
 logging_config.setup_logging()
 logger = logging.getLogger(__name__)
-
-def log_file_size(path):
-    """Print the current file size in bytes"""
-    file_size = os.path.getsize(path)
-    logger.info("Before opening the file:")
-    logger.info(f"File size: {file_size} bytes")
-
-def list_files_recursive(directory):
-    paths = []
-    for root, dirs, files in os.walk(directory):
-        for file in files:
-            paths.append(os.path.join(root, file))            
-    return paths
-
-def extract_date_from_path(path):
-    match = re.search(r'\d{4}\.\d{2}\.\d{2}', path)  # Find YYYY.MM.DD pattern
-    if match:
-        return datetime.strptime(match.group(), '%Y.%m.%d')  # Convert to datetime
-    return None
 
 def stack_channel(file_path, new_channel_data):
     """
@@ -47,79 +28,114 @@ def stack_channel(file_path, new_channel_data):
         
         # Check the current shape of the dataset
         current_shape = dataset.shape
-        n, m, c = current_shape  # Unpack current dimensions
-        
-        # Create a new shape for the dataset with an additional channel
-        new_shape = (n, m, c + 1)
-        
-        # Resize the dataset to accommodate the new channel
-        dataset.resize(new_shape)
+        c, n, m = current_shape  # Unpack current dimensions
 
+        dataset.resize((c + 1, n, m))
+        
         # Add the new channel data to the last channel of the dataset
-        dataset[:, :, -1] = new_channel_data
+        dataset[-1, :, :] = new_channel_data.squeeze()  # Remove the last singleton dimension if present
 
-def main(args):
-    filename = os.path.basename(args.fixed_image_path).split('_')[0]
-    output_path = os.path.join(args.output_dir, f'{filename}.h5') # Path to output file
+def save_tiff(image, output_path, resolution, metadata):
+    tiff.imwrite(output_path, 
+                 image, 
+                 resolution=resolution,
+                 bigtiff=True, 
+                 ome=True,
+                 metadata=metadata
+    )
+
+def _parse_args():
+    """Parse command-line arguments."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-p",
+        "--patient_id",
+        type=str,
+        default=None,
+        required=True,
+        help="A string containing the current patient id.",
+    )
+    parser.add_argument(
+        "-f",
+        "--fixed",
+        type=str,
+        default=None,
+        required=True,
+        help="String of paths to h5 files (fixed image).",
+    )
+    parser.add_argument(
+        "-r",
+        "--registered",
+        type=str,
+        default=None,
+        required=True,
+        help="String of paths to h5 files (registered images).",
+    )
+    parser.add_argument(
+        "-m",
+        "--metadata",
+        type=str,
+        default=None,
+        required=True,
+        help="Path to .pkl containing image metadata",
+    )
+
+    args = parser.parse_args()
+    return args
+
+def main():
+    handler = logging.FileHandler('/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/LOG.log')
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+
+    args = _parse_args()
 
     # Load current fixed image
-    fixed_image = load_h5(args.fixed_image_path)
+    registered_files = args.registered.split()
+    fixed_image = load_h5(args.fixed)
+    
     # Save transposed fixed image: (n, m, c) --> (c, n, m)
-    save_h5(np.transpose(fixed_image, (2, 0, 1)), output_path, chunks=True)
+    output_path = f"{args.patient_id}.h5"
+    save_h5(
+        np.transpose(fixed_image.astype(np.float32), (2, 0, 1)), 
+        output_path
+    )
 
     del fixed_image
     gc.collect()
 
-    #### Channels stacking ####
-    file_paths = [file for file in list_files_recursive(args.output_dir) if file.endswith('.h5')]
-    sorted_files = sorted(file_paths, key=extract_date_from_path)
-    n_channels = 2
-
+    #### Channels stacking ####    
     # Channel stacking loop
-    for file in sorted_files:
+    n_channels = 2
+    for file in registered_files:
         for ch in range(n_channels):
-            # Load individual channel and transpose it
-            new_channel = np.transpose(np.squeeze(load_h5(file, channels_to_load=[ch])), (2, 0, 1)) 
-            log_file_size(output_path)
-
-            # Stack channel to fixed image
+            logger.info(f"Loading and transposing: {file}")
+            new_channel = np.transpose(
+                load_h5(file, channels_to_load=[ch]), 
+                (2, 0, 1)
+            )
+            logger.info(f"Transposed {file}")
+            
+            # Track the file size before opening
+            logger.info("Before stacking:")
+            f"File size: {os.path.getsize(output_path)} bytes"
+            
             stack_channel(output_path, new_channel)
+
+            logger.info("After stacking: ") 
+            f"File size: {os.path.getsize(output_path)} bytes"
     
-    # Save stacked image as tiff
+    # # Save stacked image as tiff
+    resolution, metadata = load_pickle(args.metadata)
     stacked_image = load_h5(output_path)
     output_path_tiff = output_path.replace('h5', 'tiff')
-    tiff.imwrite(output_path_tiff, stacked_image)
+    save_tiff(stacked_image, output_path_tiff, resolution, metadata)
 
     del stacked_image
     gc.collect()
-    
-    #### Channels logging ####
-    fixed_channels = os.path.basename(args.fixed_image_path.replace('.h5', '')).split('_')[1:4][::-1]
-    channels = [os.path.basename(file.replace('.h5', '')) for file in sorted_files]
-    channels = [file.split('_')[2:4][::-1] for file in channels].insert(0, fixed_channels)
-    channels = [item for sublist in channels for item in sublist]
 
-    channels_log_path = os.path.join(args.logs_dir, f'channels_log_{filename}.txt')
-    with open(channels_log_path, 'w') as f:
-        # Write the header line
-        f.write(f"Patient id: {filename}\n\n")  # Two newlines for spacing, optional
-
-        # Write each item with "Channel X" format
-        for index, item in enumerate(channels, start=1):
-            f.write(f"Channel {index}: {item}\n")
-
-    print(f"Data has been written to {channels_log_path}")
  
         
 if __name__ == '__main__':
-    # Set up argument parser for command-line usage
-    parser = argparse.ArgumentParser(description="Register images from input paths and save them to output paths.")
-    parser.add_argument('--output-dir', type=str, required=True, 
-                        help='Path to save the registered image.')
-    parser.add_argument('--fixed-image-path', type=str, required=True, 
-                        help='Path to the fixed image used for registration.')
-    parser.add_argument('--logs-dir', type=str, required=True, 
-                        help='Path to the directory where log files will be stored.')
-    
-    args = parser.parse_args()
-    main(args)
+    main()

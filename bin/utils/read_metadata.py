@@ -3,6 +3,7 @@
 import tifffile
 import nd2
 import h5py
+from nd2reader import ND2Reader
 
 def get_image_file_shape(file, format=".h5"):
     """
@@ -33,3 +34,12 @@ def get_image_file_shape(file, format=".h5"):
             f.close()
 
     return shape
+
+def get_metadata_nd2(path):
+    with ND2Reader(path) as data:
+        # Print general metadata
+        metadata = data.metadata
+
+    return metadata
+
+

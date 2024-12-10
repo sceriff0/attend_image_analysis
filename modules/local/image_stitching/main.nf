@@ -1,12 +1,13 @@
 process stitching{
     cpus 1
     maxRetries = 3
-    memory { 95.GB }
-    // memory { 80.GB }
+    memory { 20.GB }
+    conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
+    
     input:
         tuple val(patient_id), path(moving), path(fixed), path(crops)
     output:
-        tuple val(patient_id), path(moving), path(fixed), path("registered_${moving}")
+        tuple val(patient_id), path(fixed), path("registered_${moving}")
  
     script:
     """

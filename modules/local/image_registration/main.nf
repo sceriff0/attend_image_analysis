@@ -5,7 +5,8 @@
 process affine{
     cpus 2
     maxRetries = 3
-    memory { 95.GB }
+    memory { 20.GB }
+    conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
     input:
         tuple val(patient_id), path(moving), path(fixed)
     output:
@@ -28,6 +29,7 @@ process diffeomorphic{
     cpus 1
     maxRetries = 3
     memory { 2.GB * task.attempt }
+    conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
     input:
         tuple val(patient_id), path(moving), path(fixed), path(crop)
     output:
