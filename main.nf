@@ -76,6 +76,8 @@ workflow {
             } 
             .flatMap { it }
 
+    // crops_data.view()
+
     diffeomorphic(crops_data)
 
     collapsed = diffeomorphic.out.map{

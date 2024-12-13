@@ -1,11 +1,11 @@
 
  N E X T F L O W   ~  version 24.10.2
 
-Launching `/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/main.nf` [big_rutherford] DSL2 - revision: 12da4ecca4
+Launching `/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/main.nf` [exotic_waddington] DSL2 - revision: 14cce5c1ce
 
-[-        ] get_padding -
+[-        ] get_padding   -
+[-        ] apply_padding -
 
-Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/2JZfIBj1q4Y82t
 [-        ] get_padding   -
 [-        ] apply_padding -
 [-        ] affine        -
@@ -13,126 +13,280 @@ Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.
 [-        ] stitching     -
 [-        ] get_metadata  -
 [-        ] stacking      -
+[-        ] conversion    -
 
-Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/2JZfIBj1q4Y82t
-[c0/eb8947] get_padding (1)   [100%] 3 of 3, cached: 3 ✔
-[01/deac4e] apply_padding (6) [100%] 9 of 9, cached: 9 ✔
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/3rBxuUQA2gMBec
+[-        ] get_padding   -
+[-        ] apply_padding -
+[-        ] affine        -
+[-        ] diffeomorphic -
+[-        ] stitching     -
+[-        ] get_metadata  -
+[-        ] stacking      -
+[-        ] conversion    -
+
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/3rBxuUQA2gMBec
+[70/2f36d8] get_padding (3) [100%] 3 of 3, cached: 3
+[-        ] apply_padding   -
+[-        ] affine          -
+[-        ] diffeomorphic   -
+[-        ] stitching       -
+[-        ] get_metadata    -
+[-        ] stacking        -
+[-        ] conversion      -
+
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/3rBxuUQA2gMBec
+[70/2f36d8] get_padding (3)   [100%] 3 of 3, cached: 3 ✔
+[ce/0f0fe7] apply_padding (9) [100%] 9 of 9, cached: 9 ✔
 [-        ] affine            -
 [-        ] diffeomorphic     -
 [-        ] stitching         -
 [-        ] get_metadata      -
 [-        ] stacking          -
+[-        ] conversion        -
 
-Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/2JZfIBj1q4Y82t
-[c0/eb8947] get_padding (1)    [100%] 3 of 3, cached: 3 ✔
-[01/deac4e] apply_padding (6)  [100%] 9 of 9, cached: 9 ✔
-[43/79c4f6] affine (2)         [100%] 6 of 6, cached: 6 ✔
-[db/c81aa2] diffeomorphic (96) [100%] 96 of 96, cached: 96 ✔
-[22/55d6ad] stitching (6)      [ 16%] 1 of 6, cached: 1
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/3rBxuUQA2gMBec
+[70/2f36d8] get_padding (3)    [100%] 3 of 3, cached: 3 ✔
+[ce/0f0fe7] apply_padding (9)  [100%] 9 of 9, cached: 9 ✔
+[ad/dfbf70] affine (2)         [100%] 6 of 6, cached: 6 ✔
+[06/5cc439] diffeomorphic (34) [100%] 31 of 31, cached: 31
+[-        ] stitching          -
 [-        ] get_metadata       -
 [-        ] stacking           -
+[-        ] conversion         -
 
-Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/2JZfIBj1q4Y82t
-executor >  pbspro (1)
-[c0/eb8947] get_padding (1)    [100%] 3 of 3, cached: 3 ✔
-[01/deac4e] apply_padding (6)  [100%] 9 of 9, cached: 9 ✔
-[43/79c4f6] affine (2)         [100%] 6 of 6, cached: 6 ✔
-[db/c81aa2] diffeomorphic (96) [100%] 96 of 96, cached: 96 ✔
-[5d/af3bfb] stitching (5)      [ 16%] 1 of 6, cached: 1
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/3rBxuUQA2gMBec
+[70/2f36d8] get_padding (3)    [100%] 3 of 3, cached: 3 ✔
+[ce/0f0fe7] apply_padding (9)  [100%] 9 of 9, cached: 9 ✔
+[ad/dfbf70] affine (2)         [100%] 6 of 6, cached: 6 ✔
+[36/9eebfe] diffeomorphic (86) [100%] 92 of 92, cached: 92
+[-        ] stitching          -
 [-        ] get_metadata       -
 [-        ] stacking           -
+[-        ] conversion         -
 
-Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/2JZfIBj1q4Y82t
-executor >  pbspro (5)
-[c0/eb8947] get_padding (1)    [100%] 3 of 3, cached: 3 ✔
-[01/deac4e] apply_padding (6)  [100%] 9 of 9, cached: 9 ✔
-[43/79c4f6] affine (2)         [100%] 6 of 6, cached: 6 ✔
-[db/c81aa2] diffeomorphic (96) [100%] 96 of 96, cached: 96 ✔
-[1e/02dc85] stitching (2)      [ 16%] 1 of 6, cached: 1
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/3rBxuUQA2gMBec
+[70/2f36d8] get_padding (3)    [100%] 3 of 3, cached: 3 ✔
+[ce/0f0fe7] apply_padding (9)  [100%] 9 of 9, cached: 9 ✔
+[ad/dfbf70] affine (2)         [100%] 6 of 6, cached: 6 ✔
+[ab/6af507] diffeomorphic (90) [100%] 96 of 96, cached: 96 ✔
+[-        ] stitching          [  0%] 0 of 6
 [-        ] get_metadata       -
 [-        ] stacking           -
+[-        ] conversion         -
 
-Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/2JZfIBj1q4Y82t
-executor >  pbspro (5)
-[c0/eb8947] get_padding (1)    [100%] 3 of 3, cached: 3 ✔
-[01/deac4e] apply_padding (6)  [100%] 9 of 9, cached: 9 ✔
-[43/79c4f6] affine (2)         [100%] 6 of 6, cached: 6 ✔
-[db/c81aa2] diffeomorphic (96) [100%] 96 of 96, cached: 96 ✔
-[1e/02dc85] stitching (2)      [ 16%] 1 of 6, cached: 1
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/3rBxuUQA2gMBec
+executor >  pbspro (3)
+[70/2f36d8] get_padding (3)    [100%] 3 of 3, cached: 3 ✔
+[ce/0f0fe7] apply_padding (9)  [100%] 9 of 9, cached: 9 ✔
+[ad/dfbf70] affine (2)         [100%] 6 of 6, cached: 6 ✔
+[ab/6af507] diffeomorphic (90) [100%] 96 of 96, cached: 96 ✔
+[14/f20386] stitching (4)      [  0%] 0 of 6
 [-        ] get_metadata       -
 [-        ] stacking           -
+[-        ] conversion         -
 
-Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/2JZfIBj1q4Y82t
-executor >  pbspro (5)
-[c0/eb8947] get_padding (1)    [100%] 3 of 3, cached: 3 ✔
-[01/deac4e] apply_padding (6)  [100%] 9 of 9, cached: 9 ✔
-[43/79c4f6] affine (2)         [100%] 6 of 6, cached: 6 ✔
-[db/c81aa2] diffeomorphic (96) [100%] 96 of 96, cached: 96 ✔
-[1e/02dc85] stitching (2)      [ 16%] 1 of 6, cached: 1
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/3rBxuUQA2gMBec
+executor >  pbspro (6)
+[70/2f36d8] get_padding (3)    [100%] 3 of 3, cached: 3 ✔
+[ce/0f0fe7] apply_padding (9)  [100%] 9 of 9, cached: 9 ✔
+[ad/dfbf70] affine (2)         [100%] 6 of 6, cached: 6 ✔
+[ab/6af507] diffeomorphic (90) [100%] 96 of 96, cached: 96 ✔
+[00/68e662] stitching (6)      [  0%] 0 of 6
 [-        ] get_metadata       -
 [-        ] stacking           -
+[-        ] conversion         -
 
-Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/2JZfIBj1q4Y82t
-executor >  pbspro (5)
-[c0/eb8947] get_padding (1)    [100%] 3 of 3, cached: 3 ✔
-[01/deac4e] apply_padding (6)  [100%] 9 of 9, cached: 9 ✔
-[43/79c4f6] affine (2)         [100%] 6 of 6, cached: 6 ✔
-[db/c81aa2] diffeomorphic (96) [100%] 96 of 96, cached: 96 ✔
-[1e/02dc85] stitching (2)      [100%] 6 of 6, cached: 1 ✔
-[-        ] get_metadata       [  0%] 0 of 3
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/3rBxuUQA2gMBec
+executor >  pbspro (6)
+[70/2f36d8] get_padding (3)    [100%] 3 of 3, cached: 3 ✔
+[ce/0f0fe7] apply_padding (9)  [100%] 9 of 9, cached: 9 ✔
+[ad/dfbf70] affine (2)         [100%] 6 of 6, cached: 6 ✔
+[ab/6af507] diffeomorphic (90) [100%] 96 of 96, cached: 96 ✔
+[00/68e662] stitching (6)      [  0%] 0 of 6
+[-        ] get_metadata       -
 [-        ] stacking           -
+[-        ] conversion         -
 
-Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/2JZfIBj1q4Y82t
-executor >  pbspro (8)
-[c0/eb8947] get_padding (1)    [100%] 3 of 3, cached: 3 ✔
-[01/deac4e] apply_padding (6)  [100%] 9 of 9, cached: 9 ✔
-[43/79c4f6] affine (2)         [100%] 6 of 6, cached: 6 ✔
-[db/c81aa2] diffeomorphic (96) [100%] 96 of 96, cached: 96 ✔
-[1e/02dc85] stitching (2)      [100%] 6 of 6, cached: 1 ✔
-[2b/b87a56] get_metadata (2)   [  0%] 0 of 3
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/3rBxuUQA2gMBec
+executor >  pbspro (6)
+[70/2f36d8] get_padding (3)    [100%] 3 of 3, cached: 3 ✔
+[ce/0f0fe7] apply_padding (9)  [100%] 9 of 9, cached: 9 ✔
+[ad/dfbf70] affine (2)         [100%] 6 of 6, cached: 6 ✔
+[ab/6af507] diffeomorphic (90) [100%] 96 of 96, cached: 96 ✔
+[ab/8da608] stitching (2)      [ 16%] 1 of 6
+[-        ] get_metadata       -
 [-        ] stacking           -
+[-        ] conversion         -
 
-Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/2JZfIBj1q4Y82t
-executor >  pbspro (8)
-[c0/eb8947] get_padding (1)    [100%] 3 of 3, cached: 3 ✔
-[01/deac4e] apply_padding (6)  [100%] 9 of 9, cached: 9 ✔
-[43/79c4f6] affine (2)         [100%] 6 of 6, cached: 6 ✔
-[db/c81aa2] diffeomorphic (96) [100%] 96 of 96, cached: 96 ✔
-[1e/02dc85] stitching (2)      [100%] 6 of 6, cached: 1 ✔
-[bb/63d589] get_metadata (3)   [ 33%] 1 of 3
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/3rBxuUQA2gMBec
+executor >  pbspro (6)
+[70/2f36d8] get_padding (3)    [100%] 3 of 3, cached: 3 ✔
+[ce/0f0fe7] apply_padding (9)  [100%] 9 of 9, cached: 9 ✔
+[ad/dfbf70] affine (2)         [100%] 6 of 6, cached: 6 ✔
+[ab/6af507] diffeomorphic (90) [100%] 96 of 96, cached: 96 ✔
+[84/7bd2ae] stitching (5)      [ 66%] 4 of 6
+[-        ] get_metadata       -
 [-        ] stacking           -
+[-        ] conversion         -
 
-Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/2JZfIBj1q4Y82t
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/3rBxuUQA2gMBec
+executor >  pbspro (6)
+[70/2f36d8] get_padding (3)    [100%] 3 of 3, cached: 3 ✔
+[ce/0f0fe7] apply_padding (9)  [100%] 9 of 9, cached: 9 ✔
+[ad/dfbf70] affine (2)         [100%] 6 of 6, cached: 6 ✔
+[ab/6af507] diffeomorphic (90) [100%] 96 of 96, cached: 96 ✔
+[84/7bd2ae] stitching (5)      [ 66%] 4 of 6
+[-        ] get_metadata       -
+[-        ] stacking           -
+[-        ] conversion         -
+
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/3rBxuUQA2gMBec
+executor >  pbspro (7)
+[70/2f36d8] get_padding (3)    [100%] 3 of 3, cached: 3 ✔
+[ce/0f0fe7] apply_padding (9)  [100%] 9 of 9, cached: 9 ✔
+[ad/dfbf70] affine (2)         [100%] 6 of 6, cached: 6 ✔
+[ab/6af507] diffeomorphic (90) [100%] 96 of 96, cached: 96 ✔
+[36/c76f4c] stitching (1)      [100%] 6 of 6 ✔
+[b3/8ca52f] get_metadata (3)   [  0%] 0 of 3
+[-        ] stacking           -
+[-        ] conversion         -
+
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/3rBxuUQA2gMBec
 executor >  pbspro (9)
-[c0/eb8947] get_padding (1)           [100%] 3 of 3, cached: 3 ✔
-[01/deac4e] apply_padding (6)         [100%] 9 of 9, cached: 9 ✔
-[43/79c4f6] affine (2)                [100%] 6 of 6, cached: 6 ✔
-[db/c81aa2] diffeomorphic (96)        [100%] 96 of 96, cached: 96 ✔
-[1e/02dc85] stitching (2)             [100%] 6 of 6, cached: 1 ✔
-[84/2434de] get_metadata (1)          [100%] 3 of 3 ✔
-[0d/bea3af] stacking (image_stacking) [  0%] 0 of 3
+[70/2f36d8] get_padding (3)    [100%] 3 of 3, cached: 3 ✔
+[ce/0f0fe7] apply_padding (9)  [100%] 9 of 9, cached: 9 ✔
+[ad/dfbf70] affine (2)         [100%] 6 of 6, cached: 6 ✔
+[ab/6af507] diffeomorphic (90) [100%] 96 of 96, cached: 96 ✔
+[36/c76f4c] stitching (1)      [100%] 6 of 6 ✔
+[e4/143022] get_metadata (2)   [  0%] 0 of 3
+[-        ] stacking           -
+[-        ] conversion         -
 
-Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/2JZfIBj1q4Y82t
-executor >  pbspro (11)
-[c0/eb8947] get_padding (1)           [100%] 3 of 3, cached: 3 ✔
-[01/deac4e] apply_padding (6)         [100%] 9 of 9, cached: 9 ✔
-[43/79c4f6] affine (2)                [100%] 6 of 6, cached: 6 ✔
-[db/c81aa2] diffeomorphic (96)        [100%] 96 of 96, cached: 96 ✔
-[1e/02dc85] stitching (2)             [100%] 6 of 6, cached: 1 ✔
-[84/2434de] get_metadata (1)          [100%] 3 of 3 ✔
-[55/1e2821] stacking (image_stacking) [  0%] 0 of 3
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/3rBxuUQA2gMBec
+executor >  pbspro (9)
+[70/2f36d8] get_padding (3)    [100%] 3 of 3, cached: 3 ✔
+[ce/0f0fe7] apply_padding (9)  [100%] 9 of 9, cached: 9 ✔
+[ad/dfbf70] affine (2)         [100%] 6 of 6, cached: 6 ✔
+[ab/6af507] diffeomorphic (90) [100%] 96 of 96, cached: 96 ✔
+[36/c76f4c] stitching (1)      [100%] 6 of 6 ✔
+[05/6218db] get_metadata (1)   [ 66%] 2 of 3
+[-        ] stacking           -
+[-        ] conversion         -
 
-WARN: Killing running tasks (3)
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/3rBxuUQA2gMBec
+executor >  pbspro (9)
+[70/2f36d8] get_padding (3)    [100%] 3 of 3, cached: 3 ✔
+[ce/0f0fe7] apply_padding (9)  [100%] 9 of 9, cached: 9 ✔
+[ad/dfbf70] affine (2)         [100%] 6 of 6, cached: 6 ✔
+[ab/6af507] diffeomorphic (90) [100%] 96 of 96, cached: 96 ✔
+[36/c76f4c] stitching (1)      [100%] 6 of 6 ✔
+[05/6218db] get_metadata (1)   [ 66%] 2 of 3 ✔
+[-        ] stacking           -
+[-        ] conversion         -
 
-Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/2JZfIBj1q4Y82t
-executor >  pbspro (11)
-[c0/eb8947] get_padding (1)           [100%] 3 of 3, cached: 3 ✔
-[01/deac4e] apply_padding (6)         [100%] 9 of 9, cached: 9 ✔
-[43/79c4f6] affine (2)                [100%] 6 of 6, cached: 6 ✔
-[db/c81aa2] diffeomorphic (96)        [100%] 96 of 96, cached: 96 ✔
-[1e/02dc85] stitching (2)             [100%] 6 of 6, cached: 1 ✔
-[84/2434de] get_metadata (1)          [100%] 3 of 3 ✔
-[55/1e2821] stacking (image_stacking) [  0%] 0 of 3
-One more CTRL+C to force exit
-Adieu
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/3rBxuUQA2gMBec
+executor >  pbspro (12)
+[70/2f36d8] get_padding (3)           [100%] 3 of 3, cached: 3 ✔
+[ce/0f0fe7] apply_padding (9)         [100%] 9 of 9, cached: 9 ✔
+[ad/dfbf70] affine (2)                [100%] 6 of 6, cached: 6 ✔
+[ab/6af507] diffeomorphic (90)        [100%] 96 of 96, cached: 96 ✔
+[36/c76f4c] stitching (1)             [100%] 6 of 6 ✔
+[e4/143022] get_metadata (2)          [100%] 3 of 3 ✔
+[ac/5e5747] stacking (image_stacking) [  0%] 0 of 3
+[-        ] conversion                -
+
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/3rBxuUQA2gMBec
+executor >  pbspro (12)
+[70/2f36d8] get_padding (3)           [100%] 3 of 3, cached: 3 ✔
+[ce/0f0fe7] apply_padding (9)         [100%] 9 of 9, cached: 9 ✔
+[ad/dfbf70] affine (2)                [100%] 6 of 6, cached: 6 ✔
+[ab/6af507] diffeomorphic (90)        [100%] 96 of 96, cached: 96 ✔
+[36/c76f4c] stitching (1)             [100%] 6 of 6 ✔
+[e4/143022] get_metadata (2)          [100%] 3 of 3 ✔
+[ac/5e5747] stacking (image_stacking) [  0%] 0 of 3
+[-        ] conversion                -
+
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/3rBxuUQA2gMBec
+executor >  pbspro (14)
+[70/2f36d8] get_padding (3)           [100%] 3 of 3, cached: 3 ✔
+[ce/0f0fe7] apply_padding (9)         [100%] 9 of 9, cached: 9 ✔
+[ad/dfbf70] affine (2)                [100%] 6 of 6, cached: 6 ✔
+[ab/6af507] diffeomorphic (90)        [100%] 96 of 96, cached: 96 ✔
+[36/c76f4c] stitching (1)             [100%] 6 of 6 ✔
+[e4/143022] get_metadata (2)          [100%] 3 of 3 ✔
+[ac/5e5747] stacking (image_stacking) [100%] 3 of 3 ✔
+[fd/adb8e2] conversion (ome_tiff)     [  0%] 0 of 3
+
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/3rBxuUQA2gMBec
+executor >  pbspro (15)
+[70/2f36d8] get_padding (3)           [100%] 3 of 3, cached: 3 ✔
+[ce/0f0fe7] apply_padding (9)         [100%] 9 of 9, cached: 9 ✔
+[ad/dfbf70] affine (2)                [100%] 6 of 6, cached: 6 ✔
+[ab/6af507] diffeomorphic (90)        [100%] 96 of 96, cached: 96 ✔
+[36/c76f4c] stitching (1)             [100%] 6 of 6 ✔
+[e4/143022] get_metadata (2)          [100%] 3 of 3 ✔
+[ac/5e5747] stacking (image_stacking) [100%] 3 of 3 ✔
+[d5/df1d10] conversion (ome_tiff)     [  0%] 0 of 3
+
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/3rBxuUQA2gMBec
+executor >  pbspro (15)
+[70/2f36d8] get_padding (3)           [100%] 3 of 3, cached: 3 ✔
+[ce/0f0fe7] apply_padding (9)         [100%] 9 of 9, cached: 9 ✔
+[ad/dfbf70] affine (2)                [100%] 6 of 6, cached: 6 ✔
+[ab/6af507] diffeomorphic (90)        [100%] 96 of 96, cached: 96 ✔
+[36/c76f4c] stitching (1)             [100%] 6 of 6 ✔
+[e4/143022] get_metadata (2)          [100%] 3 of 3 ✔
+[ac/5e5747] stacking (image_stacking) [100%] 3 of 3 ✔
+[d5/df1d10] conversion (ome_tiff)     [  0%] 0 of 3
+
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/3rBxuUQA2gMBec
+executor >  pbspro (15)
+[70/2f36d8] get_padding (3)           [100%] 3 of 3, cached: 3 ✔
+[ce/0f0fe7] apply_padding (9)         [100%] 9 of 9, cached: 9 ✔
+[ad/dfbf70] affine (2)                [100%] 6 of 6, cached: 6 ✔
+[ab/6af507] diffeomorphic (90)        [100%] 96 of 96, cached: 96 ✔
+[36/c76f4c] stitching (1)             [100%] 6 of 6 ✔
+[e4/143022] get_metadata (2)          [100%] 3 of 3 ✔
+[ac/5e5747] stacking (image_stacking) [100%] 3 of 3 ✔
+[b3/61548b] conversion (ome_tiff)     [ 33%] 1 of 3
+
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/3rBxuUQA2gMBec
+executor >  pbspro (15)
+[70/2f36d8] get_padding (3)           [100%] 3 of 3, cached: 3 ✔
+[ce/0f0fe7] apply_padding (9)         [100%] 9 of 9, cached: 9 ✔
+[ad/dfbf70] affine (2)                [100%] 6 of 6, cached: 6 ✔
+[ab/6af507] diffeomorphic (90)        [100%] 96 of 96, cached: 96 ✔
+[36/c76f4c] stitching (1)             [100%] 6 of 6 ✔
+[e4/143022] get_metadata (2)          [100%] 3 of 3 ✔
+[ac/5e5747] stacking (image_stacking) [100%] 3 of 3 ✔
+[d5/df1d10] conversion (ome_tiff)     [ 66%] 2 of 3
+
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/3rBxuUQA2gMBec
+executor >  pbspro (15)
+[70/2f36d8] get_padding (3)           [100%] 3 of 3, cached: 3 ✔
+[ce/0f0fe7] apply_padding (9)         [100%] 9 of 9, cached: 9 ✔
+[ad/dfbf70] affine (2)                [100%] 6 of 6, cached: 6 ✔
+[ab/6af507] diffeomorphic (90)        [100%] 96 of 96, cached: 96 ✔
+[36/c76f4c] stitching (1)             [100%] 6 of 6 ✔
+[e4/143022] get_metadata (2)          [100%] 3 of 3 ✔
+[ac/5e5747] stacking (image_stacking) [100%] 3 of 3 ✔
+[fd/adb8e2] conversion (ome_tiff)     [100%] 3 of 3 ✔
+
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/3rBxuUQA2gMBec
+executor >  pbspro (15)
+[70/2f36d8] get_padding (3)           [100%] 3 of 3, cached: 3 ✔
+[ce/0f0fe7] apply_padding (9)         [100%] 9 of 9, cached: 9 ✔
+[ad/dfbf70] affine (2)                [100%] 6 of 6, cached: 6 ✔
+[ab/6af507] diffeomorphic (90)        [100%] 96 of 96, cached: 96 ✔
+[36/c76f4c] stitching (1)             [100%] 6 of 6 ✔
+[e4/143022] get_metadata (2)          [100%] 3 of 3 ✔
+[ac/5e5747] stacking (image_stacking) [100%] 3 of 3 ✔
+[fd/adb8e2] conversion (ome_tiff)     [100%] 3 of 3 ✔
+Completed at: 13-Dec-2024 17:37:13
+Duration    : 4m 57s
+CPU hours   : 3.3 (94.4% cached)
+Succeeded   : 15
+Cached      : 114
+
 

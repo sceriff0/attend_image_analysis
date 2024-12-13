@@ -39,6 +39,17 @@ def save_tiff(image, save_path, resolution, metadata):
         metadata=metadata
     )
 
+def are_all_alphabetic_lowercase(string):
+            # Filter alphabetic characters and check if all are lowercase
+            return all(char.islower() for char in string if char.isalpha())
+
+def remove_lowercase_channels(channels):
+            filtered_channels = []
+            for ch in channels:
+                if not are_all_alphabetic_lowercase(ch):
+                    filtered_channels.append(ch)
+            return filtered_channels
+
 def _parse_args():
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser()
@@ -101,7 +112,8 @@ def main():
 
     nd2_files = args.nd2_files.split() 
 
-    channels_files = args.channels.split() 
+    channels_files = args.channels.split()
+
 
     channel_names = []
     for file in channels_files:
@@ -109,9 +121,14 @@ def main():
         channel_name = filename.split('_')[2]
         channel_names.append(channel_name)
 
-    channel_names = list(set(channel_names))
+    channels_to_register = remove_lowercase_channels(
+            list(
+                set(channel_names)
+            )
+        )
+    channels_to_register = sorted(channels_to_register, key=lambda x: channels_list.index(x))
 
-    resolution, metadata = create_tiff_metadata(nd2_files[0], channel_names)
+    resolution, metadata = create_tiff_metadata(nd2_files[0], channels_to_register)
 
     meta = (resolution, metadata)
     save_path = f"metadata_{args.patient_id}.pkl"

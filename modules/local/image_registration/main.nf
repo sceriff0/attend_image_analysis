@@ -33,10 +33,12 @@ process diffeomorphic{
     input:
         tuple val(patient_id), path(moving), path(fixed), path(crop)
     output:
-        tuple val(patient_id), path(moving), path(fixed), path("registered_${crop}")
+        tuple val(patient_id), path(moving), path(fixed), path("registered*")
  
     script:
     """
-        diffeomorphic.py --crop_image $crop
+        diffeomorphic.py \
+            --crop_image $crop \
+            --moving_image $moving
     """
 }

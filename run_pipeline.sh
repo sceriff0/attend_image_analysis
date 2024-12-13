@@ -25,8 +25,8 @@
 
 nextflow run /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/main.nf \
         -with-tower \
-        -profile singularity \
         -resume \
+        -profile singularity \
         --with-tower \
         --input /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/sample_sheet.csv \
         --crop_size_affine 2000\

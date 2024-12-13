@@ -8,7 +8,7 @@ import numpy as np
 from utils.io import load_h5
 
 from utils.io import save_pickle
-from utils.cropping import create_crops, reconstruct_image
+from utils.cropping import reconstruct_image
 from utils.mapping import compute_affine_mapping_cv2, apply_mapping
 
 def _parse_args():

@@ -83,23 +83,50 @@ def main():
 
     args = _parse_args()
 
+    channels_list = [
+        "DAPI",
+        "panCK",
+        "MLH1",
+        "P53",
+        "ARID1A",
+        "PAX2",
+        "Vimentin",
+        "Alpha-SMA",
+        "CD163",
+        "CD14",
+        "CD45",
+        "CD3",
+        "CD4",
+        "CD8",
+        "FOXP3",
+        "PD1",
+        "PDL1"
+    ]
+
     channels_files = args.channels.split()
     output_path = f"{args.patient_id}.h5"
 
     # Get unique channel paths
-    channels = {}
+    channels_paths = {}
     for path in channels_files:
         base = os.path.basename(path)
-        if base not in channels:
-            channels[base] = path
+        if base not in channels_paths:
+            channels_paths[base] = path
 
-    # Get unique paths
-    channels = list(channels.values())
-
+    # Sort by channels_list
+    channels_paths = list(channels_paths.values())
+    channels_paths = sorted(
+        channels_paths, 
+        key=lambda x: next(
+            (channels_list.index(substr) for substr in channels_list if substr in x), 
+            float('inf')
+            )
+        )
+    
     #### Channels stacking ####    
-    for ch in channels:
-        logger.info(f"Loading: {ch}")
-        new_channel = load_h5(ch)
+    for path in channels_paths:
+        logger.info(f"Loading: {path}")
+        new_channel = load_h5(path)
         
         if not os.path.exists(output_path):
             save_h5(new_channel, output_path)
