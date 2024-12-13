@@ -23,13 +23,18 @@ def load_h5(path, loading_region=None, channels_to_load=None):
 
     return data
 
-def save_h5(data, path):
+def save_h5(data, path, ndim=3):
+    if ndim == 3:
+        maxshape = (None, None, None)
+    else:
+        maxshape = (None, None)
+
     with h5py.File(path, 'w') as hdf5_file:
         hdf5_file.create_dataset(
             'dataset', 
             data=data, 
             chunks=True, 
-            maxshape=(None, None, None)
+            maxshape=maxshape
         )
         hdf5_file.flush()
 

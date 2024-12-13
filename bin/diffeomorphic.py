@@ -16,7 +16,7 @@ def _parse_args():
         type=str,
         default=None,
         required=True,
-        help="pickle containing fixed and moving crops, in this order.",
+        help="Pickle file containing fixed and moving crops, in this order.",
     )
 
     args = parser.parse_args()

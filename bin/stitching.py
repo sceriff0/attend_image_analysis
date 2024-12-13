@@ -5,7 +5,7 @@ import logging
 import argparse
 import os
 import numpy as np
-from utils.io import save_h5, load_pickle
+from utils.io import load_h5, save_h5, load_pickle
 from utils.cropping import reconstruct_image
 from utils.read_metadata import get_image_file_shape
 from utils import logging_config
@@ -17,6 +17,14 @@ logger = logging.getLogger(__name__)
 def _parse_args():
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-p",
+        "--patient_id",
+        type=str,
+        default=None,
+        required=True,
+        help="A string containing the current patient id.",
+    )
     parser.add_argument(
         "-c",
         "--crops",
@@ -43,12 +51,20 @@ def _parse_args():
         help="Size of the overlap",
     )
     parser.add_argument(
-        "-or",
-        "--original_file",
+        "-f",
+        "--fixed",
         type=str,
         default=None,
         required=True,
-        help="Padded full moving or fixed file.",
+        help="Padded full fixed file.",
+    )
+    parser.add_argument(
+        "-m",
+        "--moving",
+        type=str,
+        default=None,
+        required=True,
+        help="Padded full moving file.",
     )
     args = parser.parse_args()
     return args
@@ -61,7 +77,7 @@ def main():
     logger.addHandler(handler)
 
     args = _parse_args()
-    original_shape = get_image_file_shape(args.original_file, format='.h5')
+    original_shape = get_image_file_shape(args.moving, format='.h5')
     crops_files = args.crops
     reconstructed_image = np.zeros(original_shape, dtype='float32')
     for crop_file in crops_files:
@@ -72,7 +88,29 @@ def main():
         position = (x, y)
         reconstructed_image = reconstruct_image(reconstructed_image, crop, position, original_shape, args.overlap_size)
 
-    save_h5(reconstructed_image, f"registered_{os.path.basename(args.original_file)}")
+    moving_channels = os.path.basename(args.moving)\
+        .split('.')[0] \
+        .split('_')[2:4][::-1] # Select first two channels (omit DAPI)
+    
+    fixed_channels = os.path.basename(args.fixed) \
+        .split('.')[0] \
+        .split('_')[1:4][::-1] # Select all channels
+    
+    for idx, ch in enumerate(moving_channels):
+        save_h5(
+            np.expand_dims(reconstructed_image[:,:,idx], axis=0).astype(np.float32), 
+            f"registered_{args.patient_id}_{ch}.h5"
+        )
+    
+    for idx, ch in enumerate(fixed_channels):
+        image = load_h5(args.fixed, channels_to_load=idx).astype(np.float32)
+        image = np.expand_dims(image, axis=0)
+        save_h5(
+            image, 
+            f"registered_{args.patient_id}_{ch}.h5"
+        )
+    
+
 
 
 if __name__ == "__main__":

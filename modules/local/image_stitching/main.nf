@@ -7,14 +7,16 @@ process stitching{
     input:
         tuple val(patient_id), path(moving), path(fixed), path(crops)
     output:
-        tuple val(patient_id), path(fixed), path("registered_${moving}")
+        tuple val(patient_id), path("registered_${patient_id}*")
  
     script:
     """
         stitching.py \
+            --patient_id $patient_id \
             --crops $crops \
             --crop_size ${params.crop_size_diffeo} \
             --overlap_size ${params.overlap_size_diffeo} \
-            --original_file $moving 
+            --fixed $fixed \
+            --moving $moving 
     """
 }

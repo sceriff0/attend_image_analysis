@@ -51,16 +51,8 @@ def _parse_args():
         help="A string of nd2 files.",
     )
     parser.add_argument(
-        "-f",
-        "--fixed",
-        type=str,
-        default=None,
-        required=True,
-        help="String of paths to h5 files (fixed image).",
-    )
-    parser.add_argument(
-        "-r",
-        "--registered",
+        "-c",
+        "--channels",
         type=str,
         default=None,
         required=True,
@@ -86,35 +78,40 @@ def main():
 
     args = _parse_args()
 
+    # Fixed-order list of channels
+    channels_list = [
+        "DAPI",
+        "panCK",
+        "MLH1",
+        "P53",
+        "ARID1A",
+        "PAX2",
+        "Vimentin",
+        "Alpha-SMA",
+        "CD163",
+        "CD14",
+        "CD45",
+        "CD3",
+        "CD4",
+        "CD8",
+        "FOXP3",
+        "PD1",
+        "PDL1"
+    ]
+
     nd2_files = args.nd2_files.split() 
-    fixed = args.fixed
-    registered = args.registered.split()
 
-    registered.append(fixed)
+    channels_files = args.channels.split() 
 
-    h5_files = registered   
-
-    channels = []
-    for file in h5_files:
+    channel_names = []
+    for file in channels_files:
         filename = os.path.basename(file).split('.')[0]
-        channel_names = [filename.split('_')[1], filename.split('_')[2], filename.split('_')[3]]
+        channel_name = filename.split('_')[2]
+        channel_names.append(channel_name)
 
-        for name in channel_names:
-            channels.append(name)
-            
-    # Only keep DAPI channel from fixed image
-    channels.reverse()  
-    first_occurrence = True
-    result = []
-    for item in channels:
-        if item == 'DAPI':
-            if first_occurrence:
-                result.append(item)
-                first_occurrence = False
-        else:
-            result.append(item)
+    channel_names = list(set(channel_names))
 
-    resolution, metadata = create_tiff_metadata(nd2_files[0], result)
+    resolution, metadata = create_tiff_metadata(nd2_files[0], channel_names)
 
     meta = (resolution, metadata)
     save_path = f"metadata_{args.patient_id}.pkl"

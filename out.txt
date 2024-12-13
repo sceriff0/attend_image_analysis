@@ -1,14 +1,11 @@
 
  N E X T F L O W   ~  version 24.10.2
 
-Launching `/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/main.nf` [exotic_leibniz] DSL2 - revision: 84b0d44925
+Launching `/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/main.nf` [big_rutherford] DSL2 - revision: 12da4ecca4
 
-[-        ] get_padding   -
-[-        ] apply_padding -
-[-        ] affine        -
-[-        ] diffeomorphic -
+[-        ] get_padding -
 
-Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/5OYjNnhPpAAP3d
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/2JZfIBj1q4Y82t
 [-        ] get_padding   -
 [-        ] apply_padding -
 [-        ] affine        -
@@ -17,218 +14,125 @@ Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.
 [-        ] get_metadata  -
 [-        ] stacking      -
 
-Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/5OYjNnhPpAAP3d
-[af/af2c24] get_padding (2)   [100%] 3 of 3, cached: 3 ✔
-[47/d06e39] apply_padding (5) [100%] 9 of 9, cached: 9 ✔
-[45/fb2c59] affine (3)        [100%] 6 of 6, cached: 6 ✔
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/2JZfIBj1q4Y82t
+[c0/eb8947] get_padding (1)   [100%] 3 of 3, cached: 3 ✔
+[01/deac4e] apply_padding (6) [100%] 9 of 9, cached: 9 ✔
+[-        ] affine            -
 [-        ] diffeomorphic     -
 [-        ] stitching         -
 [-        ] get_metadata      -
 [-        ] stacking          -
 
-Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/5OYjNnhPpAAP3d
-[af/af2c24] get_padding (2)    [100%] 3 of 3, cached: 3 ✔
-[47/d06e39] apply_padding (5)  [100%] 9 of 9, cached: 9 ✔
-[45/fb2c59] affine (3)         [100%] 6 of 6, cached: 6 ✔
-[8c/e273e7] diffeomorphic (85) [100%] 96 of 96, cached: 96 ✔
-[-        ] stitching          -
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/2JZfIBj1q4Y82t
+[c0/eb8947] get_padding (1)    [100%] 3 of 3, cached: 3 ✔
+[01/deac4e] apply_padding (6)  [100%] 9 of 9, cached: 9 ✔
+[43/79c4f6] affine (2)         [100%] 6 of 6, cached: 6 ✔
+[db/c81aa2] diffeomorphic (96) [100%] 96 of 96, cached: 96 ✔
+[22/55d6ad] stitching (6)      [ 16%] 1 of 6, cached: 1
 [-        ] get_metadata       -
 [-        ] stacking           -
 
-Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/5OYjNnhPpAAP3d
-[af/af2c24] get_padding (2)    [100%] 3 of 3, cached: 3 ✔
-[47/d06e39] apply_padding (5)  [100%] 9 of 9, cached: 9 ✔
-[45/fb2c59] affine (3)         [100%] 6 of 6, cached: 6 ✔
-[8c/e273e7] diffeomorphic (85) [100%] 96 of 96, cached: 96 ✔
-[38/dc4df5] stitching (5)      [ 66%] 4 of 6, cached: 4
-[-        ] get_metadata       -
-[-        ] stacking           -
-
-Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/5OYjNnhPpAAP3d
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/2JZfIBj1q4Y82t
 executor >  pbspro (1)
-[af/af2c24] get_padding (2)    [100%] 3 of 3, cached: 3 ✔
-[47/d06e39] apply_padding (5)  [100%] 9 of 9, cached: 9 ✔
-[45/fb2c59] affine (3)         [100%] 6 of 6, cached: 6 ✔
-[8c/e273e7] diffeomorphic (85) [100%] 96 of 96, cached: 96 ✔
-[c2/1a85bb] stitching (1)      [ 66%] 4 of 6, cached: 4
+[c0/eb8947] get_padding (1)    [100%] 3 of 3, cached: 3 ✔
+[01/deac4e] apply_padding (6)  [100%] 9 of 9, cached: 9 ✔
+[43/79c4f6] affine (2)         [100%] 6 of 6, cached: 6 ✔
+[db/c81aa2] diffeomorphic (96) [100%] 96 of 96, cached: 96 ✔
+[5d/af3bfb] stitching (5)      [ 16%] 1 of 6, cached: 1
 [-        ] get_metadata       -
 [-        ] stacking           -
 
-Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/5OYjNnhPpAAP3d
-executor >  pbspro (2)
-[af/af2c24] get_padding (2)    [100%] 3 of 3, cached: 3 ✔
-[47/d06e39] apply_padding (5)  [100%] 9 of 9, cached: 9 ✔
-[45/fb2c59] affine (3)         [100%] 6 of 6, cached: 6 ✔
-[8c/e273e7] diffeomorphic (85) [100%] 96 of 96, cached: 96 ✔
-[88/eeb3f7] stitching (2)      [ 66%] 4 of 6, cached: 4
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/2JZfIBj1q4Y82t
+executor >  pbspro (5)
+[c0/eb8947] get_padding (1)    [100%] 3 of 3, cached: 3 ✔
+[01/deac4e] apply_padding (6)  [100%] 9 of 9, cached: 9 ✔
+[43/79c4f6] affine (2)         [100%] 6 of 6, cached: 6 ✔
+[db/c81aa2] diffeomorphic (96) [100%] 96 of 96, cached: 96 ✔
+[1e/02dc85] stitching (2)      [ 16%] 1 of 6, cached: 1
 [-        ] get_metadata       -
 [-        ] stacking           -
 
-Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/5OYjNnhPpAAP3d
-executor >  pbspro (2)
-[af/af2c24] get_padding (2)    [100%] 3 of 3, cached: 3 ✔
-[47/d06e39] apply_padding (5)  [100%] 9 of 9, cached: 9 ✔
-[45/fb2c59] affine (3)         [100%] 6 of 6, cached: 6 ✔
-[8c/e273e7] diffeomorphic (85) [100%] 96 of 96, cached: 96 ✔
-[88/eeb3f7] stitching (2)      [ 66%] 4 of 6, cached: 4
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/2JZfIBj1q4Y82t
+executor >  pbspro (5)
+[c0/eb8947] get_padding (1)    [100%] 3 of 3, cached: 3 ✔
+[01/deac4e] apply_padding (6)  [100%] 9 of 9, cached: 9 ✔
+[43/79c4f6] affine (2)         [100%] 6 of 6, cached: 6 ✔
+[db/c81aa2] diffeomorphic (96) [100%] 96 of 96, cached: 96 ✔
+[1e/02dc85] stitching (2)      [ 16%] 1 of 6, cached: 1
 [-        ] get_metadata       -
 [-        ] stacking           -
 
-Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/5OYjNnhPpAAP3d
-executor >  pbspro (2)
-[af/af2c24] get_padding (2)    [100%] 3 of 3, cached: 3 ✔
-[47/d06e39] apply_padding (5)  [100%] 9 of 9, cached: 9 ✔
-[45/fb2c59] affine (3)         [100%] 6 of 6, cached: 6 ✔
-[8c/e273e7] diffeomorphic (85) [100%] 96 of 96, cached: 96 ✔
-[c2/1a85bb] stitching (1)      [ 83%] 5 of 6, cached: 4
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/2JZfIBj1q4Y82t
+executor >  pbspro (5)
+[c0/eb8947] get_padding (1)    [100%] 3 of 3, cached: 3 ✔
+[01/deac4e] apply_padding (6)  [100%] 9 of 9, cached: 9 ✔
+[43/79c4f6] affine (2)         [100%] 6 of 6, cached: 6 ✔
+[db/c81aa2] diffeomorphic (96) [100%] 96 of 96, cached: 96 ✔
+[1e/02dc85] stitching (2)      [ 16%] 1 of 6, cached: 1
 [-        ] get_metadata       -
 [-        ] stacking           -
 
-Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/5OYjNnhPpAAP3d
-executor >  pbspro (2)
-[af/af2c24] get_padding (2)    [100%] 3 of 3, cached: 3 ✔
-[47/d06e39] apply_padding (5)  [100%] 9 of 9, cached: 9 ✔
-[45/fb2c59] affine (3)         [100%] 6 of 6, cached: 6 ✔
-[8c/e273e7] diffeomorphic (85) [100%] 96 of 96, cached: 96 ✔
-[88/eeb3f7] stitching (2)      [100%] 6 of 6, cached: 4 ✔
-[d3/a03f5d] get_metadata (1)   [ 33%] 1 of 3, cached: 1
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/2JZfIBj1q4Y82t
+executor >  pbspro (5)
+[c0/eb8947] get_padding (1)    [100%] 3 of 3, cached: 3 ✔
+[01/deac4e] apply_padding (6)  [100%] 9 of 9, cached: 9 ✔
+[43/79c4f6] affine (2)         [100%] 6 of 6, cached: 6 ✔
+[db/c81aa2] diffeomorphic (96) [100%] 96 of 96, cached: 96 ✔
+[1e/02dc85] stitching (2)      [100%] 6 of 6, cached: 1 ✔
+[-        ] get_metadata       [  0%] 0 of 3
 [-        ] stacking           -
 
-Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/5OYjNnhPpAAP3d
-executor >  pbspro (4)
-[af/af2c24] get_padding (2)    [100%] 3 of 3, cached: 3 ✔
-[47/d06e39] apply_padding (5)  [100%] 9 of 9, cached: 9 ✔
-[45/fb2c59] affine (3)         [100%] 6 of 6, cached: 6 ✔
-[8c/e273e7] diffeomorphic (85) [100%] 96 of 96, cached: 96 ✔
-[88/eeb3f7] stitching (2)      [100%] 6 of 6, cached: 4 ✔
-[17/cdb18a] get_metadata (2)   [ 33%] 1 of 3, cached: 1
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/2JZfIBj1q4Y82t
+executor >  pbspro (8)
+[c0/eb8947] get_padding (1)    [100%] 3 of 3, cached: 3 ✔
+[01/deac4e] apply_padding (6)  [100%] 9 of 9, cached: 9 ✔
+[43/79c4f6] affine (2)         [100%] 6 of 6, cached: 6 ✔
+[db/c81aa2] diffeomorphic (96) [100%] 96 of 96, cached: 96 ✔
+[1e/02dc85] stitching (2)      [100%] 6 of 6, cached: 1 ✔
+[2b/b87a56] get_metadata (2)   [  0%] 0 of 3
 [-        ] stacking           -
 
-Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/5OYjNnhPpAAP3d
-executor >  pbspro (4)
-[af/af2c24] get_padding (2)    [100%] 3 of 3, cached: 3 ✔
-[47/d06e39] apply_padding (5)  [100%] 9 of 9, cached: 9 ✔
-[45/fb2c59] affine (3)         [100%] 6 of 6, cached: 6 ✔
-[8c/e273e7] diffeomorphic (85) [100%] 96 of 96, cached: 96 ✔
-[88/eeb3f7] stitching (2)      [100%] 6 of 6, cached: 4 ✔
-[17/cdb18a] get_metadata (2)   [100%] 3 of 3, cached: 1 ✔
-[-        ] stacking           [  0%] 0 of 3
-[785R1, [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/d3/a03f5deac09ce5b01b1fc103e751d0/785R1_DAPI_PPARgamma_PDL1.h5], [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/d3/a03f5deac09ce5b01b1fc103e751d0/registered_785R1_DAPI_p53_CD3.h5, /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/d3/a03f5deac09ce5b01b1fc103e751d0/registered_785R1_DAPI_PD1_SRSF3.h5], [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/d3/a03f5deac09ce5b01b1fc103e751d0/metadata_785R1.pkl]]
-[785R3, [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/ac/c22ceb91737066bfc4be26d94e54ed/785R3_DAPI_PPARgamma_PDL1.h5], [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/ac/c22ceb91737066bfc4be26d94e54ed/registered_785R3_DAPI_p53_CD3.h5, /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/ac/c22ceb91737066bfc4be26d94e54ed/registered_785R3_DAPI_PD1_SRSF3.h5], [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/ac/c22ceb91737066bfc4be26d94e54ed/metadata_785R3.pkl]]
-[785R2, [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/17/cdb18aed7e8a3cdefaef189f218cf5/785R2_DAPI_PPARgamma_PDL1.h5], [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/17/cdb18aed7e8a3cdefaef189f218cf5/registered_785R2_DAPI_PD1_SRSF3.h5, /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/17/cdb18aed7e8a3cdefaef189f218cf5/registered_785R2_DAPI_p53_CD3.h5], [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/17/cdb18aed7e8a3cdefaef189f218cf5/metadata_785R2.pkl]]
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/2JZfIBj1q4Y82t
+executor >  pbspro (8)
+[c0/eb8947] get_padding (1)    [100%] 3 of 3, cached: 3 ✔
+[01/deac4e] apply_padding (6)  [100%] 9 of 9, cached: 9 ✔
+[43/79c4f6] affine (2)         [100%] 6 of 6, cached: 6 ✔
+[db/c81aa2] diffeomorphic (96) [100%] 96 of 96, cached: 96 ✔
+[1e/02dc85] stitching (2)      [100%] 6 of 6, cached: 1 ✔
+[bb/63d589] get_metadata (3)   [ 33%] 1 of 3
+[-        ] stacking           -
 
-Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/5OYjNnhPpAAP3d
-executor >  pbspro (7)
-[af/af2c24] get_padding (2)           [100%] 3 of 3, cached: 3 ✔
-[47/d06e39] apply_padding (5)         [100%] 9 of 9, cached: 9 ✔
-[45/fb2c59] affine (3)                [100%] 6 of 6, cached: 6 ✔
-[8c/e273e7] diffeomorphic (85)        [100%] 96 of 96, cached: 96 ✔
-[88/eeb3f7] stitching (2)             [100%] 6 of 6, cached: 4 ✔
-[17/cdb18a] get_metadata (2)          [100%] 3 of 3, cached: 1 ✔
-[e3/6ac37c] stacking (image_stacking) [  0%] 0 of 3
-[785R1, [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/d3/a03f5deac09ce5b01b1fc103e751d0/785R1_DAPI_PPARgamma_PDL1.h5], [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/d3/a03f5deac09ce5b01b1fc103e751d0/registered_785R1_DAPI_p53_CD3.h5, /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/d3/a03f5deac09ce5b01b1fc103e751d0/registered_785R1_DAPI_PD1_SRSF3.h5], [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/d3/a03f5deac09ce5b01b1fc103e751d0/metadata_785R1.pkl]]
-[785R3, [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/ac/c22ceb91737066bfc4be26d94e54ed/785R3_DAPI_PPARgamma_PDL1.h5], [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/ac/c22ceb91737066bfc4be26d94e54ed/registered_785R3_DAPI_p53_CD3.h5, /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/ac/c22ceb91737066bfc4be26d94e54ed/registered_785R3_DAPI_PD1_SRSF3.h5], [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/ac/c22ceb91737066bfc4be26d94e54ed/metadata_785R3.pkl]]
-[785R2, [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/17/cdb18aed7e8a3cdefaef189f218cf5/785R2_DAPI_PPARgamma_PDL1.h5], [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/17/cdb18aed7e8a3cdefaef189f218cf5/registered_785R2_DAPI_PD1_SRSF3.h5, /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/17/cdb18aed7e8a3cdefaef189f218cf5/registered_785R2_DAPI_p53_CD3.h5], [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/17/cdb18aed7e8a3cdefaef189f218cf5/metadata_785R2.pkl]]
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/2JZfIBj1q4Y82t
+executor >  pbspro (9)
+[c0/eb8947] get_padding (1)           [100%] 3 of 3, cached: 3 ✔
+[01/deac4e] apply_padding (6)         [100%] 9 of 9, cached: 9 ✔
+[43/79c4f6] affine (2)                [100%] 6 of 6, cached: 6 ✔
+[db/c81aa2] diffeomorphic (96)        [100%] 96 of 96, cached: 96 ✔
+[1e/02dc85] stitching (2)             [100%] 6 of 6, cached: 1 ✔
+[84/2434de] get_metadata (1)          [100%] 3 of 3 ✔
+[0d/bea3af] stacking (image_stacking) [  0%] 0 of 3
 
-Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/5OYjNnhPpAAP3d
-executor >  pbspro (7)
-[af/af2c24] get_padding (2)           [100%] 3 of 3, cached: 3 ✔
-[47/d06e39] apply_padding (5)         [100%] 9 of 9, cached: 9 ✔
-[45/fb2c59] affine (3)                [100%] 6 of 6, cached: 6 ✔
-[8c/e273e7] diffeomorphic (85)        [100%] 96 of 96, cached: 96 ✔
-[88/eeb3f7] stitching (2)             [100%] 6 of 6, cached: 4 ✔
-[17/cdb18a] get_metadata (2)          [100%] 3 of 3, cached: 1 ✔
-[e3/6ac37c] stacking (image_stacking) [  0%] 0 of 3
-[785R1, [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/d3/a03f5deac09ce5b01b1fc103e751d0/785R1_DAPI_PPARgamma_PDL1.h5], [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/d3/a03f5deac09ce5b01b1fc103e751d0/registered_785R1_DAPI_p53_CD3.h5, /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/d3/a03f5deac09ce5b01b1fc103e751d0/registered_785R1_DAPI_PD1_SRSF3.h5], [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/d3/a03f5deac09ce5b01b1fc103e751d0/metadata_785R1.pkl]]
-[785R3, [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/ac/c22ceb91737066bfc4be26d94e54ed/785R3_DAPI_PPARgamma_PDL1.h5], [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/ac/c22ceb91737066bfc4be26d94e54ed/registered_785R3_DAPI_p53_CD3.h5, /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/ac/c22ceb91737066bfc4be26d94e54ed/registered_785R3_DAPI_PD1_SRSF3.h5], [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/ac/c22ceb91737066bfc4be26d94e54ed/metadata_785R3.pkl]]
-[785R2, [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/17/cdb18aed7e8a3cdefaef189f218cf5/785R2_DAPI_PPARgamma_PDL1.h5], [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/17/cdb18aed7e8a3cdefaef189f218cf5/registered_785R2_DAPI_PD1_SRSF3.h5, /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/17/cdb18aed7e8a3cdefaef189f218cf5/registered_785R2_DAPI_p53_CD3.h5], [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/17/cdb18aed7e8a3cdefaef189f218cf5/metadata_785R2.pkl]]
-ERROR ~ Error executing process > 'stacking (image_stacking)'
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/2JZfIBj1q4Y82t
+executor >  pbspro (11)
+[c0/eb8947] get_padding (1)           [100%] 3 of 3, cached: 3 ✔
+[01/deac4e] apply_padding (6)         [100%] 9 of 9, cached: 9 ✔
+[43/79c4f6] affine (2)                [100%] 6 of 6, cached: 6 ✔
+[db/c81aa2] diffeomorphic (96)        [100%] 96 of 96, cached: 96 ✔
+[1e/02dc85] stitching (2)             [100%] 6 of 6, cached: 1 ✔
+[84/2434de] get_metadata (1)          [100%] 3 of 3 ✔
+[55/1e2821] stacking (image_stacking) [  0%] 0 of 3
 
-Caused by:
-  Process `stacking (image_stacking)` terminated with an error exit status (2)
+WARN: Killing running tasks (3)
 
-
-Command executed:
-
-  stacking.py         --fixed "785R2_DAPI_PPARgamma_PDL1.h5"         --registered "registered_785R2_DAPI_PD1_SRSF3.h5 registered_785R2_DAPI_p53_CD3.h5"         --metadata "metadata_785R2.pkl"
-
-Command exit status:
-  2
-
-Command output:
-  (empty)
-
-Command error:
-  /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/bin/stacking.py: line 1: import: command not found
-  /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/bin/stacking.py: line 2: import: command not found
-  /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/bin/stacking.py: line 3: import: command not found
-  /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/bin/stacking.py: line 4: import: command not found
-  /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/bin/stacking.py: line 5: import: command not found
-  /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/bin/stacking.py: line 6: import: command not found
-  /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/bin/stacking.py: line 7: import: command not found
-  /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/bin/stacking.py: line 8: from: command not found
-  /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/bin/stacking.py: line 14: syntax error near unexpected token `('
-  /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/bin/stacking.py: line 14: `def stack_channel(file_path, new_channel_data):'
-
-Work dir:
-  /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/ee/349b29370dbffe03157f4f31af7d3f
-
-Container:
-  /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/singularity/alech00-attend_image_analysis-v0.1.img
-
-Tip: you can replicate the issue by changing to the process work dir and entering the command `bash .command.run`
-
- -- Check '.nextflow.log' file for details
-WARN: Killing running tasks (1)
-
-Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/5OYjNnhPpAAP3d
-executor >  pbspro (7)
-[af/af2c24] get_padding (2)           [100%] 3 of 3, cached: 3 ✔
-[47/d06e39] apply_padding (5)         [100%] 9 of 9, cached: 9 ✔
-[45/fb2c59] affine (3)                [100%] 6 of 6, cached: 6 ✔
-[8c/e273e7] diffeomorphic (85)        [100%] 96 of 96, cached: 96 ✔
-[88/eeb3f7] stitching (2)             [100%] 6 of 6, cached: 4 ✔
-[17/cdb18a] get_metadata (2)          [100%] 3 of 3, cached: 1 ✔
-[e3/6ac37c] stacking (image_stacking) [ 66%] 2 of 3, failed: 2
-[785R1, [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/d3/a03f5deac09ce5b01b1fc103e751d0/785R1_DAPI_PPARgamma_PDL1.h5], [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/d3/a03f5deac09ce5b01b1fc103e751d0/registered_785R1_DAPI_p53_CD3.h5, /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/d3/a03f5deac09ce5b01b1fc103e751d0/registered_785R1_DAPI_PD1_SRSF3.h5], [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/d3/a03f5deac09ce5b01b1fc103e751d0/metadata_785R1.pkl]]
-[785R3, [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/ac/c22ceb91737066bfc4be26d94e54ed/785R3_DAPI_PPARgamma_PDL1.h5], [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/ac/c22ceb91737066bfc4be26d94e54ed/registered_785R3_DAPI_p53_CD3.h5, /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/ac/c22ceb91737066bfc4be26d94e54ed/registered_785R3_DAPI_PD1_SRSF3.h5], [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/ac/c22ceb91737066bfc4be26d94e54ed/metadata_785R3.pkl]]
-[785R2, [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/17/cdb18aed7e8a3cdefaef189f218cf5/785R2_DAPI_PPARgamma_PDL1.h5], [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/17/cdb18aed7e8a3cdefaef189f218cf5/registered_785R2_DAPI_PD1_SRSF3.h5, /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/17/cdb18aed7e8a3cdefaef189f218cf5/registered_785R2_DAPI_p53_CD3.h5], [/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/17/cdb18aed7e8a3cdefaef189f218cf5/metadata_785R2.pkl]]
-ERROR ~ Error executing process > 'stacking (image_stacking)'
-
-Caused by:
-  Process `stacking (image_stacking)` terminated with an error exit status (2)
-
-
-Command executed:
-
-  stacking.py         --fixed "785R2_DAPI_PPARgamma_PDL1.h5"         --registered "registered_785R2_DAPI_PD1_SRSF3.h5 registered_785R2_DAPI_p53_CD3.h5"         --metadata "metadata_785R2.pkl"
-
-Command exit status:
-  2
-
-Command output:
-  (empty)
-
-Command error:
-  /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/bin/stacking.py: line 1: import: command not found
-  /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/bin/stacking.py: line 2: import: command not found
-  /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/bin/stacking.py: line 3: import: command not found
-  /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/bin/stacking.py: line 4: import: command not found
-  /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/bin/stacking.py: line 5: import: command not found
-  /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/bin/stacking.py: line 6: import: command not found
-  /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/bin/stacking.py: line 7: import: command not found
-  /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/bin/stacking.py: line 8: from: command not found
-  /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/bin/stacking.py: line 14: syntax error near unexpected token `('
-  /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/bin/stacking.py: line 14: `def stack_channel(file_path, new_channel_data):'
-
-Work dir:
-  /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/ee/349b29370dbffe03157f4f31af7d3f
-
-Container:
-  /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/work/singularity/alech00-attend_image_analysis-v0.1.img
-
-Tip: you can replicate the issue by changing to the process work dir and entering the command `bash .command.run`
-
- -- Check '.nextflow.log' file for details
-WARN: Seqera Platform request field `workflow.errorMessage` exceeds expected size | offending value: `/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/bin/stacking.py: line 1: import: com(truncated)`, size: 1186 (max: 255)
+Monitor the execution with Seqera Platform using this URL: https://cloud.seqera.io/user/alessiochiodin/watch/2JZfIBj1q4Y82t
+executor >  pbspro (11)
+[c0/eb8947] get_padding (1)           [100%] 3 of 3, cached: 3 ✔
+[01/deac4e] apply_padding (6)         [100%] 9 of 9, cached: 9 ✔
+[43/79c4f6] affine (2)                [100%] 6 of 6, cached: 6 ✔
+[db/c81aa2] diffeomorphic (96)        [100%] 96 of 96, cached: 96 ✔
+[1e/02dc85] stitching (2)             [100%] 6 of 6, cached: 1 ✔
+[84/2434de] get_metadata (1)          [100%] 3 of 3 ✔
+[55/1e2821] stacking (image_stacking) [  0%] 0 of 3
+One more CTRL+C to force exit
+Adieu
 

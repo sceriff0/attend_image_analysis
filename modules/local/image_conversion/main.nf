@@ -1,6 +1,6 @@
 process conversion {
-    cpus 20
-    memory "20G"
+    cpus 2
+    memory "2G"
     conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
     tag "ome_tiff"
     
@@ -16,8 +16,8 @@ process conversion {
         -tiley 512 \
         -pyramid-resolutions 3 \
         -pyramid-scale 2 \
-        "$image" \
-        "$patient_id".ome.tiff
+        ${image} \
+        ${patient_id}.ome.tiff
     """
 }
 

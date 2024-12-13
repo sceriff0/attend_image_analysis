@@ -4,16 +4,15 @@ process get_metadata{
     maxRetries = 3
     memory { 1.GB * task.attempt }
     input:
-        tuple val(patient_id), path(nd2_files), path(fixed), path(registered)
+        tuple val(patient_id), path(nd2_files), path(channels, stageAs: "?/*")
     output:
-        tuple val(patient_id), path(fixed), path(registered), path("*.pkl")
+        tuple val(patient_id), path(channels), path("*.pkl")
  
     script:
     """
         get_metadata.py \
             --nd2_files "$nd2_files" \
-            --fixed "$fixed" \
-            --registered "$registered" \
+            --channels "$channels" \
             --patient_id "$patient_id"
     """ 
 }

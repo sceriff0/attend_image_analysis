@@ -56,20 +56,12 @@ def _parse_args():
         help="A string containing the current patient id.",
     )
     parser.add_argument(
-        "-f",
-        "--fixed",
+        "-c",
+        "--channels",
         type=str,
         default=None,
         required=True,
-        help="String of paths to h5 files (fixed image).",
-    )
-    parser.add_argument(
-        "-r",
-        "--registered",
-        type=str,
-        default=None,
-        required=True,
-        help="String of paths to h5 files (registered images).",
+        help="String of paths to h5 files (image channels).",
     )
     parser.add_argument(
         "-m",
@@ -91,42 +83,33 @@ def main():
 
     args = _parse_args()
 
-    # Load current fixed image
-    registered_files = args.registered.split()
-    fixed_image = load_h5(args.fixed)
-    
-    # Save transposed fixed image: (n, m, c) --> (c, n, m)
+    channels_files = args.channels.split()
     output_path = f"{args.patient_id}.h5"
-    save_h5(
-        np.transpose(fixed_image.astype(np.float32), (2, 0, 1)), 
-        output_path
-    )
 
-    del fixed_image
-    gc.collect()
+    # Get unique channel paths
+    channels = {}
+    for path in channels_files:
+        base = os.path.basename(path)
+        if base not in channels:
+            channels[base] = path
+
+    # Get unique paths
+    channels = list(channels.values())
 
     #### Channels stacking ####    
-    # Channel stacking loop
-    n_channels = 2
-    for file in registered_files:
-        for ch in range(n_channels):
-            logger.info(f"Loading and transposing: {file}")
-            new_channel = np.transpose(
-                load_h5(file, channels_to_load=[ch]), 
-                (2, 0, 1)
-            )
-            logger.info(f"Transposed {file}")
-            
-            # Track the file size before opening
-            logger.info("Before stacking:")
-            f"File size: {os.path.getsize(output_path)} bytes"
-            
+    for ch in channels:
+        logger.info(f"Loading: {ch}")
+        new_channel = load_h5(ch)
+        
+        if not os.path.exists(output_path):
+            save_h5(new_channel, output_path)
+        else:
+            logger.info(f"Before stacking: file size: {os.path.getsize(output_path)} bytes")
             stack_channel(output_path, new_channel)
-
-            logger.info("After stacking: ") 
-            f"File size: {os.path.getsize(output_path)} bytes"
+            logger.info(f"After stacking: file size: {os.path.getsize(output_path)} bytes") 
+            
     
-    # # Save stacked image as tiff
+    #### Save stacked image as tiff
     resolution, metadata = load_pickle(args.metadata)
     stacked_image = load_h5(output_path)
     output_path_tiff = output_path.replace('h5', 'tiff')

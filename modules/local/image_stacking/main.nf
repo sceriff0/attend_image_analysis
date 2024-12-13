@@ -1,11 +1,11 @@
 process stacking {
-    cpus 20
-    memory "20G"
+    cpus 2
+    memory { 10.GB }
     conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
     tag "image_stacking"
     
     input:
-    tuple val(patient_id), path(fixed), path(registered), path(metadata)
+    tuple val(patient_id), path(channels, stageAs: "?/*"), path(metadata)
 
     output:
     tuple val(patient_id), path("*tiff")
@@ -14,8 +14,7 @@ process stacking {
     """
     stacking.py \
         --patient_id "$patient_id" \
-        --fixed "$fixed" \
-        --registered "$registered" \
+        --channels "$channels" \
         --metadata "$metadata" 
     """
 }

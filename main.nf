@@ -17,6 +17,7 @@ include { stitching } from './modules/local/image_stitching/main.nf'
 include { stacking } from './modules/local/image_stacking/main.nf'
 include { conversion } from './modules/local/image_conversion/main.nf'
 
+
 def parse_csv(csv_file_path) {
     channel
         .fromPath(csv_file_path)
@@ -42,7 +43,7 @@ workflow {
 
     moving_fixed_ch = apply_padding.out.groupTuple().flatMap { tuple ->
             def patient = tuple[0]       // Patient ID
-            def records = tuple[1]      // List of records for the patient
+            def records = tuple[1]       // List of records for the patient
             def fix = tuple[2]
 
             // Find the file associated with the `true` value
@@ -84,30 +85,28 @@ workflow {
     }
 
     stitching(collapsed)
+
     grouped_stitching_out = stitching.out.groupTuple()
 
-    meta_input = grouped_input.combine(grouped_stitching_out, by: 0)
-
-    meta_input = meta_input.map{
-        return [it[0], it[1], it[3][0], it[4]]
-    }  
-
-    get_metadata(meta_input)
-
-    grouped_metadata_out = get_metadata.out.groupTuple()
-
-    metadata_out = grouped_metadata_out.map{
-        return [it[0], it[1], it[2][0], it[3]]
+    stitching_out = grouped_stitching_out.map { entry ->
+        def channels = entry[1].flatten()
+        return [
+            entry[0],
+            channels
+        ]
     }
 
-    metadata_out.view()
+    meta_input = grouped_input.combine(stitching_out, by: 0).map{
+        return [it[0], it[1], it[3]]
+    }
+
+    get_metadata(meta_input) 
+
+    metadata_out = get_metadata.out.groupTuple().map{
+        return [it[0], it[1][0], it[2]]
+    }
 
     stacking(metadata_out)
-
+ 
     conversion(stacking.out)
-
-    // input_conv = convert_to_ome_tiff(
-    //     stack_images.out
-    //         .combine(params_conv)
-    // )
 }
