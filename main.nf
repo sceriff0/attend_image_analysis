@@ -25,14 +25,13 @@ def parse_csv(csv_file_path) {
         .map { row ->
             return [
                 row.patient_id,      // Patient identifier
-                row.image,           // Patient identifier
-                row.fixed,           // Patient identifier
+                row.image,           // Path to image
+                row.fixed,           // Boolean: true if the image is the fixed one
             ]
         }
 }
 
 workflow {
-
     input_ch = parse_csv(params.input)
     grouped_input = input_ch.groupTuple()
 
@@ -44,11 +43,11 @@ workflow {
     moving_fixed_ch = apply_padding.out.groupTuple().flatMap { tuple ->
             def patient = tuple[0]       // Patient ID
             def records = tuple[1]       // List of records for the patient
-            def fix = tuple[2]
+            def fixed = tuple[2]
 
             // Find the file associated with the `true` value
             for (int i = 0; i < records.size(); i++){
-                if(fix[i] == "true"){
+                if(fixed[i] == "true"){
                     trueFile = records[i]
                     break
                 }
@@ -75,8 +74,6 @@ workflow {
                 }
             } 
             .flatMap { it }
-
-    // crops_data.view()
 
     diffeomorphic(crops_data)
 

@@ -1,7 +1,7 @@
 process stitching{
     cpus 1
     maxRetries = 3
-    memory { 20.GB }
+    memory { 80.GB }
     conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
     
     input:
