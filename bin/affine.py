@@ -5,11 +5,16 @@ import argparse
 import gc
 import os
 import numpy as np
+import logging
 from utils.io import load_h5
-
 from utils.io import save_pickle
 from utils.cropping import reconstruct_image
 from utils.mapping import compute_affine_mapping_cv2, apply_mapping
+from utils import logging_config
+
+# Set up logging configuration
+logging_config.setup_logging()
+logger = logging.getLogger(__name__)
 
 def _parse_args():
     """Parse command-line arguments."""
@@ -93,34 +98,59 @@ def get_crops_positions(shape, crop_size, overlap_size):
 
 def save_stacked_crops(areas, fixed_image_path, moving_image_path, reconstructed_image):
     for area in areas:
+        logger.debug(f"Affine - processing crop area: {area}")
+
         start_row, end_row, start_col, end_col = area
 
         fixed_crop = load_h5(fixed_image_path, loading_region=area)
         moving_crop = reconstructed_image[start_row:end_row, start_col:end_col, :]
 
-        # Computing local affine transformation matrix
-        matrix = compute_affine_mapping_cv2(
-            y=fixed_crop[:,:,2].squeeze(), 
-            x=moving_crop[:,:,2].squeeze()
-        )
-        
-        save_pickle(
-            (  
-                fixed_crop,
-                apply_mapping(matrix, moving_crop, method="cv2"), # Apply local affine transformation
-            ),
-            f"{start_row}_{start_col}_{os.path.basename(moving_image_path)}.pkl",
-        )
+        output_path = f"{start_row}_{start_col}_{os.path.basename(moving_image_path)}.pkl"
+    
+        if len(np.unique(moving_crop)) != 1 and len(np.unique(fixed_crop)) != 1:
+            logger.debug(f"Affine - computing transformation: {area}")
+            matrix = compute_affine_mapping_cv2(
+                y=fixed_crop[:,:,-1].squeeze(), 
+                x=moving_crop[:,:,-1].squeeze()
+            )
+            logger.debug(f"Affine - computed transformation: {area}")
+
+            logger.debug(f"Affine - saving crop: {output_path}")
+            save_pickle(
+                (  
+                    fixed_crop,
+                    apply_mapping(matrix, moving_crop, method="cv2"),
+                ),
+                output_path,
+            )
+            logger.debug(f"Affine - saved crop: {output_path}")
+        else:
+            logger.debug(f"Affine - saving crop: {output_path}")
+            save_pickle(
+                (  
+                    fixed_crop,
+                    moving_crop
+                ),
+                output_path,
+            )
+            logger.debug(f"Affine - saved crop: {output_path}")
 
 def main():
+    handler = logging.FileHandler('/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/LOG.log')
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+
     args = _parse_args()
+
+    logger.debug(f"Fixed image: {args.fixed_image}, Moving image: {args.moving_image}")
 
     moving = load_h5(args.moving_image)
     fixed = load_h5(args.fixed_image)
     moving_shape = moving.shape
 
     matrix = compute_affine_mapping_cv2(
-        y=fixed[:, :, 2].squeeze(), x=moving[:, :, 2].squeeze()
+        y=fixed[:, :, -1].squeeze(), x=moving[:, :, -1].squeeze()
     )
 
     del fixed, moving
