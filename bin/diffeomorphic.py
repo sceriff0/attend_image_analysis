@@ -4,7 +4,7 @@
 import argparse
 import os
 import numpy as np
-from utils.io import load_pickle, save_pickle, save_h5
+from utils.io import load_pickle, save_h5
 from utils.mapping import compute_diffeomorphic_mapping_dipy, apply_mapping
 
 def are_all_alphabetic_lowercase(string):
@@ -60,14 +60,16 @@ def main():
 
     if len(np.unique(moving)) != 1:
         mapping = compute_diffeomorphic_mapping_dipy(
-            y=fixed[:, :, 2].squeeze(), 
-            x=moving[:, :, 2].squeeze()
+            y=fixed[:, :, -1].squeeze(), 
+            x=moving[:, :, -1].squeeze()
         )
 
         registered_images = []
+        i = 0
         for idx, ch in enumerate(moving_channels):
             if ch in channels_to_register:
-                registered_images.append(apply_mapping(mapping, moving[:, :, idx]))
+                registered_images.append(apply_mapping(mapping, moving[:, :, i]))
+                i += 1
 
         registered_images = np.stack(registered_images, axis=-1)
 
@@ -78,8 +80,11 @@ def main():
         
     else:
         moving_channels_images = []
-        if ch in channels_to_register:
-            moving_channels_images.append(moving[:, :, idx])
+        i = 0
+        for idx, ch in enumerate(moving_channels):
+            if ch in channels_to_register:
+                moving_channels_images.append(moving[:, :, i])
+                i += 1
 
         moving_channels_images = np.stack(moving_channels_images, axis=-1)
 
