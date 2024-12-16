@@ -65,11 +65,9 @@ def main():
         )
 
         registered_images = []
-        i = 0
         for idx, ch in enumerate(moving_channels):
             if ch in channels_to_register:
-                registered_images.append(apply_mapping(mapping, moving[:, :, i]))
-                i += 1
+                registered_images.append(apply_mapping(mapping, moving[:, :, idx]))
 
         registered_images = np.stack(registered_images, axis=-1)
 
@@ -80,11 +78,9 @@ def main():
         
     else:
         moving_channels_images = []
-        i = 0
         for idx, ch in enumerate(moving_channels):
             if ch in channels_to_register:
-                moving_channels_images.append(moving[:, :, i])
-                i += 1
+                moving_channels_images.append(moving[:, :, idx])
 
         moving_channels_images = np.stack(moving_channels_images, axis=-1)
 
