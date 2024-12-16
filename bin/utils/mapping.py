@@ -59,8 +59,11 @@ def compute_affine_mapping_cv2(
     keypoints1, descriptors1 = orb.detectAndCompute(y, None)
     keypoints2, descriptors2 = orb.detectAndCompute(x, None)
 
-    if descriptors1 is None or descriptors2 is None:
-        raise ValueError("One of the descriptors is empty")
+    if descriptors1 is None:
+        raise ValueError("Object 'descriptors1' is None")
+    elif descriptors2 is None:
+        raise ValueError("Object 'descriptors2' is None")
+
 
     # Convert descriptors to uint8 if they are not already in that format
     if descriptors1 is not None and descriptors1.dtype != np.uint8:
