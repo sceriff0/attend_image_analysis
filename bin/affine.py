@@ -39,7 +39,7 @@ def _parse_args():
         "-ca",
         "--crop_size_affine",
         type=int,
-        default=8000,
+        default=10000,
         required=False,
         help="Size of the crop",
     )
@@ -47,7 +47,7 @@ def _parse_args():
         "-oa",
         "--overlap_size_affine",
         type=int,
-        default=2000,
+        default=4000,
         required=False,
         help="Size of the overlap",
     )
@@ -63,7 +63,7 @@ def _parse_args():
         "-od",
         "--overlap_size_diffeo",
         type=int,
-        default=200,
+        default=800,
         required=False,
         help="Size of the overlap",
     )
@@ -150,7 +150,8 @@ def main():
     moving_shape = moving.shape
 
     matrix = compute_affine_mapping_cv2(
-        y=fixed[:, :, -1].squeeze(), x=moving[:, :, -1].squeeze()
+        y=fixed[:, :, -1].squeeze(), 
+        x=moving[:, :, -1].squeeze()
     )
 
     del fixed, moving
@@ -165,7 +166,13 @@ def main():
             load_h5(args.moving_image, loading_region=area), 
             method="cv2"
         )    
-        reconstructed_image = reconstruct_image(reconstructed_image, crop, position, moving_shape, args.overlap_size_affine)
+        reconstructed_image = reconstruct_image(
+            reconstructed_image, 
+            crop, 
+            position, 
+            moving_shape, 
+            args.overlap_size_affine
+        )
 
     areas_diffeo = get_crops_positions(moving_shape, args.crop_size_diffeo, args.overlap_size_diffeo)
     save_stacked_crops(areas_diffeo, args.fixed_image, args.moving_image, reconstructed_image)
