@@ -5,7 +5,7 @@ import numpy as np
 import tifffile as tiff
 import argparse
 import logging
-from utils.read_metadata import get_metadata_nd2
+from utils.metadata_tools import get_channels_list
 from utils.io import save_pickle
 from utils import logging_config
 
@@ -90,25 +90,7 @@ def main():
     args = _parse_args()
 
     # Fixed-order list of channels
-    channels_list = [
-        "DAPI",
-        "panCK",
-        "MLH1",
-        "P53",
-        "ARID1A",
-        "PAX2",
-        "Vimentin",
-        "Alpha-SMA",
-        "CD163",
-        "CD14",
-        "CD45",
-        "CD3",
-        "CD4",
-        "CD8",
-        "FOXP3",
-        "PD1",
-        "PDL1"
-    ]
+    channels_list = get_channels_list()
 
     nd2_files = args.nd2_files.split() 
 

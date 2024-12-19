@@ -7,7 +7,7 @@ import os
 import numpy as np
 import logging
 from utils.io import load_h5
-from utils.io import save_pickle
+from utils.io import save_pickle, load_pickle
 from utils.cropping import reconstruct_image
 from utils.mapping import compute_affine_mapping_cv2, apply_mapping
 from utils import logging_config
@@ -19,6 +19,22 @@ logger = logging.getLogger(__name__)
 def _parse_args():
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-p",
+        "--patient_id",
+        type=str,
+        default=None,
+        required=True,
+        help="A string containing the current patient id.",
+    )
+    parser.add_argument(
+        "-c",
+        "--channels_to_register",
+        type=str,
+        default=None,
+        required=True,
+        help="Pickle file containing list of image channels to register",
+    )
     parser.add_argument(
         "-m",
         "--moving_image",
@@ -104,8 +120,8 @@ def save_stacked_crops(areas, fixed_image_path, moving_image_path, reconstructed
 
         fixed_crop = load_h5(fixed_image_path, loading_region=area)
         moving_crop = reconstructed_image[start_row:end_row, start_col:end_col, :]
-
-        output_path = f"{start_row}_{start_col}_{os.path.basename(moving_image_path)}.pkl"
+        patient_id = os.path.basename(moving_image_path)
+        output_path = f"{start_row}_{start_col}_{patient_id}.pkl"
     
         if len(np.unique(moving_crop)) != 1 and len(np.unique(fixed_crop)) != 1:
             logger.debug(f"Affine - computing transformation: {area}")
@@ -145,40 +161,46 @@ def main():
 
     logger.debug(f"Fixed image: {args.fixed_image}, Moving image: {args.moving_image}")
 
-    moving = load_h5(args.moving_image)
-    fixed = load_h5(args.fixed_image)
-    moving_shape = moving.shape
+    channels_to_register = load_pickle(args.channels_to_register)
 
-    matrix = compute_affine_mapping_cv2(
-        y=fixed[:, :, -1].squeeze(), 
-        x=moving[:, :, -1].squeeze()
-    )
+    if channels_to_register:
+        moving = load_h5(args.moving_image)
+        fixed = load_h5(args.fixed_image)
+        moving_shape = moving.shape
 
-    del fixed, moving
-    gc.collect()
-
-    reconstructed_image = np.zeros(moving_shape, dtype='uint16')
-    areas_affine = get_crops_positions(moving_shape, args.crop_size_affine, args.overlap_size_affine)
-    for area in areas_affine:
-        position = (area[0], area[2])
-        crop = apply_mapping(
-            matrix, 
-            load_h5(args.moving_image, loading_region=area), 
-            method="cv2"
-        )    
-        reconstructed_image = reconstruct_image(
-            reconstructed_image, 
-            crop, 
-            position, 
-            moving_shape, 
-            args.overlap_size_affine
+        matrix = compute_affine_mapping_cv2(
+            y=fixed[:, :, -1].squeeze(), 
+            x=moving[:, :, -1].squeeze()
         )
 
-    areas_diffeo = get_crops_positions(moving_shape, args.crop_size_diffeo, args.overlap_size_diffeo)
-    save_stacked_crops(areas_diffeo, args.fixed_image, args.moving_image, reconstructed_image)
+        del fixed, moving
+        gc.collect()
 
-    del reconstructed_image
-    gc.collect()
+        reconstructed_image = np.zeros(moving_shape, dtype='uint16')
+        areas_affine = get_crops_positions(moving_shape, args.crop_size_affine, args.overlap_size_affine)
+        for area in areas_affine:
+            position = (area[0], area[2])
+            crop = apply_mapping(
+                matrix, 
+                load_h5(args.moving_image, loading_region=area), 
+                method="cv2"
+            )    
+            reconstructed_image = reconstruct_image(
+                reconstructed_image, 
+                crop, 
+                position, 
+                moving_shape, 
+                args.overlap_size_affine
+            )
+
+        areas_diffeo = get_crops_positions(moving_shape, args.crop_size_diffeo, args.overlap_size_diffeo)
+        save_stacked_crops(areas_diffeo, args.fixed_image, args.moving_image, reconstructed_image)
+
+        del reconstructed_image
+        gc.collect()
+
+    else:
+        save_pickle([], f"0_0_{args.patient_id}.pkl")
 
 
 if __name__ == "__main__":

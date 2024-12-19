@@ -2,7 +2,7 @@
 # Padding
 
 import argparse
-from utils.read_metadata import get_image_file_shape
+from utils.metadata_tools import get_image_file_shape
 
 def get_max_axis_value(files):
 

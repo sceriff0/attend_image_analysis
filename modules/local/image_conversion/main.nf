@@ -10,15 +10,17 @@ process conversion {
 
     script:
     """
-    bfconvert \
-        -noflat \
-        -bigtiff \
-        -tilex 512 \
-        -tiley 512 \
-        -pyramid-resolutions 3 \
-        -pyramid-scale 2 \
-        ${image} \
-        ${patient_id}.ome.tiff
+    if [[ $image != "null.h5" ]]; then
+        bfconvert \
+            -noflat \
+            -bigtiff \
+            -tilex 512 \
+            -tiley 512 \
+            -pyramid-resolutions 3 \
+            -pyramid-scale 2 \
+            ${image} \
+            ${patient_id}.ome.tiff
+    fi
     """
 }
 

@@ -15,6 +15,8 @@ process affine{
     script:
     """
         affine.py \
+            --patient_id $patient_id \
+            --channels_to_register $channels_to_register
             --moving $moving \
             --fixed $fixed \
             --crop_size_affine ${params.crop_size_affine} \

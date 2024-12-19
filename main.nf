@@ -16,6 +16,7 @@ include { diffeomorphic} from './modules/local/image_registration/main.nf'
 include { stitching } from './modules/local/image_stitching/main.nf'
 include { stacking } from './modules/local/image_stacking/main.nf'
 include { conversion } from './modules/local/image_conversion/main.nf'
+include { check_new_channels } from './modules/local/check_new_channels/main.nf'
 
 
 def parse_csv(csv_file_path) {
@@ -35,7 +36,10 @@ workflow {
     input_ch = parse_csv(params.input)
     grouped_input = input_ch.groupTuple()
 
+    check_new_channels(grouped_input)
+
     get_padding(grouped_input)
+    
     joined_channel = input_ch.combine(get_padding.out, by:0)
     
     apply_padding(joined_channel)
