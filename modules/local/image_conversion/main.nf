@@ -2,6 +2,7 @@ process conversion {
     cpus 2
     memory "2G"
     conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
+    publishDir ${params.output_dir}
     tag "ome_tiff"
     
     input:
