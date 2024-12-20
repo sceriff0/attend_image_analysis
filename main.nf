@@ -39,7 +39,7 @@ workflow {
     check_new_channels(grouped_input)
 
     get_padding(grouped_input)
-    
+
     joined_channel = input_ch.combine(get_padding.out, by:0)
     
     apply_padding(joined_channel)
@@ -65,26 +65,43 @@ workflow {
             tuple[1..-1].unique().size() == tuple[1..-1].size() // Check for uniqueness in the list of files
         }
 
-    affine(moving_fixed_ch)
+    affine_input = moving_fixed_ch.combine(
+        check_new_channels.out.map { it ->
+            def patient_id = it[0]
+            def channels_to_register = it[3]
+            
+            return [patient_id, channels_to_register] 
+        }, 
+        by: 0
+    )
+
+    affine(affine_input)
 
     crops_data = affine.out.map { it ->
-                def patient_id = it[0]
-                def moving_image = it[1]
-                def fixed_image = it[2]
-                def crops_paths = it[3]  // Paths to *.pkl files
+        def patient_id = it[0]
+        def moving_image = it[1]
+        def fixed_image = it[2]
+        def crops_paths = it[3] // Paths to *.pkl files
+        def channels_to_register = it[4]
 
-                return crops_paths.collect { crops_path ->                    
-                    return [patient_id, moving_image, fixed_image, crops_path]
-                }
-            } 
-            .flatMap { it }
+        return crops_paths.collect { crops_path ->                    
+            return [patient_id, moving_image, fixed_image, crops_path, channels_to_register]
+        }
+    } 
+    .flatMap { it }
 
     diffeomorphic(crops_data)
 
     collapsed = diffeomorphic.out.map{
-        return [it[0], it[1].getName(), it[1], it[2], it[3]]
+        def patient_id = it[0]
+        def moving = it[1]
+        def fixed = it[2]
+        def registered_crop = it[3]
+        def channels_to_register = it[4]
+
+        return [patient_id, moving.getName(), moving, fixed, registered_crop, channels_to_register]
     }.groupTuple(by:1).map{
-        return [it[0][0], it[2][0], it[3][0], it[4]]
+        return [it[0][0], it[2][0], it[3][0], it[4], it[5]]
     }
 
     stitching(collapsed)

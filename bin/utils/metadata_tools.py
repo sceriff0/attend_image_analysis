@@ -11,24 +11,24 @@ from nd2reader import ND2Reader
 
 def get_channel_list():
     channels_list = [
-            "DAPI",
-            "panCK",
-            "MLH1",
-            "P53",
-            "ARID1A",
-            "PAX2",
-            "Vimentin",
-            "SMA", # Alpha-SMA
-            "CD163",
-            "CD14",
-            "CD45",
-            "CD3",
-            "CD4",
-            "CD8",
-            "FOXP3",
-            "PD1",
-            "PDL1"
-        ]
+        "DAPI",
+        "panCK",
+        "MLH1",
+        "P53",
+        "ARID1A",
+        "PAX2",
+        "Vimentin",
+        "SMA", # Alpha-SMA
+        "CD163",
+        "CD14",
+        "CD45",
+        "CD3",
+        "CD4",
+        "CD8",
+        "FOXP3",
+        "PD1",
+        "PDL1"
+    ]
 
     return channels_list
 

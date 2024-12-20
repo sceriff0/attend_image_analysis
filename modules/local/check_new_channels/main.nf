@@ -6,7 +6,7 @@ process check_new_channels{
     input:
         tuple val(patient_id), path(files), val(metadata)
     output:
-        tuple val(patient_id), path(files), val(metadata), path("channels")
+        tuple val(patient_id), path(files), val(metadata), path("channels*")
  
     script:
     """

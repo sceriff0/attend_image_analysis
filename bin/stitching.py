@@ -92,7 +92,7 @@ def main():
     original_shape = get_image_file_shape(args.moving, format='.h5')
     crops_files = args.crops
 
-    if load_h5(args.crops) != 0
+    if load_h5(args.crops) != 0:
         crop = load_h5(crops_files[0])
         c = crop.shape[2]
         n, m = original_shape[0], original_shape[1]

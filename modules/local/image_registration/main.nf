@@ -5,20 +5,21 @@
 process affine{
     cpus 2
     maxRetries = 3
-    memory { 70.GB }
+    // memory { 70.GB }
+    memory { 20.GB }
     conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
     input:
-        tuple val(patient_id), path(moving), path(fixed)
+        tuple val(patient_id), path(moving), path(fixed), path(channels_to_register)
     output:
-        tuple val(patient_id), path(moving), path(fixed), path("*pkl")
+        tuple val(patient_id), path(moving), path(fixed), path("*pkl"), path(channels_to_register)
  
     script:
     """
         affine.py \
             --patient_id $patient_id \
-            --channels_to_register $channels_to_register
-            --moving $moving \
-            --fixed $fixed \
+            --channels_to_register $channels_to_register \
+            --moving_image $moving \
+            --fixed_image $fixed \
             --crop_size_affine ${params.crop_size_affine} \
             --overlap_size_affine ${params.overlap_size_affine} \
             --crop_size_diffeo ${params.crop_size_diffeo} \
@@ -33,13 +34,14 @@ process diffeomorphic{
     memory { 2.GB * task.attempt }
     conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
     input:
-        tuple val(patient_id), path(moving), path(fixed), path(crop)
+        tuple val(patient_id), path(moving), path(fixed), path(crop), path(channels_to_register)
     output:
-        tuple val(patient_id), path(moving), path(fixed), path("registered*")
+        tuple val(patient_id), path(moving), path(fixed), path("registered*"), path(channels_to_register)
  
     script:
     """
         diffeomorphic.py \
+            --channels_to_register $channels_to_register \
             --crop_image $crop \
             --moving_image $moving
     """

@@ -4,8 +4,14 @@
 import argparse
 import os
 import numpy as np
+import logging
 from utils.io import load_pickle, save_h5
 from utils.mapping import compute_diffeomorphic_mapping_dipy, apply_mapping
+from utils import logging_config
+
+# Set up logging configuration
+logging_config.setup_logging()
+logger = logging.getLogger(__name__)
 
 def are_all_alphabetic_lowercase(string):
             # Filter alphabetic characters and check if all are lowercase
@@ -22,7 +28,7 @@ def _parse_args():
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "-c",
+        "-ch",
         "--channels_to_register",
         type=str,
         default=None,
@@ -30,7 +36,7 @@ def _parse_args():
         help="Pickle file containing list of image channels to register",
     )
     parser.add_argument(
-        "-c",
+        "-cr",
         "--crop_image",
         type=str,
         default=None,
@@ -50,12 +56,18 @@ def _parse_args():
     return args
 
 def main():
+    handler = logging.FileHandler('/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/LOG.log')
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+
     args = _parse_args()
 
     moving_channels = os.path.basename(args.moving_image) \
         .split('.')[0] \
         .split('_')[2:][::-1] 
 
+    channels_to_register = load_pickle(args.channels_to_register)
     current_channels_to_register = remove_lowercase_channels(moving_channels)
 
     crop_id = os.path.basename(args.crop_image).split('.')[0].split('_')[0:3]
@@ -66,14 +78,14 @@ def main():
 
     if any([e for e in current_channels_to_register if e in channels_to_register]):
         fixed, moving = load_pickle(args.crop_image)
-        channels_to_register = load_pickle(args.channels_to_register)
-
         if len(np.unique(moving)) != 1:
+            logger.debug(f"Computing mapping: {args.crop_image}")
             mapping = compute_diffeomorphic_mapping_dipy(
                 y=fixed[:, :, -1].squeeze(), 
                 x=moving[:, :, -1].squeeze()
             )
-
+            
+            logger.debug(f"Applying mapping: {args.crop_image}")
             registered_images = []
             for idx, ch in enumerate(moving_channels):
                 if ch in current_channels_to_register:
@@ -81,6 +93,7 @@ def main():
 
             registered_images = np.stack(registered_images, axis=-1)
 
+            logger.debug(f"Saving registered image: {args.crop_image}")
             save_h5(
                 registered_images, 
                 output_path
@@ -94,6 +107,7 @@ def main():
 
             moving_channels_images = np.stack(moving_channels_images, axis=-1)
 
+            logger.debug(f"Saving empty crop (unregistered): {args.crop_image}")
             save_h5(
                 moving_channels_images, 
                 output_path

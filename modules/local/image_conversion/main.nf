@@ -2,7 +2,7 @@ process conversion {
     cpus 2
     memory "2G"
     conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
-    publishDir ${params.output_dir}
+    publishDir "${params.output_dir}", mode: 'copy'
     tag "ome_tiff"
     
     input:
@@ -18,8 +18,8 @@ process conversion {
             -tiley 512 \
             -pyramid-resolutions 3 \
             -pyramid-scale 2 \
-            ${image} \
-            ${patient_id}.ome.tiff
+            "${image}" \
+            "${patient_id}".ome.tiff
     fi
     """
 }

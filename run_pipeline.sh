@@ -10,5 +10,5 @@ nextflow run /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/mai
         --crop_size_affine 2000\
         --overlap_size_affine 900 \
         --crop_size_diffeo 2000 \
-        --overlap_size_diffeo 200 
+        --overlap_size_diffeo 800 
 
