@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 
-import numpy as np
-import gc
+import logging
+from utils import logging_config
+
+# Set up logging configuration
+logging_config.setup_logging()
+logger = logging.getLogger(__name__)
 
 def create_crops(image, crop_size, overlap_size):
     """
@@ -80,6 +84,8 @@ def reconstruct_image(reconstructed, crop, position, original_shape, overlap_siz
         x_end = x + crop.shape[0] - overlap_size // 2
         crop = crop[(overlap_size // 2) : (crop.shape[0] - overlap_size // 2), :, :]
 
+    # logger.debug(f"CROP SHAPE: {crop.shape}")
+    logger.debug(f"RECONSTRUCTED IMAGE SHAPE: {reconstructed.shape}")
     reconstructed[x_start:x_end, y_start:y_end, :] += crop
 
     return reconstructed

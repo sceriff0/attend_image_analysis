@@ -29,6 +29,7 @@ def stack_channel(file_path, new_channel_data):
         
         # Check the current shape of the dataset
         current_shape = dataset.shape
+        logger.debug(f'CURRENT_SHAPE: {current_shape}')
         c, n, m = current_shape  # Unpack current dimensions
 
         dataset.resize((c + 1, n, m))
@@ -36,13 +37,13 @@ def stack_channel(file_path, new_channel_data):
         # Add the new channel data to the last channel of the dataset
         dataset[-1, :, :] = new_channel_data.squeeze()  # Remove the last singleton dimension if present
 
-def save_tiff(image, output_path, resolution=None, metadata=None):
+def save_tiff(image, output_path, resolution=None, bigtiff=True, ome=True, metadata=None):
     tiff.imwrite(
         output_path, 
         image, 
         resolution=resolution,
-        bigtiff=True, 
-        ome=True,
+        bigtiff=bigtiff, 
+        ome=ome,
         metadata=metadata
     )
 
@@ -89,8 +90,9 @@ def main():
 
     channels_files = args.channels.split()
     output_path = f"{args.patient_id}.h5"
+    cr = load_h5(channels_files[0])
 
-    if load_h5(channels_files[0]) != 0:
+    if not isinstance(cr, int):
         # Get unique channel paths
         channels_paths = {}
         for path in channels_files:
@@ -112,9 +114,13 @@ def main():
         for path in channels_paths:
             logger.info(f"Loading: {path}")
             new_channel = load_h5(path)
-            
+            logger.debug(f"NEW CHANNEL SHAPE: {new_channel.shape}")
+
             if not os.path.exists(output_path):
-                save_h5(new_channel, output_path)
+                save_h5(
+                    new_channel, 
+                    output_path
+                )
             else:
                 logger.info(f"Before stacking: file size: {os.path.getsize(output_path)} bytes")
                 stack_channel(output_path, new_channel)
@@ -130,7 +136,7 @@ def main():
         del stacked_image
         gc.collect()
     else:
-        save_tiff(0, "null.h5")
+        save_tiff(image=0, output_path="null.tiff", bigtiff=False, ome=False)
  
         
 if __name__ == '__main__':

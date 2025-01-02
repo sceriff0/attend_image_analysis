@@ -5,7 +5,7 @@ import numpy as np
 import tifffile as tiff
 import argparse
 import logging
-from utils.metadata_tools import get_channels_list
+from utils.metadata_tools import get_channel_list, get_metadata_nd2
 from utils.io import save_pickle
 from utils import logging_config
 
@@ -90,29 +90,30 @@ def main():
     args = _parse_args()
 
     # Fixed-order list of channels
-    channels_list = get_channels_list()
+    channels_list = get_channel_list()
 
     nd2_files = args.nd2_files.split() 
 
     channels_files = args.channels.split()
 
-
     channel_names = []
     for file in channels_files:
         filename = os.path.basename(file).split('.')[0]
-        channel_name = filename.split('_')[2]
-        channel_names.append(channel_name)
+        filename = filename.split('_')
+        if len(filename) >= 3:
+            channel_name = filename[2]
+            channel_names.append(channel_name)
 
-    channels_to_register = remove_lowercase_channels(
-            list(
-                set(channel_names)
-            )
-        )
-    channels_to_register = sorted(channels_to_register, key=lambda x: channels_list.index(x))
+    if channel_names:
+        channels_to_register = remove_lowercase_channels(list(set(channel_names)))
+        channels_to_register = sorted(channels_to_register, key=lambda x: channels_list.index(x))
 
-    resolution, metadata = create_tiff_metadata(nd2_files[0], channels_to_register)
+        resolution, metadata = create_tiff_metadata(nd2_files[0], channels_to_register)
 
-    meta = (resolution, metadata)
+        meta = (resolution, metadata)
+    else:
+        meta = []
+
     save_path = f"metadata_{args.patient_id}.pkl"
     save_pickle(meta, save_path)
 

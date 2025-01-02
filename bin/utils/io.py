@@ -4,36 +4,44 @@ import h5py
 import pickle
 import nd2
 
+
 ## H5
 def load_h5(path, loading_region=None, channels_to_load=None):
     with h5py.File(path, 'r') as hdf5_file:
         dataset = hdf5_file['dataset']
-        
-        # Select region to load if loading_region is provided
-        if loading_region is not None and channels_to_load is not None:
-            start_row, end_row, start_col, end_col = loading_region
-            data = dataset[start_row:end_row, start_col:end_col, channels_to_load]
-        elif loading_region is None and channels_to_load is not None:
-            data = dataset[:, :, channels_to_load]
-        elif loading_region is not None and channels_to_load is None:
-            start_row, end_row, start_col, end_col = loading_region
-            data = dataset[start_row:end_row, start_col:end_col, :]
+
+        if len([dataset][0]) != 1:
+            # Select region to load if loading_region is provided
+            if loading_region is not None and channels_to_load is not None:
+                start_row, end_row, start_col, end_col = loading_region
+                data = dataset[start_row:end_row, start_col:end_col, channels_to_load]
+            elif loading_region is None and channels_to_load is not None:
+                data = dataset[:, :, channels_to_load]
+            elif loading_region is not None and channels_to_load is None:
+                start_row, end_row, start_col, end_col = loading_region
+                data = dataset[start_row:end_row, start_col:end_col, :]
+            else:
+                data = dataset[:, :, :]
         else:
-            data = dataset[:, :, :]
+            data = dataset
+
+        data = data[:]
 
     return data
 
 def save_h5(data, path, ndim=3):
-    if ndim == 3:
-        maxshape = (None, None, None)
+    if isinstance(data, int): 
+        chunks = None
+        maxshape = None
     else:
-        maxshape = (None, None)
+        chunks = True
+        maxshape = tuple([None] * ndim)
 
     with h5py.File(path, 'w') as hdf5_file:
         hdf5_file.create_dataset(
             'dataset', 
             data=data, 
-            chunks=True, 
+            chunks=chunks, 
             maxshape=maxshape
         )
         hdf5_file.flush()

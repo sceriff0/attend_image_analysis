@@ -92,12 +92,15 @@ def main():
     original_shape = get_image_file_shape(args.moving, format='.h5')
     crops_files = args.crops
 
-    if load_h5(args.crops) != 0:
-        crop = load_h5(crops_files[0])
-        c = crop.shape[2]
-        n, m = original_shape[0], original_shape[1]
+    logger.debug(f'CROP 0: {crops_files[0]}')
+    cr = load_h5(crops_files[0])
 
+    logger.debug(f'OBJECT: {cr}')
+
+    if not isinstance(cr, int):
+        n, m, c = original_shape[0], original_shape[1], cr.shape[2]
         reconstructed_image = np.zeros((n, m, c), dtype='float32')
+
         for crop_file in crops_files:
             crop = load_h5(crop_file)
             logger.info(f"Loaded crop: {crop_file}")
@@ -118,13 +121,15 @@ def main():
         
         moving_channels_to_export = remove_lowercase_channels(moving_channels)
         fixed_channels_to_export = remove_lowercase_channels(fixed_channels)
-        
+
+        # Save moving channels
         for idx, ch in enumerate(moving_channels_to_export):
             save_h5(
                 np.expand_dims(reconstructed_image[:,:,idx], axis=0).astype(np.float32), 
                 f"registered_{args.patient_id}_{ch}.h5"
             )
         
+        # Save fixed channels
         for idx, ch in enumerate(fixed_channels_to_export):
             image = load_h5(args.fixed, channels_to_load=idx)
             image = image.astype(np.float32)

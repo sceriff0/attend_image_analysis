@@ -93,6 +93,8 @@ def main():
 
             registered_images = np.stack(registered_images, axis=-1)
 
+            logger.debug(f"STACKED IMAGE SHAPE: {registered_images.shape}")
+
             logger.debug(f"Saving registered image: {args.crop_image}")
             save_h5(
                 registered_images, 
@@ -107,6 +109,8 @@ def main():
 
             moving_channels_images = np.stack(moving_channels_images, axis=-1)
 
+            logger.debug(f"MOVING STACKED IMAGE SHAPE: {moving_channels_images.shape}")
+
             logger.debug(f"Saving empty crop (unregistered): {args.crop_image}")
             save_h5(
                 moving_channels_images, 
@@ -115,8 +119,10 @@ def main():
     else:
         save_h5(
             0, 
-            f"registered_0_0_{args.patient_id}.pkl"
+            f"registered_0_0_{args.patient_id}.h5"
         )
 
 if __name__ == "__main__":
     main()
+
+#

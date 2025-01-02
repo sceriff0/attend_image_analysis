@@ -10,7 +10,7 @@ process conversion {
 
     script:
     """
-    if [[ $image != "null.h5" ]]; then
+    if [[ $image != "null.tiff" ]]; then
         bfconvert \
             -noflat \
             -bigtiff \

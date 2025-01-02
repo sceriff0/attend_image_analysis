@@ -1,6 +1,6 @@
 process stacking {
     cpus 2
-    memory { 100.GB }
+    memory { 10.GB }
     conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
     tag "image_stacking"
     

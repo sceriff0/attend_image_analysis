@@ -179,12 +179,15 @@ def main():
         reconstructed_image = np.zeros(moving_shape, dtype='uint16')
         areas_affine = get_crops_positions(moving_shape, args.crop_size_affine, args.overlap_size_affine)
         for area in areas_affine:
+            logger.debug(f"AREA: {area}")
             position = (area[0], area[2])
             crop = apply_mapping(
                 matrix, 
                 load_h5(args.moving_image, loading_region=area), 
                 method="cv2"
             )    
+
+            logger.debug(f"CROP SHAPE: {crop.shape}")
             reconstructed_image = reconstruct_image(
                 reconstructed_image, 
                 crop, 
