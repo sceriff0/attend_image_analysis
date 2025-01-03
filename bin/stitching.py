@@ -5,6 +5,7 @@ import logging
 import argparse
 import os
 import numpy as np
+import re
 from utils.io import load_h5, save_h5
 from utils.cropping import reconstruct_image
 from utils.metadata_tools import get_image_file_shape
@@ -90,54 +91,62 @@ def main():
 
     args = _parse_args()
     original_shape = get_image_file_shape(args.moving, format='.h5')
-    crops_files = args.crops
 
-    logger.debug(f'CROP 0: {crops_files[0]}')
-    cr = load_h5(crops_files[0])
+    pattern = r'^registered_[a-zA-Z0-9]+_[a-fA-F0-9]{64}.h5$'
 
-    logger.debug(f'OBJECT: {cr}')
+    matches = []
+    for crop_name in args.crops:
+        matches.append(bool(re.match(pattern, crop_name)))
 
-    if not isinstance(cr, int):
-        n, m, c = original_shape[0], original_shape[1], cr.shape[2]
-        reconstructed_image = np.zeros((n, m, c), dtype='float32')
+    if not all(matches):
+        crops_files = args.crops
+        # logger.debug(f'CROP 0: {crops_files[0]}')
+        cr = load_h5(crops_files[0])
 
-        for crop_file in crops_files:
-            crop = load_h5(crop_file)
-            logger.info(f"Loaded crop: {crop_file}")
+        logger.debug(f'OBJECT: {cr}')
 
-            x, y = map(int, os.path.basename(crop_file).split("_")[1:3])
-            position = (x, y)
-            reconstructed_image = reconstruct_image(reconstructed_image, crop, position, original_shape, args.overlap_size)
+        if not isinstance(cr, int):
+            n, m, c = original_shape[0], original_shape[1], cr.shape[2]
+            reconstructed_image = np.zeros((n, m, c), dtype='float32')
 
-        moving_channels = os.path.basename(args.moving)\
-            .split('.')[0] \
-            .split('_')[2:] \
-            [::-1] # Select first two channels (omit DAPI) and reverse list
-        
-        fixed_channels = os.path.basename(args.fixed) \
-            .split('.')[0] \
-            .split('_')[1:] \
-            [::-1] # Select all channels and reverse list
-        
-        moving_channels_to_export = remove_lowercase_channels(moving_channels)
-        fixed_channels_to_export = remove_lowercase_channels(fixed_channels)
+            for crop_file in crops_files:
+                crop = load_h5(crop_file)
+                logger.info(f"Loaded crop: {crop_file}")
 
-        # Save moving channels
-        for idx, ch in enumerate(moving_channels_to_export):
-            save_h5(
-                np.expand_dims(reconstructed_image[:,:,idx], axis=0).astype(np.float32), 
-                f"registered_{args.patient_id}_{ch}.h5"
-            )
-        
-        # Save fixed channels
-        for idx, ch in enumerate(fixed_channels_to_export):
-            image = load_h5(args.fixed, channels_to_load=idx)
-            image = image.astype(np.float32)
-            image = np.expand_dims(image, axis=0)
-            save_h5(
-                image, 
-                f"registered_{args.patient_id}_{ch}.h5"
-            )
+                x, y = map(int, os.path.basename(crop_file).split("_")[1:3])
+                position = (x, y)
+                reconstructed_image = reconstruct_image(reconstructed_image, crop, position, original_shape, args.overlap_size)
+
+            moving_channels = os.path.basename(args.moving)\
+                .split('.')[0] \
+                .split('_')[2:] \
+                [::-1] # Select first two channels (omit DAPI) and reverse list
+            
+            fixed_channels = os.path.basename(args.fixed) \
+                .split('.')[0] \
+                .split('_')[1:] \
+                [::-1] # Select all channels and reverse list
+            
+            moving_channels_to_export = remove_lowercase_channels(moving_channels)
+            moving_channels_to_export_no_dapi = [ch for ch in moving_channels_to_export if ch != 'DAPI']
+            fixed_channels_to_export = remove_lowercase_channels(fixed_channels)
+
+            # Save moving channels
+            for idx, ch in enumerate(moving_channels_to_export_no_dapi):
+                save_h5(
+                    np.expand_dims(reconstructed_image[:,:,idx], axis=0).astype(np.float32), 
+                    f"registered_{args.patient_id}_{ch}.h5"
+                )
+            
+            # Save fixed channels
+            for idx, ch in enumerate(fixed_channels_to_export):
+                image = load_h5(args.fixed, channels_to_load=idx)
+                image = image.astype(np.float32)
+                image = np.expand_dims(image, axis=0)
+                save_h5(
+                    image, 
+                    f"registered_{args.patient_id}_{ch}.h5"
+                )
     else:
         save_h5(
                 0, 

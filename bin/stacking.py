@@ -5,6 +5,7 @@ import argparse
 import numpy as np
 import h5py
 import gc
+import re
 import tifffile as tiff
 import logging
 from utils.metadata_tools import get_channel_list
@@ -90,12 +91,19 @@ def main():
 
     channels_files = args.channels.split()
     output_path = f"{args.patient_id}.h5"
-    cr = load_h5(channels_files[0])
 
-    if not isinstance(cr, int):
+    # cr = load_h5(channels_files[0])
+
+    # Define the pattern
+    pattern = r"registered_[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+)+\.h5"
+
+    # Filter strings that match the pattern
+    nonempty_channels_files = [path for path in channels_files if re.match(pattern, os.path.basename(path))]
+
+    if nonempty_channels_files:
         # Get unique channel paths
         channels_paths = {}
-        for path in channels_files:
+        for path in nonempty_channels_files:
             base = os.path.basename(path)
             if base not in channels_paths:
                 channels_paths[base] = path

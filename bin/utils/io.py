@@ -10,7 +10,7 @@ def load_h5(path, loading_region=None, channels_to_load=None):
     with h5py.File(path, 'r') as hdf5_file:
         dataset = hdf5_file['dataset']
 
-        if len([dataset][0]) != 1:
+        if not dataset.shape == ():
             # Select region to load if loading_region is provided
             if loading_region is not None and channels_to_load is not None:
                 start_row, end_row, start_col, end_col = loading_region
@@ -23,9 +23,7 @@ def load_h5(path, loading_region=None, channels_to_load=None):
             else:
                 data = dataset[:, :, :]
         else:
-            data = dataset
-
-        data = data[:]
+            data = dataset[()]
 
     return data
 

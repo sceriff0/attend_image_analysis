@@ -2,7 +2,6 @@
 
 # TEST
 nextflow run /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/main.nf \
-        -with-tower \
         -profile singularity \
         --with-tower \
         --input /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/sample_sheet.csv \
