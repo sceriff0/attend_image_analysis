@@ -92,8 +92,6 @@ def main():
     channels_files = args.channels.split()
     output_path = f"{args.patient_id}.h5"
 
-    # cr = load_h5(channels_files[0])
-
     # Define the pattern
     pattern = r"registered_[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+)+\.h5"
 
@@ -139,7 +137,7 @@ def main():
         resolution, metadata = load_pickle(args.metadata)
         stacked_image = load_h5(output_path)
         output_path_tiff = output_path.replace('h5', 'tiff')
-        save_tiff(stacked_image, output_path_tiff, resolution, metadata)
+        save_tiff(image=stacked_image, output_path=output_path_tiff, resolution=resolution, metadata=metadata)
 
         del stacked_image
         gc.collect()
