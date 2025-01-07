@@ -68,6 +68,8 @@ def main():
         .split('.')[0] \
         .split('_')[2:][::-1] 
 
+    moving_channels_no_dapi = [ch for ch in moving_channels if ch != 'DAPI']
+
     channels_to_register = load_pickle(args.channels_to_register)
     current_channels_to_register = remove_lowercase_channels(moving_channels)
     current_channels_to_register_no_dapi = [ch for ch in current_channels_to_register if ch != 'DAPI']
@@ -93,7 +95,6 @@ def main():
                 logger.debug(f"Applying mapping: {args.crop_image}")
                 registered_images = []
 
-                moving_channels_no_dapi = [ch for ch in moving_channels if ch != 'DAPI']
                 for idx, ch in enumerate(moving_channels_no_dapi):
                     if ch in current_channels_to_register_no_dapi:
                         registered_images.append(apply_mapping(mapping, moving[:, :, idx]))
