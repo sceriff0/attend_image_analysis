@@ -141,41 +141,38 @@ def main():
 
 
         #### Save stacked image as tiff
-        # resolution, metadata = load_pickle(args.metadata)
-        # stacked_image = load_h5(output_path)
-        # output_path_tiff = output_path.replace('h5', 'tiff')
-        # save_tiff(image=stacked_image, output_path=output_path_tiff, resolution=resolution, metadata=metadata)
-#
-        # del stacked_image
-        # gc.collect()
-                
-        
-        #### Save stacked image as tiff
+        k = args.n_crops
+
         resolution, metadata = load_pickle(args.metadata)
 
-        shape = get_image_file_shape(output_path)[1], get_image_file_shape(output_path)[2] 
-
-        # Calculate row and column step size based on k
-        k = args.n_crops
-        
-        row_step = shape[0] // k
-        col_step = shape[1] // k
-
-        # Generate export areas dynamically for k x k grid
-        export_areas = []
-        for i in range(k):
-            for j in range(k):
-                top = i * row_step
-                bottom = (i + 1) * row_step if i < k - 1 else shape[0]
-                left = j * col_step
-                right = (j + 1) * col_step if j < k - 1 else shape[1]
-                export_areas.append((top, bottom, left, right))
-
-
-        for area in export_areas:
-            stacked_image = load_h5(output_path, loading_region=area)
-            output_path_tiff = f"{args.patient_id}_{area[0]}_{area[1]}_{area[2]}_{area[3]}.tiff"
+        if k == 1:
+            stacked_image = load_h5(output_path)
+            output_path_tiff = output_path.replace('h5', 'tiff')
             save_tiff(image=stacked_image, output_path=output_path_tiff, resolution=resolution, metadata=metadata)
+            del stacked_image
+            gc.collect()
+        else:
+            shape = get_image_file_shape(output_path)[1], get_image_file_shape(output_path)[2] 
+
+            # Calculate row and column step size based on k
+            row_step = shape[0] // k
+            col_step = shape[1] // k
+
+            # Generate export areas dynamically for k x k grid
+            export_areas = []
+            for i in range(k):
+                for j in range(k):
+                    top = i * row_step
+                    bottom = (i + 1) * row_step if i < k - 1 else shape[0]
+                    left = j * col_step
+                    right = (j + 1) * col_step if j < k - 1 else shape[1]
+                    export_areas.append((top, bottom, left, right))
+
+
+            for area in export_areas:
+                stacked_image = load_h5(output_path, loading_region=area)
+                output_path_tiff = f"{args.patient_id}_{area[0]}_{area[1]}_{area[2]}_{area[3]}.tiff"
+                save_tiff(image=stacked_image, output_path=output_path_tiff, resolution=resolution, metadata=metadata)
 
         del stacked_image
         gc.collect()
