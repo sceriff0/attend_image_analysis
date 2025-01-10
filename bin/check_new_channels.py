@@ -85,8 +85,6 @@ def main():
     else:
         channels_to_register = []
 
-    logger.debug(f'CHANNELS TO REGISTER: {channels_to_register}')
-
     save_pickle(channels_to_register, save_path)
 
 if __name__ == "__main__":
