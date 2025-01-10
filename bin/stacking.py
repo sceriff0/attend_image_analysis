@@ -8,7 +8,7 @@ import gc
 import re
 import tifffile as tiff
 import logging
-from utils.metadata_tools import get_channel_list
+from utils.metadata_tools import get_channel_list, get_image_file_shape
 from utils.io import save_h5, load_h5, load_pickle
 from utils import logging_config
 
@@ -68,6 +68,14 @@ def _parse_args():
         help="String of paths to h5 files (image channels).",
     )
     parser.add_argument(
+        "-n",
+        "--n_crops",
+        type=int,
+        default=None,
+        required=True,
+        help="Number of image crops to export.",
+    )
+    parser.add_argument(
         "-m",
         "--metadata",
         type=str,
@@ -120,7 +128,6 @@ def main():
         for path in channels_paths:
             logger.info(f"Loading: {path}")
             new_channel = load_h5(path)
-            logger.debug(f"NEW CHANNEL SHAPE: {new_channel.shape}")
 
             if not os.path.exists(output_path):
                 save_h5(
@@ -131,13 +138,44 @@ def main():
                 logger.info(f"Before stacking: file size: {os.path.getsize(output_path)} bytes")
                 stack_channel(output_path, new_channel)
                 logger.info(f"After stacking: file size: {os.path.getsize(output_path)} bytes") 
+
+
+        #### Save stacked image as tiff
+        # resolution, metadata = load_pickle(args.metadata)
+        # stacked_image = load_h5(output_path)
+        # output_path_tiff = output_path.replace('h5', 'tiff')
+        # save_tiff(image=stacked_image, output_path=output_path_tiff, resolution=resolution, metadata=metadata)
+#
+        # del stacked_image
+        # gc.collect()
                 
         
         #### Save stacked image as tiff
         resolution, metadata = load_pickle(args.metadata)
-        stacked_image = load_h5(output_path)
-        output_path_tiff = output_path.replace('h5', 'tiff')
-        save_tiff(image=stacked_image, output_path=output_path_tiff, resolution=resolution, metadata=metadata)
+
+        shape = get_image_file_shape(output_path)[1], get_image_file_shape(output_path)[2] 
+
+        # Calculate row and column step size based on k
+        k = args.n_crops
+        
+        row_step = shape[0] // k
+        col_step = shape[1] // k
+
+        # Generate export areas dynamically for k x k grid
+        export_areas = []
+        for i in range(k):
+            for j in range(k):
+                top = i * row_step
+                bottom = (i + 1) * row_step if i < k - 1 else shape[0]
+                left = j * col_step
+                right = (j + 1) * col_step if j < k - 1 else shape[1]
+                export_areas.append((top, bottom, left, right))
+
+
+        for area in export_areas:
+            stacked_image = load_h5(output_path, loading_region=area)
+            output_path_tiff = f"{args.patient_id}_{area[0]}_{area[1]}_{area[2]}_{area[3]}.tiff"
+            save_tiff(image=stacked_image, output_path=output_path_tiff, resolution=resolution, metadata=metadata)
 
         del stacked_image
         gc.collect()
