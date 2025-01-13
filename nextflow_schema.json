@@ -50,6 +50,11 @@
                     "description": "Vertical overlap for image registration.",
                     "examples": [300]
                 },
+                "n_crops": {
+                    "type": "integer",
+                    "description": "Number of image crops to export.",
+                    "examples": [4]
+                },
                 "tilex": {
                     "type": "integer",
                     "description": "Width of tiles for image conversion.",

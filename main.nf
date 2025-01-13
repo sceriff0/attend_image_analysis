@@ -127,6 +127,6 @@ workflow {
     }
 
     stacking(metadata_out)
- 
+
     conversion(stacking.out)
 }
