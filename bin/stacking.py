@@ -141,7 +141,9 @@ def main():
 
 
         #### Save stacked image as tiff
-        k = args.n_crops
+        k = int(np.sqrt(args.n_crops))
+        if k != np.sqrt(args.n_crops):
+            ValueError('Argument `n_crops` must be a number whose square root is an integer.')
 
         resolution, metadata = load_pickle(args.metadata)
 
@@ -168,9 +170,8 @@ def main():
                     right = (j + 1) * col_step if j < k - 1 else shape[1]
                     export_areas.append((top, bottom, left, right))
 
-
             for area in export_areas:
-                stacked_image = load_h5(output_path, loading_region=area)
+                stacked_image = load_h5(output_path, loading_region=area, shape='CYX')
                 output_path_tiff = f"{args.patient_id}_{area[0]}_{area[1]}_{area[2]}_{area[3]}.tiff"
                 save_tiff(image=stacked_image, output_path=output_path_tiff, resolution=resolution, metadata=metadata)
 
