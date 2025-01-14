@@ -141,10 +141,10 @@ def main():
 
 
         #### Save stacked image as tiff
-        k = int(np.sqrt(args.n_crops))
-        if k != np.sqrt(args.n_crops):
+        if int(np.sqrt(args.n_crops)) != np.sqrt(args.n_crops):
             ValueError('Argument `n_crops` must be a number whose square root is an integer.')
 
+        k = int(np.sqrt(args.n_crops))
         resolution, metadata = load_pickle(args.metadata)
 
         if k == 1:
