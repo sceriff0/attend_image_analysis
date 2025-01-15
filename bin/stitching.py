@@ -6,6 +6,9 @@ import argparse
 import os
 import numpy as np
 import re
+import gc
+import matplotib.pyplot as plt
+from skimage.transform import rescale
 from utils.io import load_h5, save_h5
 from utils.cropping import reconstruct_image
 from utils.metadata_tools import get_image_file_shape
@@ -26,6 +29,40 @@ def remove_lowercase_channels(channels):
             filtered_channels.append(ch)
     return filtered_channels
 
+def image_reconstruction_loop(crops_files, shape, overlap_size):
+    reconstructed_image = np.zeros(shape, dtype='float32')
+
+    for crop_file in crops_files:
+        crop = load_h5(crop_file)
+        logger.info(f"Loaded crop: {crop_file}")
+
+        x, y = map(int, os.path.basename(crop_file).split("_")[1:3])
+        position = (x, y)
+        reconstructed_image = reconstruct_image(reconstructed_image, crop, position, (shape[0], shape[1]), overlap_size)
+    
+    return reconstructed_image
+
+def save_quality_control_plot(output_path, dapi_crops_files, shape, overlap_size, fixed, downscale_factor = 0.5):
+        reconstructed_image = image_reconstruction_loop(dapi_crops_files, shape, overlap_size)
+        reconstructed_image = rescale(
+            reconstructed_image,
+            scale=downscale_factor,
+            anti_aliasing=True
+        )
+
+        fixed = load_h5(fixed, channels_to_load=-1)
+        fixed = rescale(
+            fixed,
+            scale=downscale_factor,
+            anti_aliasing=True
+        )
+        fixed = np.squeeze(fixed)
+
+        plt.figure(figsize=(20, 20))
+        plt.imshow(reconstructed_image, cmap='Reds', alpha=0.8)
+        plt.imshow(fixed, cmap='Greens', alpha=0.6) 
+        plt.savefig(output_path, format="jpg", dpi=300)
+
 def _parse_args():
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser()
@@ -36,6 +73,15 @@ def _parse_args():
         default=None,
         required=True,
         help="A string containing the current patient id.",
+    )
+    parser.add_argument(
+        "-d",
+        "--dapi_crops",
+        type=str,
+        default=None,
+        required=True,
+        nargs='+',
+        help="A list of crops (DAPI channel)",
     )
     parser.add_argument(
         "-c",
@@ -100,22 +146,18 @@ def main():
 
     if not all(matches):
         crops_files = args.crops
-        # logger.debug(f'CROP 0: {crops_files[0]}')
+        dapi_crops_files = args.crops
         cr = load_h5(crops_files[0])
 
         logger.debug(f'OBJECT: {cr}')
 
         if not isinstance(cr, int):
-            n, m, c = original_shape[0], original_shape[1], cr.shape[2]
-            reconstructed_image = np.zeros((n, m, c), dtype='float32')
+            shape = (original_shape[0], original_shape[1], cr.shape[2])
 
-            for crop_file in crops_files:
-                crop = load_h5(crop_file)
-                logger.info(f"Loaded crop: {crop_file}")
+            plot_output = f"registered_{os.path.basename(args.moving).split('.')[0]}_overlay.jpg"
+            save_quality_control_plot(plot_output, dapi_crops_files, shape, args.overlap_size, args.fixed)
 
-                x, y = map(int, os.path.basename(crop_file).split("_")[1:3])
-                position = (x, y)
-                reconstructed_image = reconstruct_image(reconstructed_image, crop, position, original_shape, args.overlap_size)
+            reconstructed_image = image_reconstruction_loop(reconstructed_image, crops_files, original_shape, args.overlap_size)
 
             moving_channels = os.path.basename(args.moving)\
                 .split('.')[0] \

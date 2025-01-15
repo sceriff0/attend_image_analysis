@@ -6,6 +6,7 @@ import os
 import numpy as np
 import logging
 import hashlib
+from skimage.transform import rescale
 from utils.io import load_pickle, save_h5
 from utils.mapping import compute_diffeomorphic_mapping_dipy, apply_mapping
 from utils import logging_config
@@ -81,6 +82,7 @@ def main():
     crop_name = crop_id_pos + current_channels_to_register_no_dapi[::-1]   
     crop_name = '_'.join(crop_name)
     output_path = f"registered_{crop_name}.h5"
+    output_path_dapi = f"qc_{'_'.join(crop_id_pos)}_DAPI.h5"
     
     if current_channels_to_register_no_dapi:
         if any([e for e in current_channels_to_register_no_dapi if e in channels_to_register]):
@@ -92,6 +94,13 @@ def main():
                     x=moving[:, :, -1].squeeze()
                 )
                 
+                # Save registered dapi channel for quality control
+                save_h5(
+                    np.squeeze(apply_mapping(mapping, moving[:, :, -1])), 
+                    output_path_dapi,
+                    ndim=2
+                )
+
                 logger.debug(f"Applying mapping: {args.crop_image}")
                 registered_images = []
 
@@ -124,10 +133,18 @@ def main():
                     moving_channels_images, 
                     output_path
                 )
+                save_h5(
+                    moving_channels_images, 
+                    output_path_dapi
+                )
         else:
             save_h5(
                 0, 
                 f"registered_0_0_{patient_id}.h5"
+            )
+            save_h5(
+                0, 
+                f"qc_0_0_{patient_id}.h5"
             )
     else:
         # Generate random bytes
@@ -142,6 +159,10 @@ def main():
             save_h5(
                 0, 
                 f"registered_{patient_id}_{random_hash}.h5"
+            )
+            save_h5(
+                0, 
+                f"qc_{patient_id}_{random_hash}.h5"
             )
 
 if __name__ == "__main__":

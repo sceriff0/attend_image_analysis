@@ -6,7 +6,7 @@ process affine{
     cpus 2
     maxRetries = 3
     // memory { 70.GB }
-    memory { 20.GB }
+    memory { 10.GB }
     conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
     input:
         tuple val(patient_id), path(moving), path(fixed), path(channels_to_register)
@@ -36,7 +36,7 @@ process diffeomorphic{
     input:
         tuple val(patient_id), path(moving), path(fixed), path(crop), path(channels_to_register)
     output:
-        tuple val(patient_id), path(moving), path(fixed), path("registered*"), path(channels_to_register)
+        tuple val(patient_id), path(moving), path(fixed), path("qc*"), path("registered*"), path(channels_to_register)
  
     script:
     """

@@ -96,12 +96,13 @@ workflow {
         def patient_id = it[0]
         def moving = it[1]
         def fixed = it[2]
-        def registered_crop = it[3]
-        def channels_to_register = it[4]
+        registered_dapi = it[3]
+        def registered_crop = it[4]
+        def channels_to_register = it[5]
 
-        return [patient_id, moving.getName(), moving, fixed, registered_crop, channels_to_register]
+        return [patient_id, moving.getName(), moving, fixed, registered_dapi, registered_crop, channels_to_register]
     }.groupTuple(by:1).map{
-        return [it[0][0], it[2][0], it[3][0], it[4], it[5]]
+        return [it[0][0], it[2][0], it[3][0], it[4], it[5], it[6]]
     }
 
     stitching(collapsed)
