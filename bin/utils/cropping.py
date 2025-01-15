@@ -49,7 +49,11 @@ def reconstruct_image(reconstructed, crop, position, original_shape, overlap_siz
     Returns:
         numpy.ndarray: The reconstructed image of dtype uint16.
     """
-    X, Y, Z = original_shape
+    if len(original_shape) == 3:
+        X, Y, Z = original_shape
+    if len(original_shape) == 2:
+        X, Y = original_shape
+        
     x, y = position
 
     # Shape crops

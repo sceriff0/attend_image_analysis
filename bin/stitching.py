@@ -7,7 +7,7 @@ import os
 import numpy as np
 import re
 import gc
-import matplotib.pyplot as plt
+import matplotlib.pyplot as plt
 from skimage.transform import rescale
 from utils.io import load_h5, save_h5
 from utils.cropping import reconstruct_image
@@ -157,7 +157,7 @@ def main():
             plot_output = f"registered_{os.path.basename(args.moving).split('.')[0]}_overlay.jpg"
             save_quality_control_plot(plot_output, dapi_crops_files, shape, args.overlap_size, args.fixed)
 
-            reconstructed_image = image_reconstruction_loop(reconstructed_image, crops_files, original_shape, args.overlap_size)
+            reconstructed_image = image_reconstruction_loop(crops_files, original_shape, args.overlap_size)
 
             moving_channels = os.path.basename(args.moving)\
                 .split('.')[0] \

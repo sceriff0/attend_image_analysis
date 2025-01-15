@@ -2,7 +2,6 @@ process stitching{
     cpus 1
     maxRetries = 3
     memory { 10.GB }
-    publishDir "*.jpg", mode: 'copy'
     conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
     
     input:

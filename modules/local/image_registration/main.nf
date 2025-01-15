@@ -6,7 +6,7 @@ process affine{
     cpus 2
     maxRetries = 3
     // memory { 70.GB }
-    memory { 10.GB }
+    memory { 5.GB }
     conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
     input:
         tuple val(patient_id), path(moving), path(fixed), path(channels_to_register)

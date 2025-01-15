@@ -21,7 +21,7 @@ process get_padding{
 process apply_padding{
     cpus 2
     maxRetries = 3
-    memory { 20.GB } 
+    memory { 8.GB } 
     // memory { 80.GB }
     conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
     input:
