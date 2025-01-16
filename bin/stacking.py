@@ -127,18 +127,26 @@ def main():
         #### Channels stacking ####    
         for path in channels_paths:
             logger.info(f"Loading: {path}")
-            new_channel = load_h5(path)
 
             if not os.path.exists(output_path):
+                new_channel = load_h5(path)
                 save_h5(
                     new_channel, 
                     output_path
                 )
+                del new_channel
+                gc.collect()         
+       
             else:
-                logger.info(f"Before stacking: file size: {os.path.getsize(output_path)} bytes")
-                stack_channel(output_path, new_channel)
-                logger.info(f"After stacking: file size: {os.path.getsize(output_path)} bytes") 
+                shape = get_image_file_shape(output_path)
+                if shape[0] < len(channels_paths):
+                    new_channel = load_h5(path) 
+                    logger.info(f"Before stacking: file size: {os.path.getsize(output_path)} bytes")
+                    stack_channel(output_path, new_channel)
+                    logger.info(f"After stacking: file size: {os.path.getsize(output_path)} bytes") 
 
+                    del new_channel
+                    gc.collect()
 
         #### Save stacked image as tiff
         if int(np.sqrt(args.n_crops)) != np.sqrt(args.n_crops):
@@ -171,12 +179,18 @@ def main():
                     export_areas.append((top, bottom, left, right))
 
             for area in export_areas:
-                stacked_image = load_h5(output_path, loading_region=area, shape='CYX')
                 output_path_tiff = f"{args.patient_id}_{area[0]}_{area[1]}_{area[2]}_{area[3]}.tiff"
-                save_tiff(image=stacked_image, output_path=output_path_tiff, resolution=resolution, metadata=metadata)
-
-        del stacked_image
-        gc.collect()
+                logger.info(f"Processing file {output_path_tiff}.")
+                if not os.path.exists(output_path_tiff):
+                    logger.info(f"Loading region {area} from {output_path}")
+                    stacked_image = load_h5(output_path, loading_region=area, shape='CYX')
+                    logger.info(f"Region {area} loaded successfully")
+                    save_tiff(image=stacked_image, output_path=output_path_tiff, resolution=resolution, metadata=metadata)
+                    logger.info(f"Saved file {output_path_tiff}.")
+                    del stacked_image
+                    gc.collect()
+                else:
+                    logger.info(f"File {output_path_tiff} already exists.")
     else:
         save_tiff(image=0, output_path="null.tiff", bigtiff=False, ome=False)
  
