@@ -3,6 +3,7 @@ process stitching{
     maxRetries = 3
     memory { 10.GB }
     conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
+    publishDir "${params.quality_control_output_dir}", mode: 'copy'
     
     input:
         tuple val(patient_id), path(moving), path(fixed), path(dapi_crops), path(crops)
