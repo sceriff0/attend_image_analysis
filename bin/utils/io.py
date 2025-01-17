@@ -37,40 +37,6 @@ def load_h5(path, loading_region=None, channels_to_load=None, shape='YXC'):
     
     return data
 
-# def load_h5(path, loading_region=None, channels_to_load=None, shape='YXC'):
-#     with h5py.File(path, 'r') as hdf5_file:
-#         dataset = hdf5_file['dataset']
-# 
-#         if loading_region is not None:
-#                 start_row, end_row, start_col, end_col = loading_region
-#         if not dataset.shape == ():
-# 
-#             if shape == 'YXC':
-#                 # Select region to load if loading_region is provided
-#                 if loading_region is not None and channels_to_load is not None:
-#                     data = dataset[start_row:end_row, start_col:end_col, channels_to_load]
-#                 elif loading_region is None and channels_to_load is not None:
-#                     data = dataset[:, :, channels_to_load]
-#                 elif loading_region is not None and channels_to_load is None:
-#                     data = dataset[start_row:end_row, start_col:end_col, :]
-#                 else:
-#                     data = dataset[:, :, :]
-#             
-#             if shape == 'CYX':
-#                 # Select region to load if loading_region is provided
-#                 if loading_region is not None and channels_to_load is not None:
-#                     data = dataset[channels_to_load, start_row:end_row, start_col:end_col]
-#                 elif loading_region is None and channels_to_load is not None:
-#                     data = dataset[channels_to_load, :, :]
-#                 elif loading_region is not None and channels_to_load is None:
-#                     data = dataset[:, start_row:end_row, start_col:end_col]
-#                 else:
-#                     data = dataset[:, :, :]
-#         else:
-#             data = dataset[()]
-# 
-#     return data
-
 def save_h5(data, path, ndim=3):
     if isinstance(data, int): 
         chunks = None
