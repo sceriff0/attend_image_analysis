@@ -38,6 +38,23 @@ def stack_channel(file_path, new_channel_data):
         # Add the new channel data to the last channel of the dataset
         dataset[-1, :, :] = new_channel_data.squeeze()  # Remove the last singleton dimension if present
 
+def get_crop_areas(shape, n_crops):
+    # Calculate row and column step size based on k
+    row_step = shape[0] // n_crops
+    col_step = shape[1] // n_crops
+
+    # Generate export areas dynamically for k x k grid
+    crop_areas = []
+    for i in range(n_crops):
+        for j in range(n_crops):
+            top = i * row_step
+            bottom = (i + 1) * row_step if i < n_crops - 1 else shape[0]
+            left = j * col_step
+            right = (j + 1) * col_step if j < n_crops - 1 else shape[1]
+            crop_areas.append((top, bottom, left, right))
+
+    return crop_areas
+
 def save_tiff(image, output_path, resolution=None, bigtiff=True, ome=True, metadata=None):
     tiff.imwrite(
         output_path, 
@@ -152,31 +169,18 @@ def main():
         if int(np.sqrt(args.n_crops)) != np.sqrt(args.n_crops):
             ValueError('Argument `n_crops` must be a number whose square root is an integer.')
 
-        k = int(np.sqrt(args.n_crops))
+        n_crops = int(np.sqrt(args.n_crops))
         resolution, metadata = load_pickle(args.metadata)
 
-        if k == 1:
+        if n_crops == 1:
             stacked_image = load_h5(output_path)
             output_path_tiff = output_path.replace('h5', 'tiff')
             save_tiff(image=stacked_image, output_path=output_path_tiff, resolution=resolution, metadata=metadata)
             del stacked_image
             gc.collect()
         else:
-            shape = get_image_file_shape(output_path)[1], get_image_file_shape(output_path)[2] 
-
-            # Calculate row and column step size based on k
-            row_step = shape[0] // k
-            col_step = shape[1] // k
-
-            # Generate export areas dynamically for k x k grid
-            export_areas = []
-            for i in range(k):
-                for j in range(k):
-                    top = i * row_step
-                    bottom = (i + 1) * row_step if i < k - 1 else shape[0]
-                    left = j * col_step
-                    right = (j + 1) * col_step if j < k - 1 else shape[1]
-                    export_areas.append((top, bottom, left, right))
+            shape = get_image_file_shape(output_path)[1], get_image_file_shape(output_path)[2]
+            export_areas = get_crop_areas(shape, n_crops)
 
             for area in export_areas:
                 output_path_tiff = f"{args.patient_id}_{area[0]}_{area[1]}_{area[2]}_{area[3]}.tiff"
