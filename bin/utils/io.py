@@ -15,11 +15,11 @@ def load_h5(path, loading_region=None, channels_to_load=None, shape='YXC'):
             return dataset[()]
 
         # Define default slicing
-        slices = [slice(None), slice(None), slice(None)]
+        slices = [slice(None)] * len(shape)
         
         if loading_region:
             start_row, end_row, start_col, end_col = loading_region
-            if shape == 'YXC':
+            if shape == 'YXC' or shape == 'YX':
                 slices[0] = slice(start_row, end_row)
                 slices[1] = slice(start_col, end_col)
             elif shape == 'CYX':

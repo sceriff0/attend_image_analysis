@@ -49,47 +49,78 @@ def reconstruct_image(reconstructed, crop, position, original_shape, overlap_siz
     Returns:
         numpy.ndarray: The reconstructed image of dtype uint16.
     """
+    x, y = position
+    if len(crop.shape) == 3:
+        c_x, c_y, _ = crop.shape
+    elif len(crop.shape) == 2:
+        c_x, c_y = crop.shape
+
     if len(original_shape) == 3:
         X, Y, Z = original_shape
-    if len(original_shape) == 2:
+        # border
+        if y == 0:
+            y_start = y
+            y_end = y + crop.shape[1] - overlap_size // 2
+            crop = crop[:, : (crop.shape[1] - overlap_size // 2), :]
+
+        elif y == Y - c_y:  # border
+            y_start = y + overlap_size // 2
+            y_end = y + crop.shape[1]
+            crop = crop[:, (overlap_size // 2) :, :]
+
+        else:  # no border
+            y_start = y + overlap_size // 2
+            y_end = y + crop.shape[1] - overlap_size // 2
+            crop = crop[:, (overlap_size // 2) : (crop.shape[1] - overlap_size // 2), :]
+
+        # border
+        if x == 0:
+            x_start = x
+            x_end = x + crop.shape[0] - overlap_size // 2
+            crop = crop[: (crop.shape[0] - overlap_size // 2), :, :]
+        elif x == X - c_x:  # border
+            x_start = x + overlap_size // 2
+            x_end = x + crop.shape[0]
+            crop = crop[(overlap_size // 2) :, :, :]
+        else:  # no border
+            x_start = x + overlap_size // 2
+            x_end = x + crop.shape[0] - overlap_size // 2
+            crop = crop[(overlap_size // 2) : (crop.shape[0] - overlap_size // 2), :, :]
+
+        # logger.debug(f"CROP SHAPE: {crop.shape}")
+        reconstructed[x_start:x_end, y_start:y_end, :] += crop
+    elif len(original_shape) == 2:
         X, Y = original_shape
-        
-    x, y = position
+        if y == 0:
+            y_start = y
+            y_end = y + crop.shape[1] - overlap_size // 2
+            crop = crop[:, : (crop.shape[1] - overlap_size // 2)]
 
-    # Shape crops
-    c_x, c_y, _ = crop.shape
-    # border
-    if y == 0:
-        y_start = y
-        y_end = y + crop.shape[1] - overlap_size // 2
-        crop = crop[:, : (crop.shape[1] - overlap_size // 2), :]
+        elif y == Y - c_y:  # border
+            y_start = y + overlap_size // 2
+            y_end = y + crop.shape[1]
+            crop = crop[:, (overlap_size // 2)]
 
-    elif y == Y - c_y:  # border
-        y_start = y + overlap_size // 2
-        y_end = y + crop.shape[1]
-        crop = crop[:, (overlap_size // 2) :, :]
+        else:  # no border
+            y_start = y + overlap_size // 2
+            y_end = y + crop.shape[1] - overlap_size // 2
+            crop = crop[:, (overlap_size // 2) : (crop.shape[1] - overlap_size // 2)]
 
-    else:  # no border
-        y_start = y + overlap_size // 2
-        y_end = y + crop.shape[1] - overlap_size // 2
-        crop = crop[:, (overlap_size // 2) : (crop.shape[1] - overlap_size // 2), :]
+        # border
+        if x == 0:
+            x_start = x
+            x_end = x + crop.shape[0] - overlap_size // 2
+            crop = crop[: (crop.shape[0] - overlap_size // 2), :]
+        elif x == X - c_x:  # border
+            x_start = x + overlap_size // 2
+            x_end = x + crop.shape[0]
+            crop = crop[(overlap_size // 2) :, :]
+        else:  # no border
+            x_start = x + overlap_size // 2
+            x_end = x + crop.shape[0] - overlap_size // 2
+            crop = crop[(overlap_size // 2) : (crop.shape[0] - overlap_size // 2), :]
 
-    # border
-    if x == 0:
-        x_start = x
-        x_end = x + crop.shape[0] - overlap_size // 2
-        crop = crop[: (crop.shape[0] - overlap_size // 2), :, :]
-    elif x == X - c_x:  # border
-        x_start = x + overlap_size // 2
-        x_end = x + crop.shape[0]
-        crop = crop[(overlap_size // 2) :, :, :]
-    else:  # no border
-        x_start = x + overlap_size // 2
-        x_end = x + crop.shape[0] - overlap_size // 2
-        crop = crop[(overlap_size // 2) : (crop.shape[0] - overlap_size // 2), :, :]
-
-    # logger.debug(f"CROP SHAPE: {crop.shape}")
-    logger.debug(f"RECONSTRUCTED IMAGE SHAPE: {reconstructed.shape}")
-    reconstructed[x_start:x_end, y_start:y_end, :] += crop
-
+        # logger.debug(f"CROP SHAPE: {crop.shape}")
+        reconstructed[x_start:x_end, y_start:y_end] += crop
+    
     return reconstructed

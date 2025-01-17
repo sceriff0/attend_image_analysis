@@ -39,11 +39,16 @@ def stack_channel(file_path, new_channel_data):
         dataset[-1, :, :] = new_channel_data.squeeze()  # Remove the last singleton dimension if present
 
 def get_crop_areas(shape, n_crops):
-    # Calculate row and column step size based on k
+    if int(np.sqrt(n_crops)) != np.sqrt(n_crops):
+            ValueError('Argument `n_crops` must be a number whose square root is an integer.')
+
+    n_crops = int(np.sqrt(n_crops))
+    
+    # Calculate row and column step size based on n_crops
     row_step = shape[0] // n_crops
     col_step = shape[1] // n_crops
 
-    # Generate export areas dynamically for k x k grid
+    # Generate export areas dynamically for n_crops x n_crops grid
     crop_areas = []
     for i in range(n_crops):
         for j in range(n_crops):
@@ -144,7 +149,6 @@ def main():
         #### Channels stacking ####    
         for path in channels_paths:
             logger.info(f"Loading: {path}")
-
             if not os.path.exists(output_path):
                 new_channel = load_h5(path)
                 save_h5(
@@ -153,10 +157,9 @@ def main():
                 )
                 del new_channel
                 gc.collect()         
-       
             else:
                 shape = get_image_file_shape(output_path)
-                if shape[0] < len(channels_paths):
+                if shape[0] < len(channels_paths): # Skip stacking if the image already has all the channels
                     new_channel = load_h5(path) 
                     logger.info(f"Before stacking: file size: {os.path.getsize(output_path)} bytes")
                     stack_channel(output_path, new_channel)
@@ -166,10 +169,8 @@ def main():
                     gc.collect()
 
         #### Save stacked image as tiff
-        if int(np.sqrt(args.n_crops)) != np.sqrt(args.n_crops):
-            ValueError('Argument `n_crops` must be a number whose square root is an integer.')
-
-        n_crops = int(np.sqrt(args.n_crops))
+        n_crops = args.n_crops
+        
         resolution, metadata = load_pickle(args.metadata)
 
         if n_crops == 1:

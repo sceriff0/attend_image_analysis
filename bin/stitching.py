@@ -33,7 +33,7 @@ def image_reconstruction_loop(crops_files, shape, overlap_size):
     reconstructed_image = np.zeros(shape, dtype='float32')
 
     for crop_file in crops_files:
-        crop = load_h5(crop_file)
+        crop = load_h5(path=crop_file, shape='YX')
         logger.info(f"Loaded crop: {crop_file}")
 
         x, y = map(int, os.path.basename(crop_file).split("_")[1:3])
@@ -42,26 +42,83 @@ def image_reconstruction_loop(crops_files, shape, overlap_size):
     
     return reconstructed_image
 
-def save_quality_control_plot(output_path, dapi_crops_files, shape, overlap_size, fixed, downscale_factor = 0.5):
-        reconstructed_image = image_reconstruction_loop(dapi_crops_files, shape, overlap_size)
-        reconstructed_image = rescale(
-            reconstructed_image,
-            scale=downscale_factor,
-            anti_aliasing=True
-        )
+def get_crop_areas(shape, n_crops):
+    if int(np.sqrt(n_crops)) != np.sqrt(n_crops):
+            ValueError('Argument `n_crops` must be a number whose square root is an integer.')
 
-        fixed = load_h5(fixed, channels_to_load=-1)
-        fixed = rescale(
-            fixed,
-            scale=downscale_factor,
-            anti_aliasing=True
-        )
-        fixed = np.squeeze(fixed)
+    n_crops = int(np.sqrt(n_crops))
+    
+    # Calculate row and column step size based on n_crops
+    row_step = shape[0] // n_crops
+    col_step = shape[1] // n_crops
 
-        plt.figure(figsize=(20, 20))
-        plt.imshow(reconstructed_image, cmap='Reds', alpha=0.8)
-        plt.imshow(fixed, cmap='Greens', alpha=0.6) 
-        plt.savefig(output_path, format="jpg", dpi=300)
+    # Generate export areas dynamically for n_crops x n_crops grid
+    crop_areas = []
+    for i in range(n_crops):
+        for j in range(n_crops):
+            top = i * row_step
+            bottom = (i + 1) * row_step if i < n_crops - 1 else shape[0]
+            left = j * col_step
+            right = (j + 1) * col_step if j < n_crops - 1 else shape[1]
+            crop_areas.append((top, bottom, left, right))
+
+    return crop_areas
+
+def save_quality_control_plot(dapi_crops_files, shape, overlap_size, fixed_path, moving_path, downscale_factor = 2):
+        def save_overlay_plot(image_1, image_2, output_path):
+            plt.figure(figsize=(20, 20))
+            plt.imshow(image_1, cmap='Reds', alpha=0.8)
+            plt.imshow(image_2, cmap='Greens', alpha=0.6) 
+            plt.savefig(output_path, format="jpg", dpi=300)
+        
+        def save_single_plot(image, output_path):
+            plt.figure(figsize=(20, 20))
+            plt.imshow(image, cmap='Reds')
+            plt.savefig(output_path, format="jpg", dpi=300)
+
+        crop_areas = get_crop_areas(shape, 4)
+        downscale_factor = 1 / downscale_factor
+        if downscale_factor !=1 :
+            reconstructed_image = image_reconstruction_loop(dapi_crops_files, shape, overlap_size)
+            reconstructed_image = rescale(
+                reconstructed_image,
+                scale=downscale_factor,
+                anti_aliasing=True
+            )
+
+            fixed = load_h5(fixed_path, channels_to_load=-1)
+            fixed = rescale(
+                fixed,
+                scale=downscale_factor,
+                anti_aliasing=True
+            )
+            fixed = np.squeeze(fixed)
+        else:
+            reconstructed_image = image_reconstruction_loop(dapi_crops_files, shape, overlap_size)
+            fixed = load_h5(fixed_path, channels_to_load=-1)
+            fixed = np.squeeze(fixed)
+
+        for area in crop_areas:
+            output_path_overlay = f"registered_{os.path.basename(moving_path).split('.')[0]}_overlay_{area[0]}_{area[1]}_{area[2]}_{area[3]}.jpg"
+            output_path_single_1 = f"registered_{os.path.basename(moving_path).split('.')[0]}_single_{area[0]}_{area[1]}_{area[2]}_{area[3]}.jpg"
+            output_path_single_2 = f"registered_{os.path.basename(fixed_path).split('.')[0]}_single_{area[0]}_{area[1]}_{area[2]}_{area[3]}.jpg"
+
+            logger.debug(f"Saving {output_path_overlay}")
+            save_overlay_plot(
+                reconstructed_image[area[0]:area[1], area[2]:area[3]], 
+                fixed[area[0]:area[1], area[2]:area[3]],
+                output_path_overlay
+            )
+            logger.debug(f"Saving {output_path_single_1}")
+            save_single_plot(
+                reconstructed_image[area[0]:area[1], area[2]:area[3]], 
+                output_path_single_1
+            )
+            logger.debug(f"Saving {output_path_single_2}")
+            save_single_plot(
+                fixed[area[0]:area[1], area[2]:area[3]], 
+                output_path_single_2
+            )
 
 def _parse_args():
     """Parse command-line arguments."""
@@ -146,16 +203,14 @@ def main():
 
     if not all(matches):
         crops_files = args.crops
-        dapi_crops_files = args.crops
+        dapi_crops_files = args.dapi_crops
         cr = load_h5(crops_files[0])
 
         logger.debug(f'OBJECT: {cr}')
 
         if not isinstance(cr, int):
-            shape = (original_shape[0], original_shape[1], cr.shape[2])
-
-            plot_output = f"registered_{os.path.basename(args.moving).split('.')[0]}_overlay.jpg"
-            save_quality_control_plot(plot_output, dapi_crops_files, shape, args.overlap_size, args.fixed)
+            shape = (original_shape[0], original_shape[1])
+            save_quality_control_plot(dapi_crops_files, shape, args.overlap_size, args.fixed, args.moving, downscale_factor=1)
 
             reconstructed_image = image_reconstruction_loop(crops_files, original_shape, args.overlap_size)
 
