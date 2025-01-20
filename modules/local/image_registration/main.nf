@@ -37,7 +37,12 @@ process diffeomorphic{
     input:
         tuple val(patient_id), path(moving), path(fixed), path(crop), path(channels_to_register)
     output:
-        tuple val(patient_id), path(moving), path(fixed), path("qc*"), path("registered*"), path(channels_to_register)
+        tuple val(patient_id), 
+        path(moving), 
+        path(fixed), 
+        path("qc*"), 
+        path("registered*"), 
+        path(channels_to_register)
  
     script:
     """
