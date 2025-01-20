@@ -39,7 +39,7 @@ def image_reconstruction_loop(crops_files, shape, overlap_size):
         x, y = map(int, os.path.basename(crop_file).split("_")[1:3])
         position = (x, y)
         reconstructed_image = reconstruct_image(reconstructed_image, crop, position, (shape[0], shape[1]), overlap_size)
-    
+        
     return reconstructed_image
 
 def get_crop_areas(shape, n_crops):

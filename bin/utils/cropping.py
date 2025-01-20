@@ -35,92 +35,51 @@ def create_crops(image, crop_size, overlap_size):
 
     return crops, positions
 
-def reconstruct_image(reconstructed, crop, position, original_shape, overlap_size):
+
+def reconstruct_image_new(reconstructed, crop, position, original_shape, overlap_size):
     """
     Reconstruct the original image from overlapping crops.
 
     Args:
-        crops (list): List of crops.
-        positions (list): List of top-left corner indices for each crop.
-        original_shape (tuple): Shape of the original image (X, Y, Z).
-        crop_size (int): The size of the crops along X and Y.
+        reconstructed (numpy.ndarray): The array to reconstruct the image into.
+        crop (numpy.ndarray): The crop to be placed in the reconstructed image.
+        position (tuple): The top-left corner indices (x, y) for the crop.
+        original_shape (tuple): Shape of the original image (X, Y, Z) or (X, Y).
         overlap_size (int): The overlap size along X and Y.
 
     Returns:
         numpy.ndarray: The reconstructed image of dtype uint16.
     """
     x, y = position
-    if len(crop.shape) == 3:
-        c_x, c_y, _ = crop.shape
-    elif len(crop.shape) == 2:
-        c_x, c_y = crop.shape
+    c_x, c_y = crop.shape[:2]
+    X, Y = original_shape[:2]
 
-    if len(original_shape) == 3:
-        X, Y, Z = original_shape
-        # border
-        if y == 0:
-            y_start = y
-            y_end = y + crop.shape[1] - overlap_size // 2
-            crop = crop[:, : (crop.shape[1] - overlap_size // 2), :]
+    def calculate_bounds(start, crop_dim, total_dim, overlap):
+        if start == 0:
+            start_idx = start
+            end_idx = start + crop_dim - overlap // 2
+            crop_slice = slice(0, crop_dim - overlap // 2)
+        elif start == total_dim - crop_dim:
+            start_idx = start + overlap // 2
+            end_idx = start + crop_dim
+            crop_slice = slice(overlap // 2, crop_dim)
+        else:
+            start_idx = start + overlap // 2
+            end_idx = start + crop_dim - overlap // 2
+            crop_slice = slice(overlap // 2, crop_dim - overlap // 2)
+        return start_idx, end_idx, crop_slice
 
-        elif y == Y - c_y:  # border
-            y_start = y + overlap_size // 2
-            y_end = y + crop.shape[1]
-            crop = crop[:, (overlap_size // 2) :, :]
+    # Calculate bounds for y-axis
+    y_start, y_end, y_slice = calculate_bounds(y, c_y, Y, overlap_size)
+    # Calculate bounds for x-axis
+    x_start, x_end, x_slice = calculate_bounds(x, c_x, X, overlap_size)
 
-        else:  # no border
-            y_start = y + overlap_size // 2
-            y_end = y + crop.shape[1] - overlap_size // 2
-            crop = crop[:, (overlap_size // 2) : (crop.shape[1] - overlap_size // 2), :]
-
-        # border
-        if x == 0:
-            x_start = x
-            x_end = x + crop.shape[0] - overlap_size // 2
-            crop = crop[: (crop.shape[0] - overlap_size // 2), :, :]
-        elif x == X - c_x:  # border
-            x_start = x + overlap_size // 2
-            x_end = x + crop.shape[0]
-            crop = crop[(overlap_size // 2) :, :, :]
-        else:  # no border
-            x_start = x + overlap_size // 2
-            x_end = x + crop.shape[0] - overlap_size // 2
-            crop = crop[(overlap_size // 2) : (crop.shape[0] - overlap_size // 2), :, :]
-
-        # logger.debug(f"CROP SHAPE: {crop.shape}")
+    # Adjust crop based on dimensionality
+    if len(original_shape) == 3:  # 3D image
+        crop = crop[x_slice, y_slice, :]
         reconstructed[x_start:x_end, y_start:y_end, :] += crop
-    elif len(original_shape) == 2:
-        X, Y = original_shape
-        if y == 0:
-            y_start = y
-            y_end = y + crop.shape[1] - overlap_size // 2
-            crop = crop[:, : (crop.shape[1] - overlap_size // 2)]
-
-        elif y == Y - c_y:  # border
-            y_start = y + overlap_size // 2
-            y_end = y + crop.shape[1]
-            crop = crop[:, (overlap_size // 2)]
-
-        else:  # no border
-            y_start = y + overlap_size // 2
-            y_end = y + crop.shape[1] - overlap_size // 2
-            crop = crop[:, (overlap_size // 2) : (crop.shape[1] - overlap_size // 2)]
-
-        # border
-        if x == 0:
-            x_start = x
-            x_end = x + crop.shape[0] - overlap_size // 2
-            crop = crop[: (crop.shape[0] - overlap_size // 2), :]
-        elif x == X - c_x:  # border
-            x_start = x + overlap_size // 2
-            x_end = x + crop.shape[0]
-            crop = crop[(overlap_size // 2) :, :]
-        else:  # no border
-            x_start = x + overlap_size // 2
-            x_end = x + crop.shape[0] - overlap_size // 2
-            crop = crop[(overlap_size // 2) : (crop.shape[0] - overlap_size // 2), :]
-
-        # logger.debug(f"CROP SHAPE: {crop.shape}")
+    elif len(original_shape) == 2:  # 2D image
+        crop = crop[x_slice, y_slice]
         reconstructed[x_start:x_end, y_start:y_end] += crop
-    
+
     return reconstructed
