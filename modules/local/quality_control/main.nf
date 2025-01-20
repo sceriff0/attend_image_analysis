@@ -1,17 +1,18 @@
-process stitching{
+process quality_control{
     cpus 1
     maxRetries = 3
     memory { 10.GB }
     conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
+    publishDir "${params.quality_control_output_dir}", mode: 'copy'
     
     input:
         tuple val(patient_id), path(moving), path(fixed), path(dapi_crops), path(crops)
     output:
-        tuple val(patient_id), path("registered_${patient_id}*")
+        tuple val(patient_id), path("*jpg")
  
     script:
     """
-        stitching.py \
+        quality_control.py \
             --patient_id $patient_id \
             --dapi_crops $dapi_crops \
             --crops $crops \
@@ -19,6 +20,7 @@ process stitching{
             --overlap_size ${params.overlap_size_diffeo} \
             --fixed $fixed \
             --moving $moving \
+            --downscale_factor ${params.downscale_factor} \
             --log_file "${params.log_file}"
     """
 }

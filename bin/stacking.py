@@ -10,6 +10,7 @@ import tifffile as tiff
 import logging
 from utils.metadata_tools import get_channel_list, get_image_file_shape
 from utils.io import save_h5, load_h5, load_pickle
+from utils.cropping import get_crop_areas
 from utils import logging_config
 
 logging_config.setup_logging()
@@ -37,28 +38,6 @@ def stack_channel(file_path, new_channel_data):
         
         # Add the new channel data to the last channel of the dataset
         dataset[-1, :, :] = new_channel_data.squeeze()  # Remove the last singleton dimension if present
-
-def get_crop_areas(shape, n_crops):
-    if int(np.sqrt(n_crops)) != np.sqrt(n_crops):
-            ValueError('Argument `n_crops` must be a number whose square root is an integer.')
-
-    n_crops = int(np.sqrt(n_crops))
-    
-    # Calculate row and column step size based on n_crops
-    row_step = shape[0] // n_crops
-    col_step = shape[1] // n_crops
-
-    # Generate export areas dynamically for n_crops x n_crops grid
-    crop_areas = []
-    for i in range(n_crops):
-        for j in range(n_crops):
-            top = i * row_step
-            bottom = (i + 1) * row_step if i < n_crops - 1 else shape[0]
-            left = j * col_step
-            right = (j + 1) * col_step if j < n_crops - 1 else shape[1]
-            crop_areas.append((top, bottom, left, right))
-
-    return crop_areas
 
 def save_tiff(image, output_path, resolution=None, bigtiff=True, ome=True, metadata=None):
     tiff.imwrite(
@@ -105,17 +84,24 @@ def _parse_args():
         required=True,
         help="Path to .pkl containing image metadata",
     )
+    parser.add_argument(
+        "-l",
+        "--log_file",
+        type=str,
+        required=False,
+        help="Path to log file.",
+    )
 
     args = parser.parse_args()
     return args
 
 def main():
-    handler = logging.FileHandler('/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/LOG.log')
+    args = _parse_args()
+
+    handler = logging.FileHandler(args.log_file)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-
-    args = _parse_args()
 
     channels_list = get_channel_list()
 

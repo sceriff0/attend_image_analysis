@@ -29,7 +29,6 @@ def _parse_args():
 
 
 def main():
-
     args = _parse_args()
     files = args.input.split()
     max_shape = get_max_axis_value(files)

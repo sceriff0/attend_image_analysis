@@ -16,6 +16,7 @@ include { diffeomorphic} from './modules/local/image_registration/main.nf'
 include { stitching } from './modules/local/image_stitching/main.nf'
 include { stacking } from './modules/local/image_stacking/main.nf'
 include { conversion } from './modules/local/image_conversion/main.nf'
+include { quality_control } from './modules/local/quality_control/main.nf'
 include { check_new_channels } from './modules/local/check_new_channels/main.nf'
 
 
@@ -106,6 +107,7 @@ workflow {
     }
 
     stitching(collapsed)
+    quality_control(collapsed)
 
     grouped_stitching_out = stitching.out.groupTuple()
 

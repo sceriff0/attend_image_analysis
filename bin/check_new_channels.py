@@ -50,17 +50,24 @@ def _parse_args():
         required=True,
         help="A string of nd2 files.",
     )
+    parser.add_argument(
+        "-l",
+        "--log_file",
+        type=str,
+        required=False,
+        help="Path to log file.",
+    )
 
     args = parser.parse_args()
     return args
 
 def main():
-    handler = logging.FileHandler('/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/LOG.log')
+    args = _parse_args()
+
+    handler = logging.FileHandler(args.log_file)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-
-    args = _parse_args()    
 
     nd2_files = args.nd2_files.split() 
     channels_list = get_channel_list()

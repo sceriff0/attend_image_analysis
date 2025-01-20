@@ -55,6 +55,16 @@
                     "description": "Number of image crops to export.",
                     "examples": [4]
                 },
+                "downscale_factor": {
+                    "type": "integer",
+                    "description": "Downscale factor for quality control plots (higher values reduce memory usage).",
+                    "examples": [2]
+                },
+                "log_file": {
+                    "type": "string",
+                    "description": "Path to log file.",
+                    "examples": ["/path/to/log.log"]
+                },
                 "tilex": {
                     "type": "integer",
                     "description": "Width of tiles for image conversion.",

@@ -16,6 +16,7 @@ process stacking {
         --patient_id "$patient_id" \
         --channels "$channels" \
         --n_crops ${params.n_crops} \
-        --metadata "$metadata" 
+        --metadata "$metadata" \
+        --log_file "${params.log_file}"
     """
 }

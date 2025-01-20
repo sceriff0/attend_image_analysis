@@ -13,6 +13,7 @@ process get_metadata{
         get_metadata.py \
             --nd2_files "$nd2_files" \
             --channels "$channels" \
-            --patient_id "$patient_id"
+            --patient_id "$patient_id" \
+            --log_file "${params.log_file}"
     """ 
 }

@@ -83,6 +83,13 @@ def _parse_args():
         required=False,
         help="Size of the overlap",
     )
+    parser.add_argument(
+        "-l",
+        "--log_file",
+        type=str,
+        required=False,
+        help="Path to log file.",
+    )
 
     args = parser.parse_args()
     return args
@@ -152,12 +159,12 @@ def save_stacked_crops(areas, fixed_image_path, moving_image_path, reconstructed
             logger.debug(f"Affine - saved crop: {output_path}")
 
 def main():
-    handler = logging.FileHandler('/hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/LOG.log')
+    args = _parse_args()
+
+    handler = logging.FileHandler(args.log_file)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-
-    args = _parse_args()
 
     logger.debug(f"Fixed image: {args.fixed_image}, Moving image: {args.moving_image}")
 

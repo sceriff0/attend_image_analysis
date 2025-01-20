@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 
 import logging
+import os
+import numpy as np
 from utils import logging_config
+from utils.io import load_h5
 
 # Set up logging configuration
 logging_config.setup_logging()
@@ -35,6 +38,27 @@ def create_crops(image, crop_size, overlap_size):
 
     return crops, positions
 
+def get_crop_areas(shape, n_crops):
+    if int(np.sqrt(n_crops)) != np.sqrt(n_crops):
+            ValueError('Argument `n_crops` must be a number whose square root is an integer.')
+
+    n_crops = int(np.sqrt(n_crops))
+    
+    # Calculate row and column step size based on n_crops
+    row_step = shape[0] // n_crops
+    col_step = shape[1] // n_crops
+
+    # Generate export areas dynamically for n_crops x n_crops grid
+    crop_areas = []
+    for i in range(n_crops):
+        for j in range(n_crops):
+            top = i * row_step
+            bottom = (i + 1) * row_step if i < n_crops - 1 else shape[0]
+            left = j * col_step
+            right = (j + 1) * col_step if j < n_crops - 1 else shape[1]
+            crop_areas.append((top, bottom, left, right))
+
+    return crop_areas
 
 def reconstruct_image(reconstructed, crop, position, original_shape, overlap_size):
     """
@@ -83,3 +107,21 @@ def reconstruct_image(reconstructed, crop, position, original_shape, overlap_siz
         reconstructed[x_start:x_end, y_start:y_end] += crop
 
     return reconstructed
+
+def image_reconstruction_loop(crops_files, shape, overlap_size):
+    logger.info(f"Reconstruction shape: {shape}")
+    reconstructed_image = np.zeros(shape, dtype='float32')
+
+    for crop_file in crops_files:
+        logger.info(f"Loading crop: {crop_file}")
+        crop = load_h5(crop_file, shape='YX')
+        logger.info(f"Loaded crop: {crop_file}, Shape: {crop.shape}")
+
+        if len(shape) > len(crop.shape):
+            crop = np.expand_dims(crop, axis=2)
+
+        x, y = map(int, os.path.basename(crop_file).split("_")[1:3])
+        position = (x, y)
+        reconstructed_image = reconstruct_image(reconstructed_image, crop, position, (shape[0], shape[1]), overlap_size)
+    
+    return reconstructed_image

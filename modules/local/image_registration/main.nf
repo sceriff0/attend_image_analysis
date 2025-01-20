@@ -23,7 +23,8 @@ process affine{
             --crop_size_affine ${params.crop_size_affine} \
             --overlap_size_affine ${params.overlap_size_affine} \
             --crop_size_diffeo ${params.crop_size_diffeo} \
-            --overlap_size_diffeo ${params.overlap_size_diffeo}
+            --overlap_size_diffeo ${params.overlap_size_diffeo} \
+            --log_file "${params.log_file}"
     """
 }
  
@@ -43,6 +44,7 @@ process diffeomorphic{
         diffeomorphic.py \
             --channels_to_register $channels_to_register \
             --crop_image $crop \
-            --moving_image $moving
+            --moving_image $moving \
+            --log_file "${params.log_file}"
     """
 }
