@@ -3,7 +3,7 @@ process conversion {
     memory "2G"
     conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
     tag "ome_tiff"
-    publishDir "${params.output_dir}", mode: 'copy'
+    publishDir "${params.output_dir}/${patient_id}/results", mode: 'copy'
 
 
     input:
