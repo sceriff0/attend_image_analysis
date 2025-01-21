@@ -30,6 +30,16 @@
                     "description": "Path to csv file containing the images to be processed.",
                     "examples": ["/path/to/file.csv"]
                 },
+                "output_dir": {
+                    "type": "string",
+                    "description": "Path to output directory (the .ome.tiff files).",
+                    "examples": ["/path/to/dir"]
+                },
+                "quality_control_output_dir": {
+                    "type": "string",
+                    "description": "Path to directory (quality control plots).",
+                    "examples": ["/path/to/dir"]
+                },
                 "crop_size_affine": {
                     "type": "integer",
                     "description": "Width of crop for image registration.",
