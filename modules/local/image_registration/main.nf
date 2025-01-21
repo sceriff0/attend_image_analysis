@@ -8,6 +8,8 @@ process affine{
     // memory { 70.GB }
     memory { 5.GB }
     conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
+    tag "affine"
+
     input:
         tuple val(patient_id), path(moving), path(fixed), path(channels_to_register)
     output:
@@ -34,6 +36,8 @@ process diffeomorphic{
     maxRetries = 3
     memory { 2.GB * task.attempt }
     conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
+    tag "diffeomorphic"
+
     input:
         tuple val(patient_id), path(moving), path(fixed), path(crop), path(channels_to_register)
     output:

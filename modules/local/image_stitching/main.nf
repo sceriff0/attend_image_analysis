@@ -3,7 +3,8 @@ process stitching{
     maxRetries = 3
     memory { 10.GB }
     conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
-    
+    tag "stitching"
+
     input:
         tuple val(patient_id), path(moving), path(fixed), path(dapi_crops), path(crops)
     output:

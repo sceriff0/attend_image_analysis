@@ -3,6 +3,7 @@ process check_new_channels{
     conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
     maxRetries = 3
     memory { 1.GB * task.attempt }
+    tag "check_channels"
     input:
         tuple val(patient_id), path(files), val(metadata)
     output:

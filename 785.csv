@@ -1,0 +1,12 @@
+patient_id,image,fixed
+785,/hpcnfs/techunits/imaging/PublicData/ImagingU/cborriero/nd2_images/785/785_DAPI_SMA.nd2,false
+785,/hpcnfs/techunits/imaging/PublicData/ImagingU/cborriero/nd2_images/785/785_DAPI_ARID1A_PD1.nd2,false
+785,/hpcnfs/techunits/imaging/PublicData/ImagingU/cborriero/nd2_images/785/785_DAPI_p53_CD3.nd2,false
+785,/hpcnfs/techunits/imaging/PublicData/ImagingU/cborriero/nd2_images/785/785_DAPI_MLH1_PANCK.nd2,true
+785,/hpcnfs/techunits/imaging/PublicData/ImagingU/cborriero/nd2_images/785/785_DAPI_CD14_arpc1b.nd2,false
+785,/hpcnfs/techunits/imaging/PublicData/ImagingU/cborriero/nd2_images/785/785_DAPI_CD163_CD45.nd2,false
+785,/hpcnfs/techunits/imaging/PublicData/ImagingU/cborriero/nd2_images/785/785_DAPI_FOXP3_VIMENTIN.nd2,false
+785,/hpcnfs/techunits/imaging/PublicData/ImagingU/cborriero/nd2_images/785/785_DAPI_P53_PAX2.nd2,false
+785,/hpcnfs/techunits/imaging/PublicData/ImagingU/cborriero/nd2_images/785/785_DAPI_pd1_srsf3.nd2,false
+785,/hpcnfs/techunits/imaging/PublicData/ImagingU/cborriero/nd2_images/785/785_DAPI_ppargamma_PDL1.nd2,false
+785,/hpcnfs/techunits/imaging/PublicData/ImagingU/cborriero/nd2_images/785/785_DAPI_CD8_CD4.nd2,false

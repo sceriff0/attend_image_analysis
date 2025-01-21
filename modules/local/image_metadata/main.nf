@@ -3,6 +3,8 @@ process get_metadata{
     conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
     maxRetries = 3
     memory { 1.GB * task.attempt }
+    tag "metadata"
+
     input:
         tuple val(patient_id), path(nd2_files), path(channels, stageAs: "?/*")
     output:

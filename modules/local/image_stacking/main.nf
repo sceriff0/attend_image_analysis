@@ -2,7 +2,7 @@ process stacking {
     cpus 2
     memory { 10.GB }
     conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
-    tag "image_stacking"
+    tag "stacking"
     
     input:
     tuple val(patient_id), path(channels, stageAs: "?/*"), path(metadata)

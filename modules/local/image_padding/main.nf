@@ -24,6 +24,8 @@ process apply_padding{
     memory { 8.GB } 
     // memory { 80.GB }
     conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
+    tag "padding"
+
     input:
         tuple val(patient_id), path(img), val(metadata), path(padding)
     output:
