@@ -1,7 +1,7 @@
 process conversion {
     cpus 2
     memory "2G"
-    conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
+    conda "${params.conda_dir}"
     tag "ome_tiff"
     publishDir "${params.output_dir}/${patient_id}/results", mode: 'copy'
 
@@ -51,21 +51,4 @@ process conversion {
     echo "\$(date): Image conversion process completed." >> ${params.log_file}
     """
 }
-
-
-// """
-//    for file in $image; do
-//        name=\$(basename \${file})
-//        bfconvert \
-//            -noflat \
-//            -bigtiff \
-//            -tilex 512 \
-//            -tiley 512 \
-//            -pyramid-resolutions 3 \
-//            -pyramid-scale 2 \
-//            \${file} \
-//            \${name}.ome.tiff
-//    done
-// """
-
 

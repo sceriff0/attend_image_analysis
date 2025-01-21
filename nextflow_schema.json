@@ -35,6 +35,11 @@
                     "description": "Path to output directory (the .ome.tiff files).",
                     "examples": ["/path/to/dir"]
                 },
+                "conda_dir": {
+                    "type": "string",
+                    "description": "Directory to conda environment.",
+                    "examples": ["/path/to/dir"]
+                },
                 "crop_size_affine": {
                     "type": "integer",
                     "description": "Width of crop for image registration.",
@@ -69,6 +74,10 @@
                     "type": "string",
                     "description": "Path to log file.",
                     "examples": ["/path/to/log.log"]
+                },
+                "test": {
+                    "type": "boolean",
+                    "description": "Flag to indicate whether the pipeline should run in test mode (reduced memory usage)."
                 },
                 "tilex": {
                     "type": "integer",

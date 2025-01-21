@@ -22,13 +22,15 @@ def save_quality_control_plot(dapi_crops_files, shape, overlap_size, fixed_path,
         def save_overlay_plot(image_1, image_2, output_path):
             plt.figure(figsize=(20, 20))
             plt.imshow(image_1, cmap='Reds', alpha=0.8)
-            plt.imshow(image_2, cmap='Greens', alpha=0.6) 
-            plt.savefig(output_path, format="jpg", dpi=300)
+            plt.imshow(image_2, cmap='Greens', alpha=0.6)
+            if not os.path.exists(output_path):
+                plt.savefig(output_path, format="jpg", dpi=300)
         
         def save_single_plot(image, output_path):
             plt.figure(figsize=(20, 20))
             plt.imshow(image, cmap='Reds')
-            plt.savefig(output_path, format="jpg", dpi=300)
+            if not os.path.exists(output_path):
+                plt.savefig(output_path, format="jpg", dpi=300)
 
         crop_areas = get_crop_areas(shape, 4)
         downscale_factor = 1 / downscale_factor

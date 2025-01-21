@@ -1,8 +1,8 @@
 process quality_control{
     cpus 1
     maxRetries = 3
-    memory { 10.GB }
-    conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
+    memory { task.memory + 10 * task.attempt}
+    conda "${params.conda_dir}"
     publishDir "${params.output_dir}/${patient_id}/quality_control", mode: 'copy', pattern: 'registered*.jpg'
     tag "quality_control"
     
@@ -13,6 +13,8 @@ process quality_control{
  
     script:
     """
+    echo "\$(date) Memory allocated to process "quality_control": ${task.memory}" >> ${params.log_file}
+
         quality_control.py \
             --patient_id $patient_id \
             --dapi_crops $dapi_crops \

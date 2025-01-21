@@ -5,9 +5,8 @@
 process affine{
     cpus 2
     maxRetries = 3
-    // memory { 70.GB }
-    memory { 5.GB }
-    conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
+    memory { task.memory + 10 * task.attempt}
+    conda "${params.conda_dir}"
     tag "affine"
 
     input:
@@ -17,6 +16,8 @@ process affine{
  
     script:
     """
+    echo "\$(date) Memory allocated to process "affine": ${task.memory}" >> ${params.log_file}
+
         affine.py \
             --patient_id $patient_id \
             --channels_to_register $channels_to_register \
@@ -35,7 +36,7 @@ process diffeomorphic{
     cpus 1
     maxRetries = 3
     memory { 2.GB * task.attempt }
-    conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
+    conda "${params.conda_dir}"
     tag "diffeomorphic"
 
     input:

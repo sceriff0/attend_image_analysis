@@ -1,6 +1,6 @@
 process get_metadata{
     cpus 1
-    conda '/hpcnfs/scratch/DIMA/chiodin/miniconda3'
+    conda "${params.conda_dir}"
     maxRetries = 3
     memory { 1.GB * task.attempt }
     tag "metadata"
