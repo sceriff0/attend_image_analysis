@@ -6,7 +6,6 @@ import os
 import numpy as np
 import logging
 import hashlib
-from skimage.transform import rescale
 from utils.io import load_pickle, save_h5
 from utils.mapping import compute_diffeomorphic_mapping_dipy, apply_mapping
 from utils import logging_config
