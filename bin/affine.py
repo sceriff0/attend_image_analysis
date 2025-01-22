@@ -107,7 +107,7 @@ def get_crops_positions(shape, crop_size, overlap_size):
         list: A list of crops of shape (a, a, Z).
         list: A list of the top-left corner indices of each crop.
     """
-    X, Y, Z = shape
+    Y, X, Z = shape
     positions = []
 
     for start_col in range(0, X - overlap_size, crop_size - overlap_size):
