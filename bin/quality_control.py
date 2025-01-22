@@ -82,6 +82,7 @@ def save_dapi_channels_tiff(dapi_crops_files, moving_path, fixed_path, shape, ov
         image_reconstruction_loop(dapi_crops_files, shape, overlap_size)
     )
     reconstructed_image = rescale(reconstructed_image, scale=0.25, anti_aliasing=True)
+    reconstructed_image = np.array(reconstructed_image, dtype=np.float32)
     outname = os.path.basename(moving_path).split(".")[0]
     output_path = f'registered_DAPI_{outname}.tiff'
     logger.debug(f'Saving DAPI channel (MOVING): {output_path}')
@@ -93,6 +94,7 @@ def save_dapi_channels_tiff(dapi_crops_files, moving_path, fixed_path, shape, ov
         load_h5(fixed_path, channels_to_load=-1)
     )
     fixed_dapi = rescale(fixed_dapi, scale=0.25, anti_aliasing=True)
+    fixed_dapi = np.array(fixed_dapi, dtype=np.float32)
     outname = os.path.basename(fixed_path).split(".")[0]
     output_path = f'registered_DAPI_{outname}.tiff'
     logger.info(f'Saving DAPI channel (FIXED): {output_path}')
