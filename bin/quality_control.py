@@ -8,6 +8,7 @@ import numpy as np
 import re
 import gc
 import matplotlib.pyplot as plt
+import tifffile as tiff
 from skimage.transform import rescale
 from utils.io import load_h5
 from utils.cropping import image_reconstruction_loop, get_crop_areas
@@ -55,9 +56,9 @@ def save_quality_control_plot(dapi_crops_files, shape, overlap_size, fixed_path,
             fixed = np.squeeze(fixed)
 
         for area in crop_areas:
-            output_path_overlay = f"registered_overlay_{os.path.basename(moving_path).split('.')[0]}_{area[0]}_{area[1]}_{area[2]}_{area[3]}.jpg"
-            output_path_single_1 = f"registered_channel_{os.path.basename(moving_path).split('.')[0]}_{area[0]}_{area[1]}_{area[2]}_{area[3]}.jpg"
-            output_path_single_2 = f"registered_channel_{os.path.basename(fixed_path).split('.')[0]}_{area[0]}_{area[1]}_{area[2]}_{area[3]}.jpg"
+            output_path_overlay = f"registered_DAPI_overlay_{os.path.basename(moving_path).split('.')[0]}_{area[0]}_{area[1]}_{area[2]}_{area[3]}.jpg"
+            output_path_single_1 = f"registered_DAPI_{os.path.basename(moving_path).split('.')[0]}_{area[0]}_{area[1]}_{area[2]}_{area[3]}.jpg"
+            output_path_single_2 = f"registered_DAPI_{os.path.basename(fixed_path).split('.')[0]}_{area[0]}_{area[1]}_{area[2]}_{area[3]}.jpg"
 
             logger.debug(f"Saving {output_path_overlay}")
             save_overlay_plot(
@@ -76,6 +77,29 @@ def save_quality_control_plot(dapi_crops_files, shape, overlap_size, fixed_path,
                 output_path_single_2
             )
 
+def save_dapi_channels_tiff(dapi_crops_files, moving_path, fixed_path, shape, overlap_size):
+    reconstructed_image = np.squeeze(
+        image_reconstruction_loop(dapi_crops_files, shape, overlap_size)
+    )
+    reconstructed_image = rescale(reconstructed_image, scale=0.25, anti_aliasing=True)
+    outname = os.path.basename(moving_path).split(".")[0]
+    logger.debug(f'SAVING DAPI CHANNEL (MOVING): registered_{outname}__DAPI_ONLY.tiff')
+    logger.debug(f'DAPI CHANNEL SHAPE (MOVING): {reconstructed_image.shape}')
+    tiff.imwrite(f'registered_DAPI_{outname}.tiff', reconstructed_image)
+    del reconstructed_image
+    gc.collect()
+
+    fixed_dapi = np.squeeze(
+        load_h5(fixed_path, channels_to_load=-1)
+    )
+    fixed_dapi = rescale(fixed_dapi, scale=0.25, anti_aliasing=True)
+    outname = os.path.basename(fixed_path).split(".")[0]
+    logger.debug(f'SAVING DAPI CHANNEL (FIXED): registered_channel_{outname}__DAPI_ONLY.tiff')
+    logger.debug(f'DAPI CHANNEL SHAPE (FIXED): {fixed_dapi.shape}')
+    if not os.path.exists(f'registered_{outname}__DAPI_ONLY.tiff'):
+        tiff.imwrite(f'registered_DAPI_{outname}.tiff', fixed_dapi)
+    
+
 def touch(file_path):
     # Check if the file exists
     if os.path.exists(file_path):
@@ -85,7 +109,6 @@ def touch(file_path):
         # Create an empty file
         with open(file_path, 'a'):
             os.utime(file_path, None)
-
 
 def _parse_args():
     """Parse command-line arguments."""
@@ -190,10 +213,10 @@ def main():
 
         if not isinstance(cr, int):
             shape = (original_shape[0], original_shape[1], cr.shape[2])
-
+            save_dapi_channels_tiff(dapi_crops_files, args.moving, args.fixed, shape, args.overlap_size)
             save_quality_control_plot(dapi_crops_files, shape, args.overlap_size, args.fixed, args.moving, args.downscale_factor)
     else:
-        touch(f"NULL_registered_{args.patient_id}.jpg")
+        touch(f"registered_NULL_{args.patient_id}.jpg")
 
 if __name__ == "__main__":
     main()

@@ -3,13 +3,13 @@ process quality_control{
     maxRetries = 3
     memory { task.memory + 10 * task.attempt}
     conda "${params.conda_dir}"
-    publishDir "${params.output_dir}/${patient_id}/quality_control", mode: 'copy', pattern: 'registered*.jpg'
+    publishDir "${params.output_dir}/${patient_id}/quality_control", mode: 'copy', pattern: "registered_DAPI*"
     tag "quality_control"
     
     input:
         tuple val(patient_id), path(moving), path(fixed), path(dapi_crops), path(crops)
     output:
-        tuple val(patient_id), path("*jpg")
+        tuple val(patient_id), path("registered*")
  
     script:
     """
