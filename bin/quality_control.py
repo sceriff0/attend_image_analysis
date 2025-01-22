@@ -83,9 +83,9 @@ def save_dapi_channels_tiff(dapi_crops_files, moving_path, fixed_path, shape, ov
     )
     reconstructed_image = rescale(reconstructed_image, scale=0.25, anti_aliasing=True)
     outname = os.path.basename(moving_path).split(".")[0]
-    logger.debug(f'SAVING DAPI CHANNEL (MOVING): registered_{outname}__DAPI_ONLY.tiff')
-    logger.debug(f'DAPI CHANNEL SHAPE (MOVING): {reconstructed_image.shape}')
-    tiff.imwrite(f'registered_DAPI_{outname}.tiff', reconstructed_image)
+    output_path = f'registered_DAPI_{outname}.tiff'
+    logger.debug(f'Saving DAPI channel (MOVING): {output_path}')
+    tiff.imwrite(output_path, reconstructed_image)
     del reconstructed_image
     gc.collect()
 
@@ -94,10 +94,10 @@ def save_dapi_channels_tiff(dapi_crops_files, moving_path, fixed_path, shape, ov
     )
     fixed_dapi = rescale(fixed_dapi, scale=0.25, anti_aliasing=True)
     outname = os.path.basename(fixed_path).split(".")[0]
-    logger.debug(f'SAVING DAPI CHANNEL (FIXED): registered_channel_{outname}__DAPI_ONLY.tiff')
-    logger.debug(f'DAPI CHANNEL SHAPE (FIXED): {fixed_dapi.shape}')
-    if not os.path.exists(f'registered_{outname}__DAPI_ONLY.tiff'):
-        tiff.imwrite(f'registered_DAPI_{outname}.tiff', fixed_dapi)
+    output_path = f'registered_DAPI_{outname}.tiff'
+    logger.info(f'Saving DAPI channel (FIXED): {output_path}')
+    if not os.path.exists(output_path):
+        tiff.imwrite(output_path, fixed_dapi)
     
 
 def touch(file_path):
