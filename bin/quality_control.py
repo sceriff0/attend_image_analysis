@@ -56,9 +56,9 @@ def save_quality_control_plot(dapi_crops_files, shape, overlap_size, fixed_path,
             fixed = np.squeeze(fixed)
 
         for area in crop_areas:
-            output_path_overlay = f"registered_DAPI_overlay_{os.path.basename(moving_path).split('.')[0]}_{area[0]}_{area[1]}_{area[2]}_{area[3]}.jpg"
-            output_path_single_1 = f"registered_DAPI_{os.path.basename(moving_path).split('.')[0]}_{area[0]}_{area[1]}_{area[2]}_{area[3]}.jpg"
-            output_path_single_2 = f"registered_DAPI_{os.path.basename(fixed_path).split('.')[0]}_{area[0]}_{area[1]}_{area[2]}_{area[3]}.jpg"
+            output_path_overlay = f"registered_DAPI_overlay_{os.path.basename(moving_path).split('.')[0]}_{area[0]}_{area[1]}_{area[2]}_{area[3]}.jpg".replace('padded_', '')
+            output_path_single_1 = f"registered_DAPI_{os.path.basename(moving_path).split('.')[0]}_{area[0]}_{area[1]}_{area[2]}_{area[3]}.jpg".replace('padded_', '')
+            output_path_single_2 = f"registered_DAPI_{os.path.basename(fixed_path).split('.')[0]}_{area[0]}_{area[1]}_{area[2]}_{area[3]}.jpg".replace('padded_', '')
 
             logger.debug(f"Saving {output_path_overlay}")
             save_overlay_plot(
@@ -84,7 +84,7 @@ def save_dapi_channels_tiff(dapi_crops_files, moving_path, fixed_path, shape, ov
     reconstructed_image = rescale(reconstructed_image, scale=0.25, anti_aliasing=True)
     reconstructed_image = np.array(reconstructed_image, dtype=np.float32)
     outname = os.path.basename(moving_path).split(".")[0]
-    output_path = f'registered_DAPI_{outname}.tiff'
+    output_path = f'registered_DAPI_{outname}.tiff'.replace('padded_', '')
     logger.debug(f'Saving DAPI channel (MOVING): {output_path}')
     tiff.imwrite(output_path, reconstructed_image)
     del reconstructed_image
@@ -96,7 +96,7 @@ def save_dapi_channels_tiff(dapi_crops_files, moving_path, fixed_path, shape, ov
     fixed_dapi = rescale(fixed_dapi, scale=0.25, anti_aliasing=True)
     fixed_dapi = np.array(fixed_dapi, dtype=np.float32)
     outname = os.path.basename(fixed_path).split(".")[0]
-    output_path = f'registered_DAPI_{outname}.tiff'
+    output_path = f'registered_DAPI_{outname}.tiff'.replace('padded_', '')
     logger.info(f'Saving DAPI channel (FIXED): {output_path}')
     if not os.path.exists(output_path):
         tiff.imwrite(output_path, fixed_dapi)
@@ -214,7 +214,8 @@ def main():
         cr = load_h5(crops_files[0])
 
         if not isinstance(cr, int):
-            shape = (original_shape[0], original_shape[1], cr.shape[2])
+            # shape = (original_shape[0], original_shape[1], cr.shape[2])
+            shape = (original_shape[0], original_shape[1])
             save_dapi_channels_tiff(dapi_crops_files, args.moving, args.fixed, shape, args.overlap_size)
             save_quality_control_plot(dapi_crops_files, shape, args.overlap_size, args.fixed, args.moving, args.downscale_factor)
     else:

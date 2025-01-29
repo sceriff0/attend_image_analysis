@@ -2,7 +2,6 @@ process stitching{
     cpus 1
     maxRetries = 3
     memory { task.memory + 10 * task.attempt}
-    conda "${params.conda_dir}"
     tag "stitching"
 
     input:

@@ -129,6 +129,7 @@ def save_stacked_crops(areas, fixed_image_path, moving_image_path, reconstructed
         moving_crop = reconstructed_image[start_row:end_row, start_col:end_col, :]
         patient_id = os.path.basename(moving_image_path)
         output_path = f"{start_row}_{start_col}_{patient_id}.pkl"
+        output_path = output_path.replace('padded_', '')
     
         if len(np.unique(moving_crop)) != 1 and len(np.unique(fixed_crop)) != 1:
             logger.debug(f"Affine - computing transformation: {area}")
@@ -173,6 +174,10 @@ def main():
     if channels_to_register:
         moving = load_h5(args.moving_image)
         fixed = load_h5(args.fixed_image)
+
+        logger.debug(f'AFFINE - MOVING SHAPE: {moving.shape}')
+        logger.debug(f'AFFINE - FIXED SHAPE: {fixed.shape}')
+
         moving_shape = moving.shape
 
         matrix = compute_affine_mapping_cv2(
@@ -204,6 +209,7 @@ def main():
             )
 
         areas_diffeo = get_crops_positions(moving_shape, args.crop_size_diffeo, args.overlap_size_diffeo)
+
         save_stacked_crops(areas_diffeo, args.fixed_image, args.moving_image, reconstructed_image)
 
         del reconstructed_image

@@ -14,9 +14,11 @@ logging_config.setup_logging()
 logger = logging.getLogger(__name__)
 
 
-def create_tiff_metadata(src_path, channel_names):
-    metadata = get_metadata_nd2(src_path)
-    pixel_microns = metadata['pixel_microns']
+def create_tiff_metadata(src_path=None, channel_names=None, pixel_microns=[]):
+    if not pixel_microns:
+        metadata = get_metadata_nd2(src_path)
+        pixel_microns = metadata['pixel_microns']
+
     resolution = (1/pixel_microns, 1/pixel_microns)
     metadata = {
         'axes': 'CYX', 
@@ -55,7 +57,7 @@ def _parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-i",
-        "--nd2_files",
+        "--image_files",
         type=str,
         default=None,
         required=True,
@@ -99,7 +101,9 @@ def main():
     # Fixed-order list of channels
     channels_list = get_channel_list()
 
-    nd2_files = args.nd2_files.split() 
+    image_files = args.image_files.split()
+
+    nd2_files = [file for file in image_files if os.path.basename(file).split('.')[1] == 'nd2']
 
     channels_files = args.channels.split()
 
@@ -115,9 +119,13 @@ def main():
         channels_to_register = remove_lowercase_channels(list(set(channel_names)))
         channels_to_register = sorted(channels_to_register, key=lambda x: channels_list.index(x))
 
-        resolution, metadata = create_tiff_metadata(nd2_files[0], channels_to_register)
-
-        meta = (resolution, metadata)
+        if nd2_files:
+            resolution, metadata = create_tiff_metadata(src_path=nd2_files[0], channel_names=channels_to_register)
+            meta = (resolution, metadata)
+        else:
+            resolution, metadata = create_tiff_metadata(channel_names=channels_to_register, pixel_microns=0.34533768547788)
+            meta = (resolution, metadata)
+             
     else:
         meta = []
 

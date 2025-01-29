@@ -6,7 +6,6 @@ process affine{
     cpus 2
     maxRetries = 3
     memory { task.memory + 10 * task.attempt}
-    conda "${params.conda_dir}"
     tag "affine"
 
     input:
@@ -36,7 +35,7 @@ process diffeomorphic{
     cpus 1
     maxRetries = 3
     memory { 2.GB * task.attempt }
-    conda "${params.conda_dir}"
+    array 50
     tag "diffeomorphic"
 
     input:

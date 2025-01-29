@@ -74,6 +74,8 @@ def main():
     moving_channels = os.path.basename(args.moving_image) \
         .split('.')[0] \
         .split('_')[2:][::-1] 
+    
+    logger.debug(f'DIFFEOMORPHIC - MOVING CHANNELS: {moving_channels}')
 
     moving_channels_no_dapi = [ch for ch in moving_channels if ch != 'DAPI']
 
@@ -87,8 +89,14 @@ def main():
     crop_id_pos = [str(e) for e in crop_id_pos]
     crop_name = crop_id_pos + current_channels_to_register_no_dapi[::-1]   
     crop_name = '_'.join(crop_name)
+
     output_path = f"registered_{crop_name}.h5"
+    output_path = output_path.replace('padded_', '')
+    
     output_path_dapi = f"qc_{'_'.join(crop_id_pos)}_DAPI.h5"
+    output_path_dapi = output_path_dapi.replace('padded_', '')
+
+
     
     if current_channels_to_register_no_dapi:
         if any([e for e in current_channels_to_register_no_dapi if e in channels_to_register]):
@@ -140,7 +148,7 @@ def main():
                     output_path
                 )
                 save_h5(
-                    moving_channels_images, 
+                    np.squeeze(moving[:,:,-1]), 
                     output_path_dapi
                 )
         else:

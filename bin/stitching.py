@@ -131,17 +131,16 @@ def main():
         crops_files = args.crops
         cr = load_h5(crops_files[0])
 
-        logger.debug(f'OBJECT: {cr}')
-
         if not isinstance(cr, int):
-            reconstructed_image = image_reconstruction_loop(crops_files, original_shape, args.overlap_size)
+            shape = (original_shape[0], original_shape[1], cr.shape[2])
+            reconstructed_image = image_reconstruction_loop(crops_files, shape, args.overlap_size)
 
-            moving_channels = os.path.basename(args.moving)\
+            moving_channels = os.path.basename(args.moving).replace('padded_', '') \
                 .split('.')[0] \
                 .split('_')[2:] \
                 [::-1] # Select first two channels (omit DAPI) and reverse list
             
-            fixed_channels = os.path.basename(args.fixed) \
+            fixed_channels = os.path.basename(args.fixed).replace('padded_', '') \
                 .split('.')[0] \
                 .split('_')[1:] \
                 [::-1] # Select all channels and reverse list

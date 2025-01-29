@@ -1,6 +1,5 @@
 process check_new_channels{
     cpus 1
-    conda "${params.conda_dir}"
     memory { 1.GB }
     tag "check_channels"
 

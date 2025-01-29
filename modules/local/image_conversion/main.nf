@@ -1,9 +1,8 @@
 process conversion {
     cpus 2
     memory "2G"
-    conda "${params.conda_dir}"
     tag "ome_tiff"
-    publishDir "${params.output_dir}/${patient_id}/results", mode: 'copy'
+    publishDir "${params.outdir}/${patient_id}/results", mode: 'copy'
 
 
     input:
@@ -22,7 +21,7 @@ process conversion {
     for file in $image; do
         # Get the base name and output directory path
         name="\${file%.*}"
-        output="${params.output_dir}/\${name}.ome.tiff"
+        output="${params.outdir}/\${name}.ome.tiff"
 
         # Check if the output file already exists
         if [ ! -f \${output} ]; then

@@ -2,8 +2,7 @@ process quality_control{
     cpus 1
     maxRetries = 3
     memory { task.memory + 10 * task.attempt}
-    conda "${params.conda_dir}"
-    publishDir "${params.output_dir}/${patient_id}/quality_control", mode: 'copy', pattern: "registered_DAPI*"
+    publishDir "${params.outdir}/${patient_id}/quality_control", mode: 'copy', pattern: "registered_DAPI*"
     tag "quality_control"
     
     input:

@@ -10,7 +10,7 @@ def scan_directory(base_dir, output_csv):
     for root, _, files in os.walk(base_dir):
         for file in files:
             # Check if the file is relevant (e.g., ends with .nd2)
-            if file.endswith(".nd2"):
+            if file.endswith(".nd2") or file.endswith(".h5"):
                 file_path = os.path.join(root, file)
                 
                 # Extract patient_id and check if 'MLH1' is in the path

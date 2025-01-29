@@ -4,10 +4,15 @@
 import argparse
 import ast
 import gc
-import h5py
 import os
 import numpy as np
-from utils.io import load_nd2, save_h5
+import logging
+from utils import logging_config
+from utils.io import load_nd2, load_h5, save_h5
+
+# Set up logging configuration
+logging_config.setup_logging()
+logger = logging.getLogger(__name__)
 
 def pad_image_to_shape(image, target_shape, constant_values=0):
     if image.shape[:2] != target_shape:
@@ -67,24 +72,50 @@ def _parse_args():
         required=True,
         help="Padding file containing a single line with shape in text format. E.g. (10, 10).",
     )
-
+    parser.add_argument(
+        "-l",
+        "--log_file",
+        type=str,
+        required=False,
+        help="Path to log file.",
+    )
     args = parser.parse_args()
     return args
 
 
 def main():
     args = _parse_args()
+
+    handler = logging.FileHandler(args.log_file)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+
     with open(args.padding, "r") as file:
         data = file.read()
 
     padding_shape = ast.literal_eval(data)
-    padded_image = pad_image_to_shape(
-        load_nd2(args.image), 
-        padding_shape
-    )
+    file_extension = os.path.basename(args.image).split('.')[1]
 
-    outname = str.replace(os.path.basename(args.image), "nd2", "h5")
-    save_h5(padded_image, outname)
+    if 'nd2' in file_extension:
+        padded_image = pad_image_to_shape(
+            load_nd2(args.image), 
+            padding_shape
+        )
+        outname = str.replace(os.path.basename(args.image), "nd2", "h5")
+    elif 'h5' in file_extension:
+        padded_image = pad_image_to_shape(
+            load_h5(args.image, shape='CYX'), 
+            padding_shape
+        )
+        padded_image = padded_image.transpose((1, 2, 0))
+        outname = os.path.basename(args.image)
+
+    
+    output_path = 'padded_' + outname
+
+    logger.debug(f'OUTPUT FILE PADDING: {output_path}')
+    save_h5(padded_image, output_path)
 
     del padded_image
     gc.collect()

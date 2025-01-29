@@ -1,7 +1,6 @@
 process stacking {
     cpus 2
     memory { task.memory + 10 * task.attempt}
-    conda "${params.conda_dir}"
     tag "stacking"
     
     input:

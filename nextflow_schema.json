@@ -30,7 +30,7 @@
                     "description": "Path to csv file containing the images to be processed.",
                     "examples": ["/path/to/file.csv"]
                 },
-                "output_dir": {
+                "outdir": {
                     "type": "string",
                     "description": "Path to output directory (the .ome.tiff files).",
                     "examples": ["/path/to/dir"]
