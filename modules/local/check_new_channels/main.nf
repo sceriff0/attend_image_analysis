@@ -13,7 +13,7 @@ process check_new_channels{
         check_new_channels.py \
             --patient_id $patient_id \
             --nd2_files "$files" \
-            --ome_tiff_image "${params.output_dir}/${patient_id}.ome.tiff" \
+            --ome_tiff_image "${params.outdir}/${patient_id}.ome.tiff" \
             --log_file "${params.log_file}"
     """ 
 }
