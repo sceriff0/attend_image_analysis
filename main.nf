@@ -2,6 +2,8 @@
 
 nextflow.enable.dsl=2
 
+WorkflowMain.initialise(workflow, params, log)
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     PIPELINE WORKFLOW
