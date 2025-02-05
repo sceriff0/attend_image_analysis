@@ -35,7 +35,7 @@ process diffeomorphic{
     cpus 1
     maxRetries = 3
     memory { 2.GB * task.attempt }
-    array 50
+    array { task.array }
     tag "diffeomorphic"
 
     input:
@@ -50,6 +50,9 @@ process diffeomorphic{
  
     script:
     """
+    echo "\$(date) Queue: "diffeomorphic": ${task.queue}" >> ${params.log_file}
+    echo "\$(date) Array directive value: "diffeomorphic": ${task.array}" >> ${params.log_file}
+
         diffeomorphic.py \
             --channels_to_register $channels_to_register \
             --crop_image $crop \
