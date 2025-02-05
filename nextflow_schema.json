@@ -70,15 +70,6 @@
                     "description": "Downscale factor for quality control plots (higher values reduce memory usage).",
                     "examples": [2]
                 },
-                "log_file": {
-                    "type": "string",
-                    "description": "Path to log file.",
-                    "examples": ["/path/to/log.log"]
-                },
-                "test": {
-                    "type": "boolean",
-                    "description": "Flag to indicate whether the pipeline should run in test mode (reduced memory usage)."
-                },
                 "tilex": {
                     "type": "integer",
                     "description": "Width of tiles for image conversion.",
@@ -98,6 +89,19 @@
                     "type": "integer",
                     "description": "Pyramid scale factor for image conversion.",
                     "examples": [2]
+                },
+                "log_file": {
+                    "type": "string",
+                    "description": "Path to log file.",
+                    "examples": ["/path/to/log.log"]
+                },
+                "test": {
+                    "type": "boolean",
+                    "description": "Flag to indicate whether the pipeline should run in test mode (reduced memory usage)."
+                },
+                "executor": {
+                    "type": "string",
+                    "description": "Process executor ('pbspro' or 'local')."
                 }
             }
         },
