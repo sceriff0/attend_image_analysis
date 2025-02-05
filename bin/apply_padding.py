@@ -108,7 +108,7 @@ def main():
             load_h5(args.image, shape='CYX'), 
             padding_shape
         )
-        padded_image = padded_image.transpose((1, 2, 0))
+        # padded_image = padded_image.transpose((1, 2, 0))
         outname = os.path.basename(args.image)
 
     
