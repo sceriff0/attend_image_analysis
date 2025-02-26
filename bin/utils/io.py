@@ -37,11 +37,12 @@ def load_h5(path, loading_region=None, channels_to_load=None, shape='YXC'):
     
     return data
 
-def save_h5(data, path, ndim=3):
+def save_h5(data, path):
     if isinstance(data, int): 
         chunks = None
         maxshape = None
     else:
+        ndim = data.ndim
         chunks = True
         maxshape = tuple([None] * ndim)
 
