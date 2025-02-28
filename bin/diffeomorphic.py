@@ -111,8 +111,7 @@ def main():
                 # Save registered dapi channel for quality control
                 save_h5(
                     np.squeeze(apply_mapping(mapping, moving[:, :, -1])), 
-                    output_path_dapi,
-                    ndim=2
+                    output_path_dapi
                 )
 
                 logger.debug(f"Applying mapping: {args.crop_image}")
