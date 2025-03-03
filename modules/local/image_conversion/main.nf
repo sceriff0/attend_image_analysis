@@ -24,7 +24,7 @@ process conversion {
         output="${params.outdir}/\${name}.ome.tiff"
 
         # Check if the output file already exists
-        if [ ! -f \${output} ]; then
+        if [ \${name} != "null" ] && [ ! -f \${output} ]; then
             # Log the start of the conversion
             echo "\$(date): Converting \${file} to \${output}..." >> ${params.log_file}
             
