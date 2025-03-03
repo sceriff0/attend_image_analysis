@@ -20,6 +20,7 @@ include { stacking } from './modules/local/image_stacking/main.nf'
 include { conversion } from './modules/local/image_conversion/main.nf'
 include { quality_control } from './modules/local/quality_control/main.nf'
 include { check_new_channels } from './modules/local/check_new_channels/main.nf'
+include { pipex_preprocessing } from './modules/local/dev/main.nf'
 
 
 def parse_csv(csv_file_path) {
@@ -105,13 +106,13 @@ workflow {
 
         return [patient_id, moving.getName(), moving, fixed, registered_dapi, registered_crop, channels_to_register]
     }.groupTuple(by:1).map{
-        return [it[0][0], it[2][0], it[3][0], it[4], it[5], it[6]]
+        return [it[0][0], it[2][0], it[3][0], it[4], it[5]]
     }
 
     stitching(collapsed)
     quality_control(collapsed)
 
-    grouped_stitching_out = stitching.out.groupTuple()
+    grouped_stitching_out = stitching.out.h5.groupTuple()
 
     stitching_out = grouped_stitching_out.map { entry ->
         def channels = entry[1].flatten()
@@ -125,13 +126,18 @@ workflow {
         return [it[0], it[1], it[3]]
     }
 
-    get_metadata(meta_input) 
+    //get_metadata(meta_input) 
 
-    metadata_out = get_metadata.out.groupTuple().map{
-        return [it[0], it[1][0], it[2]]
-    }
+    //metadata_out = get_metadata.out.groupTuple().map{
+    //    return [it[0], it[1][0], it[2]]
+    //}
 
-    stacking(metadata_out)
+    //stacking(metadata_out)
 
-    conversion(stacking.out)
+    //conversion(stacking.out)
+
+    // dev
+    pipex_preprocessing(stitching.out.tiff)
+    pipex_preprocessing.out.view()
+    collapsed.view()
 }

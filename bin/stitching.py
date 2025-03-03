@@ -6,6 +6,7 @@ import argparse
 import os
 import numpy as np
 import re
+import tifffile as tiff
 from utils.io import load_h5, save_h5
 from utils.cropping import image_reconstruction_loop
 from utils.metadata_tools import get_image_file_shape
@@ -110,6 +111,15 @@ def _parse_args():
     args = parser.parse_args()
     return args
 
+def save_tiff(image, output_path, resolution=None, bigtiff=True, ome=True, metadata=None):
+    tiff.imwrite(
+        output_path, 
+        image, 
+        resolution=resolution,
+        bigtiff=bigtiff, 
+        ome=ome,
+        metadata=metadata
+    )
 
 def main():
     args = _parse_args()
@@ -155,16 +165,20 @@ def main():
                     np.expand_dims(reconstructed_image[:,:,idx], axis=0).astype(np.float32), 
                     f"registered_{args.patient_id}_{ch}.h5"
                 )
+                save_tiff(reconstructed_image[:,:,idx], 
+                    f"registered_{args.patient_id}_{ch}.tiff")
             
             # Save fixed channels
             for idx, ch in enumerate(fixed_channels_to_export):
                 image = load_h5(args.fixed, channels_to_load=idx)
                 image = image.astype(np.float32)
+                save_tiff(image, f"registered_{args.patient_id}_{ch}.tiff")
                 image = np.expand_dims(image, axis=0)
                 save_h5(
                     image, 
                     f"registered_{args.patient_id}_{ch}.h5"
                 )
+                
     else:
         save_h5(
                 0, 

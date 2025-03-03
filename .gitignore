@@ -169,3 +169,6 @@ nextflow*
 .nextflow*
 work/
 tests/
+
+# custom
+dev/
