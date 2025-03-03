@@ -27,7 +27,8 @@ def get_channel_list():
         "CD8",
         "FOXP3",
         "PD1",
-        "PDL1"
+        "PDL1",
+        "L1CAM"
     ]
 
     return channels_list
