@@ -20,7 +20,7 @@ include { stacking } from './modules/local/image_stacking/main.nf'
 include { conversion } from './modules/local/image_conversion/main.nf'
 include { quality_control } from './modules/local/quality_control/main.nf'
 include { check_new_channels } from './modules/local/check_new_channels/main.nf'
-include { pipex_preprocessing } from './modules/local/dev/main.nf'
+include { pipex_preprocessing; pipex_segmentation } from './modules/local/dev/main.nf'
 
 
 def parse_csv(csv_file_path) {
@@ -138,6 +138,5 @@ workflow {
 
     // dev
     pipex_preprocessing(stitching.out.tiff)
-    pipex_preprocessing.out.view()
-    collapsed.view()
+    pipex_segmentation(pipex_preprocessing.out)
 }
