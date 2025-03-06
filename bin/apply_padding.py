@@ -99,17 +99,15 @@ def main():
 
     if 'nd2' in file_extension:
         padded_image = pad_image_to_shape(
-            np.transpose(load_nd2(args.image), (1, 2, 0)), 
+            np.transpose(load_nd2(args.image), (1, 2, 0)),
             padding_shape
         )
-        # padded_image = padded_image.transpose((1, 2, 0))
         outname = str.replace(os.path.basename(args.image), "nd2", "h5")
     elif 'h5' in file_extension:
         padded_image = pad_image_to_shape(
-            np.transpose(load_h5(args.image, shape='CYX'), (1, 2, 0)), 
+            np.transpose(load_h5(args.image, shape='CYX'), (1, 2, 0)),
             padding_shape
         )
-        # padded_image = padded_image.transpose((1, 2, 0))
         outname = os.path.basename(args.image)
 
     

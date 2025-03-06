@@ -54,7 +54,7 @@ def get_image_file_shape(file, format=".h5"):
             # Access metadata about the dimensions
             shape_metadata = nd2_file.sizes  # Example: "XYCZT" or similar
             shape_metadata = dict(shape_metadata)
-            shape = (shape_metadata.get("Y", 0), shape_metadata.get("X", 0))
+            shape = (shape_metadata.get("C", 0), shape_metadata.get("Y", 0), shape_metadata.get("X", 0))
 
     if format == ".h5" or format == "h5":
         with h5py.File(file, "r") as f:
