@@ -20,7 +20,11 @@ include { stacking } from './modules/local/image_stacking/main.nf'
 include { conversion } from './modules/local/image_conversion/main.nf'
 include { quality_control } from './modules/local/quality_control/main.nf'
 include { check_new_channels } from './modules/local/check_new_channels/main.nf'
-include { pipex_preprocessing; pipex_segmentation } from './modules/local/pipex/main.nf'
+// include { pipex_preprocessing; pipex_segmentation } from './modules/local/pipex/main.nf'
+include { pipex_preprocessing } from './modules/local/tmp_preproc/main.nf'
+include { pipex_segmentation } from './modules/local/tmp_seg/main.nf'
+include { deduplicate_files } from './modules/local/deduplicate_files/main.nf'
+
 
 
 def parse_csv(csv_file_path) {
@@ -126,17 +130,32 @@ workflow {
         return [it[0], it[1], it[3]]
     }
 
-    //get_metadata(meta_input) 
+    get_metadata(meta_input) 
 
-    //metadata_out = get_metadata.out.groupTuple().map{
-    //    return [it[0], it[1][0], it[2]]
-    //}
+    metadata_out = get_metadata.out.groupTuple().map{
+        return [it[0], it[1][0], it[2]]
+    }
 
-    //stacking(metadata_out)
+    stacking(metadata_out)
 
-    //conversion(stacking.out)
+    conversion(stacking.out)
 
-    // dev
-    pipex_preprocessing(stitching.out.tiff)
+    //dev
+    duplicated_ch = stitching.out.tiff
+        .groupTuple()
+        .map { tuple ->
+            def patient_id = tuple[0]
+            def tiff_files = tuple[1].flatten()
+
+            return [patient_id, tiff_files]
+        }
+
+    deduplicate_files(duplicated_ch)
+
+    preproc_input = deduplicate_files.out
+
+    pipex_preprocessing(preproc_input)
     pipex_segmentation(pipex_preprocessing.out)
+
+    // pipex_segmentation.out.view()
 }

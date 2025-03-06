@@ -13,16 +13,6 @@ logger = logging.getLogger(__name__)
 
 def get_max_axis_value(files):
     formats = [os.path.basename(file).split('.')[1] for file in files]
-    #if format == 'h5':
-    #    shapes = [(get_image_file_shape(file, format=format)[0], get_image_file_shape(file, format=format)[1]) for file, format in zip(files, formats)]
-    #    logger.debug(f'Shapes: {shapes}')
-    #elif format == 'nd2':
-    #    shapes = [get_image_file_shape(file, format=format) for file in files]
-    #    logger.debug(f'Shapes: {shapes}')
-    #else:
-    #    # Handle unsupported formats
-    #    logger.error(f"Unsupported file format: {format}")
-    #    raise ValueError(f"Unsupported file format: {format}")
     shapes = [(get_image_file_shape(file, format=format)[0], get_image_file_shape(file, format=format)[1]) for file, format in zip(files, formats)]
     max_shape = tuple(map(max, zip(*shapes)))
 

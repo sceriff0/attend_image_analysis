@@ -2,7 +2,7 @@ process conversion {
     cpus 2
     memory "2G"
     tag "ome_tiff"
-    publishDir "${params.outdir}/${patient_id}/results", mode: 'copy'
+    publishDir "${params.outdir}/${patient_id}/registration/results", mode: 'copy'
 
 
     input:

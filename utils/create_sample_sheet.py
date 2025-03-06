@@ -15,8 +15,12 @@ def scan_directory(base_dir, output_csv):
                 
                 # Extract patient_id and check if 'MLH1' is in the path
                 patient_id = file.split('_')[0]  # First element when split by '_'
-                fixed = 'MLH1' in file  # Check if 'MLH1' is in the file name
-                
+                # fixed = 'MLH1' in file  # Check if 'MLH1' is in the file name
+                if 'PANCK' in file or 'panck' in file:
+                    fixed = True
+                else:
+                    fixed = False                
+
                 # Append the row
                 data_rows.append({
                     "patient_id": patient_id,

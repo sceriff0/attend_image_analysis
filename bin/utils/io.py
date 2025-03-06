@@ -85,7 +85,6 @@ def load_nd2(file_path):
     """
     with nd2.ND2File(file_path) as nd2_file:
         data = nd2_file.asarray()
-        data = data.transpose((1, 2, 0))
 
     return data
 

@@ -12,23 +12,23 @@ from nd2reader import ND2Reader
 def get_channel_list():
     channels_list = [
         "DAPI",
-        "PANCK",
+        "PANCK",    # Membrane
         "MLH1",
         "P53",
         "ARID1A",
         "PAX2",
-        "VIMENTIN",
-        "SMA", # Alpha-SMA
-        "CD163",
-        "CD14",
-        "CD45",
-        "CD3",
-        "CD4",
-        "CD8",
+        "VIMENTIN", # Membrane
+        "SMA", 
+        "CD163",    # Membrane
+        "CD14",     # Membrane
+        "CD45",     # Membrane
+        "CD3",      # Membrane (if CD4 or CD8)
+        "CD4",      # Membrane
+        "CD8",      # Membrane
         "FOXP3",
-        "PD1",
-        "PDL1",
-        "L1CAM"
+        "PD1",      # Membrane
+        "PDL1",     # Membrane
+        "L1CAM"     # Membrane
     ]
 
     return channels_list
