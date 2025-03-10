@@ -8,7 +8,7 @@ process quality_control{
     input:
         tuple val(patient_id), path(moving), path(fixed), path(dapi_crops), path(crops)
     output:
-        tuple val(patient_id), path("registered*")
+        tuple val(patient_id), path("QC*")
  
     script:
     """

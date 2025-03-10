@@ -77,32 +77,31 @@ def save_quality_control_plot(dapi_crops_files, shape, overlap_size, fixed_path,
                 output_path_single_2
             )
 
-def save_dapi_channels_tiff(dapi_crops_files, moving_path, fixed_path, shape, overlap_size):
-    reconstructed_image = np.squeeze(
-        image_reconstruction_loop(dapi_crops_files, shape, overlap_size)
-    )
-    reconstructed_image = rescale(reconstructed_image, scale=0.25, anti_aliasing=True)
-    logger.debug(f"QUALITY CONTROL: Reconstructed image dtype: {reconstructed_image.dtype}")
-
-    reconstructed_image = np.array(reconstructed_image, dtype=np.float32)
+def save_dapi_stack(dapi_crops_files, moving_path, fixed_path, shape, overlap_size, scale=1):
     outname = os.path.basename(moving_path).split(".")[0]
-    output_path = f'registered_DAPI_{outname}.tiff'.replace('padded_', '')
-    logger.debug(f'Saving DAPI channel (MOVING): {output_path}')
-    tiff.imwrite(output_path, reconstructed_image)
-    del reconstructed_image
-    gc.collect()
+    output_path = f'QC_{outname}.tiff'.replace('padded_', '')
+
+    
+
+    reconstructed_image = np.squeeze(
+        image_reconstruction_loop(dapi_crops_files, shape, overlap_size, dtype='uint16')
+    )
 
     fixed_dapi = np.squeeze(
         load_h5(fixed_path, channels_to_load=-1)
     )
-    fixed_dapi = rescale(fixed_dapi, scale=0.25, anti_aliasing=True)
-    fixed_dapi = np.array(fixed_dapi, dtype=np.uint8)
-    # fixed_dapi = np.array(fixed_dapi, dtype='uint8')
-    outname = os.path.basename(fixed_path).split(".")[0]
-    output_path = f'registered_DAPI_{outname}.tiff'.replace('padded_', '')
-    logger.info(f'Saving DAPI channel (FIXED): {output_path}')
-    if not os.path.exists(output_path):
-        tiff.imwrite(output_path, fixed_dapi)
+
+    if scale == 1:
+        reconstructed_image = np.array(reconstructed_image, dtype='uint16')
+        fixed_dapi = np.array(fixed_dapi, dtype='uint16')
+    else:
+        reconstructed_image = rescale(reconstructed_image, scale=0.25, anti_aliasing=True) # float64 (0 to 1)
+        fixed_dapi = rescale(fixed_dapi, scale=0.25, anti_aliasing=True)
+    
+    logger.info(f'Quality control - Saving {output_path}')
+    dapi_stack = np.stack((reconstructed_image, fixed_dapi), axis=-1)
+
+    tiff.imwrite(output_path, dapi_stack, imagej=True)
     
 
 def touch(file_path):
@@ -205,11 +204,9 @@ def main():
 
     original_shape = get_image_file_shape(args.moving, format='.h5')
 
-    pattern = r'^registered_[a-zA-Z0-9]+_[a-fA-F0-9]{64}.h5$'
-
     matches = []
     for crop_name in args.crops:
-        matches.append(bool(re.match(pattern, crop_name)))
+        matches.append(len(crop_name.split('.')[0].split('_')[-1]) == 64) # Check if filename ends in a 64 characters hash
 
     if not all(matches):
         crops_files = args.crops
@@ -219,8 +216,8 @@ def main():
         if not isinstance(cr, int):
             # shape = (original_shape[0], original_shape[1], cr.shape[2])
             shape = (original_shape[0], original_shape[1])
-            save_dapi_channels_tiff(dapi_crops_files, args.moving, args.fixed, shape, args.overlap_size)
-            save_quality_control_plot(dapi_crops_files, shape, args.overlap_size, args.fixed, args.moving, args.downscale_factor)
+            save_dapi_stack(dapi_crops_files, args.moving, args.fixed, shape, args.overlap_size)
+            # save_quality_control_plot(dapi_crops_files, shape, args.overlap_size, args.fixed, args.moving, args.downscale_factor)
     else:
         touch(f"registered_NULL_{args.patient_id}.jpg")
 
