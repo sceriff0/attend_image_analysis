@@ -177,9 +177,6 @@ def main():
         moving = load_h5(args.moving_image)
         fixed = load_h5(args.fixed_image)
 
-        logger.debug(f'AFFINE - MOVING SHAPE: {moving.shape}')
-        logger.debug(f'AFFINE - FIXED SHAPE: {fixed.shape}')
-
         moving_shape = moving.shape
 
         matrix = compute_affine_mapping_cv2(
@@ -197,9 +194,10 @@ def main():
             position = (area[0], area[2])
             crop = apply_mapping(
                 matrix, 
-                load_h5(args.moving_image, loading_region=area), 
+                load_h5(args.moving_image, loading_region=area), # uint16 
                 method="cv2"
-            )    
+            )  
+            logger.debug(f"AFFINE: transformed CROP image dtype : {crop.dtype}")  
 
             logger.debug(f"CROP SHAPE: {crop.shape}")
             reconstructed_image = reconstruct_image(
@@ -209,6 +207,7 @@ def main():
                 moving_shape, 
                 args.overlap_size_affine
             )
+            logger.debug(f"AFFINE: RECONSTRUCTED IMAGE image dtype : {reconstructed_image.dtype}")  
 
         areas_diffeo = get_crops_positions(moving_shape, args.crop_size_diffeo, args.overlap_size_diffeo)
 
