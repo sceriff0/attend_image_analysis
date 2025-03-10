@@ -133,32 +133,34 @@ def save_stacked_crops(areas, fixed_image_path, moving_image_path, reconstructed
     
         if len(np.unique(moving_crop)) != 1 and len(np.unique(fixed_crop)) != 1:
             logger.debug(f"Affine - computing transformation: {area}")
-            matrix = compute_affine_mapping_cv2(
-                y=fixed_crop[:,:,-1].squeeze(), 
-                x=moving_crop[:,:,-1].squeeze()
-            )
-            logger.debug(f"Affine - computed transformation: {area}")
+            try:
+                matrix = compute_affine_mapping_cv2(
+                    y=fixed_crop[:,:,-1].squeeze(),
+                    x=moving_crop[:,:,-1].squeeze()
+                )
+                logger.debug(f"Affine - computed transformation: {area}")
 
-            logger.debug(f"Affine - saving crop: {output_path}")
-            save_pickle(
-                (  
-                    fixed_crop,
-                    apply_mapping(matrix, moving_crop, method="cv2"),
-                ),
-                output_path,
-            )
-            logger.debug(f"Affine - saved crop: {output_path}")
-        else:
-            logger.debug(f"Affine - saving crop: {output_path}")
-            save_pickle(
-                (  
-                    fixed_crop,
-                    moving_crop
-                ),
-                output_path,
-            )
-            logger.debug(f"Affine - saved crop: {output_path}")
 
+                logger.debug(f"Affine - saving crop: {output_path}")
+                save_pickle(
+                    (
+                        fixed_crop,
+                        apply_mapping(matrix, moving_crop, method="cv2"),
+                    ),
+                    output_path,
+                )
+                logger.debug(f"Affine - saved crop: {output_path}")
+            except:
+                if np.mean(moving_crop[:,:,-1].squeeze()!=0) < 0.05 or np.mean(fixed_crop[:,:,-1].squeeze()!=0) < 0.05:
+                    save_pickle(
+                        (
+                            fixed_crop,
+                            moving_crop
+                        ),
+                           output_path,
+                    )
+                else:
+                    raise ValueError("Error to be checked. Look at the image.")
 def main():
     args = _parse_args()
 
