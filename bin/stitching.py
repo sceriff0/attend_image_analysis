@@ -27,18 +27,6 @@ def remove_lowercase_channels(channels):
             filtered_channels.append(ch)
     return filtered_channels
 
-# def image_reconstruction_loop(crops_files, shape, overlap_size):
-#     reconstructed_image = np.zeros(shape, dtype='float32')
-# 
-#     for crop_file in crops_files:
-#         crop = load_h5(path=crop_file, shape='YX')
-#         logger.info(f"Loaded crop: {crop_file}")
-# 
-#         x, y = map(int, os.path.basename(crop_file).split("_")[1:3])
-#         position = (x, y)
-#         reconstructed_image = reconstruct_image(reconstructed_image, crop, position, (shape[0], shape[1]), overlap_size)
-#         
-#     return reconstructed_image
 
 def _parse_args():
     """Parse command-line arguments."""
@@ -131,11 +119,9 @@ def main():
 
     original_shape = get_image_file_shape(args.moving, format='.h5')
 
-    pattern = r'^registered_[a-zA-Z0-9]+_[a-fA-F0-9]{64}.h5$'
-
     matches = []
     for crop_name in args.crops:
-        matches.append(bool(re.match(pattern, crop_name)))
+        matches.append(len(crop_name.split('.')[0].split('_')[-1]) == 64) # Check if filename ends in a 64 characters hash 
 
     if not all(matches):
         crops_files = args.crops
@@ -143,7 +129,7 @@ def main():
 
         if not isinstance(cr, int):
             shape = (original_shape[0], original_shape[1], cr.shape[2])
-            reconstructed_image = image_reconstruction_loop(crops_files, shape, args.overlap_size)
+            reconstructed_image = image_reconstruction_loop(crops_files, shape, args.overlap_size, dtype='uint16')
 
             moving_channels = os.path.basename(args.moving).replace('padded_', '') \
                 .split('.')[0] \
@@ -180,6 +166,11 @@ def main():
                 )
                 
     else:
+        tiff.imwrite(
+            f"registered_{args.patient_id}.tiff",
+            0
+        )
+
         save_h5(
                 0, 
                 f"registered_{args.patient_id}.h5"
