@@ -37,21 +37,25 @@ def load_h5(path, loading_region=None, channels_to_load=None, shape='YXC'):
     
     return data
 
-def save_h5(data, path):
+def save_h5(data, path, dtype=None):
     if isinstance(data, int): 
         chunks = None
         maxshape = None
+        dtype = 'int'
     else:
         ndim = data.ndim
         chunks = True
         maxshape = tuple([None] * ndim)
+        if dtype is None:
+            dtype = data.dtype
 
     with h5py.File(path, 'w') as hdf5_file:
         hdf5_file.create_dataset(
             'dataset', 
             data=data, 
             chunks=chunks, 
-            maxshape=maxshape
+            maxshape=maxshape,
+            dtype=dtype
         )
         hdf5_file.flush()
 
