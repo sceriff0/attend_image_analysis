@@ -95,8 +95,6 @@ def main():
     
     output_path_dapi = f"qc_{'_'.join(crop_id_pos)}_DAPI.h5"
     output_path_dapi = output_path_dapi.replace('padded_', '')
-
-
     
     if current_channels_to_register_no_dapi:
         if any([e for e in current_channels_to_register_no_dapi if e in channels_to_register]):
@@ -107,11 +105,12 @@ def main():
                     y=fixed[:, :, -1].squeeze(), 
                     x=moving[:, :, -1].squeeze()
                 )
-                
+#                
                 # Save registered dapi channel for quality control
                 save_h5(
                     np.squeeze(apply_mapping(mapping, moving[:, :, -1])), 
-                    output_path_dapi
+                    output_path_dapi,
+                    dtype='uint16'
                 )
 
                 logger.debug(f"Applying mapping: {args.crop_image}")
@@ -123,12 +122,11 @@ def main():
 
                 registered_images = np.stack(registered_images, axis=-1)
 
-                logger.debug(f"REGISTERED IMAGE SHAPE: {registered_images.shape}")
-
                 logger.debug(f"Saving registered image: {args.crop_image}")
                 save_h5(
                     registered_images, 
-                    output_path
+                    output_path,
+                    dtype='uint16'
                 )
 
             else:
@@ -144,11 +142,13 @@ def main():
                 logger.debug(f"Saving empty crop (unregistered): {args.crop_image}")
                 save_h5(
                     moving_channels_images, 
-                    output_path
+                    output_path,
+                    dtype='uint16'
                 )
                 save_h5(
                     np.squeeze(moving[:,:,-1]), 
-                    output_path_dapi
+                    output_path_dapi,
+                    dtype='uint16'
                 )
         else:
             save_h5(
