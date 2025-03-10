@@ -108,9 +108,9 @@ def reconstruct_image(reconstructed, crop, position, original_shape, overlap_siz
 
     return reconstructed
 
-def image_reconstruction_loop(crops_files, shape, overlap_size):
+def image_reconstruction_loop(crops_files, shape, overlap_size, dtype='float32'):
     logger.info(f"Reconstruction shape: {shape}")
-    reconstructed_image = np.zeros(shape, dtype='float32')
+    reconstructed_image = np.zeros(shape, dtype=dtype)
 
     for crop_file in crops_files:
         logger.info(f"Loading crop: {crop_file}")
