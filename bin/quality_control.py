@@ -81,8 +81,6 @@ def save_dapi_stack(dapi_crops_files, moving_path, fixed_path, shape, overlap_si
     outname = os.path.basename(moving_path).split(".")[0]
     output_path = f'QC_{outname}.tiff'.replace('padded_', '')
 
-    
-
     reconstructed_image = np.squeeze(
         image_reconstruction_loop(dapi_crops_files, shape, overlap_size, dtype='uint16')
     )
@@ -91,10 +89,14 @@ def save_dapi_stack(dapi_crops_files, moving_path, fixed_path, shape, overlap_si
         load_h5(fixed_path, channels_to_load=-1)
     )
 
-    if scale == 1:
-        reconstructed_image = np.array(reconstructed_image, dtype='uint16')
-        fixed_dapi = np.array(fixed_dapi, dtype='uint16')
-    else:
+    # if scale == 1:
+    #     reconstructed_image = np.array(reconstructed_image, dtype='uint16')
+    #     fixed_dapi = np.array(fixed_dapi, dtype='uint16')
+    # else:
+    #     reconstructed_image = rescale(reconstructed_image, scale=0.25, anti_aliasing=True) # float64 (0 to 1)
+    #     fixed_dapi = rescale(fixed_dapi, scale=0.25, anti_aliasing=True)
+
+    if scale != 1:
         reconstructed_image = rescale(reconstructed_image, scale=0.25, anti_aliasing=True) # float64 (0 to 1)
         fixed_dapi = rescale(fixed_dapi, scale=0.25, anti_aliasing=True)
     
@@ -219,7 +221,7 @@ def main():
             save_dapi_stack(dapi_crops_files, args.moving, args.fixed, shape, args.overlap_size)
             # save_quality_control_plot(dapi_crops_files, shape, args.overlap_size, args.fixed, args.moving, args.downscale_factor)
     else:
-        touch(f"registered_NULL_{args.patient_id}.jpg")
+        touch(f"QCNULL_{args.patient_id}.tiff")
 
 if __name__ == "__main__":
     main()

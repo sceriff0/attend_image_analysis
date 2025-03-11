@@ -2,7 +2,7 @@ process quality_control{
     cpus 1
     maxRetries = 3
     memory { task.memory + 10 * task.attempt}
-    publishDir "${params.outdir}/${patient_id}/registration/quality_control", mode: 'copy', pattern: "registered_DAPI*"
+    publishDir "${params.outdir}/${patient_id}/registration/quality_control", mode: 'copy', pattern: "QC_*"
     tag "quality_control"
     
     input:
