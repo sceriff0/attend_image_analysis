@@ -109,8 +109,7 @@ def main():
                 # Save registered dapi channel for quality control
                 save_h5(
                     np.squeeze(apply_mapping(mapping, moving[:, :, -1])), 
-                    output_path_dapi,
-                    dtype='uint16'
+                    output_path_dapi
                 )
 
                 logger.debug(f"Applying mapping: {args.crop_image}")
@@ -125,8 +124,7 @@ def main():
                 logger.debug(f"Saving registered image: {args.crop_image}")
                 save_h5(
                     registered_images, 
-                    output_path,
-                    dtype='uint16'
+                    output_path
                 )
 
             else:
@@ -142,13 +140,11 @@ def main():
                 logger.debug(f"Saving empty crop (unregistered): {args.crop_image}")
                 save_h5(
                     moving_channels_images, 
-                    output_path,
-                    dtype='uint16'
+                    output_path
                 )
                 save_h5(
                     np.squeeze(moving[:,:,-1]), 
-                    output_path_dapi,
-                    dtype='uint16'
+                    output_path_dapi
                 )
         else:
             save_h5(

@@ -108,7 +108,12 @@ def reconstruct_image(reconstructed, crop, position, original_shape, overlap_siz
 
     return reconstructed
 
-def image_reconstruction_loop(crops_files, shape, overlap_size, dtype='float32'):
+def image_reconstruction_loop(crops_files, shape, overlap_size, dtype=None):
+    if dtype is None:
+        dtype = load_h5(crops_files[0], shape='YX').dtype
+
+    logger.debug(f"Reconstruction dtype: {dtype}")
+
     logger.info(f"Reconstruction shape: {shape}")
     reconstructed_image = np.zeros(shape, dtype=dtype)
 

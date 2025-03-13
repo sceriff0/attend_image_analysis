@@ -129,7 +129,7 @@ def main():
 
         if not isinstance(cr, int):
             shape = (original_shape[0], original_shape[1], cr.shape[2])
-            reconstructed_image = image_reconstruction_loop(crops_files, shape, args.overlap_size, dtype='uint16')
+            reconstructed_image = image_reconstruction_loop(crops_files, shape, args.overlap_size)
 
             moving_channels = os.path.basename(args.moving).replace('padded_', '') \
                 .split('.')[0] \
