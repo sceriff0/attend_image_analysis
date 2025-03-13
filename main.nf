@@ -140,19 +140,19 @@ workflow {
 
     conversion(stacking.out)
 
-    // duplicated_ch = stitching.out.tiff
-    //     .groupTuple()
-    //     .map { tuple ->
-    //         def patient_id = tuple[0]
-    //         def tiff_files = tuple[1].flatten()
-// 
-    //         return [patient_id, tiff_files]
-    //     }
-// 
-    // deduplicate_files(duplicated_ch)
+    duplicated_ch = stitching.out.tiff
+        .groupTuple()
+        .map { tuple ->
+            def patient_id = tuple[0]
+            def tiff_files = tuple[1].flatten()
 
-    // preproc_input = deduplicate_files.out
+            return [patient_id, tiff_files]
+        }
 
-    // pipex_preprocessing(preproc_input)
-    // pipex_segmentation(pipex_preprocessing.out)
+    deduplicate_files(duplicated_ch)
+
+    preproc_input = deduplicate_files.out
+
+    pipex_preprocessing(preproc_input)
+    pipex_segmentation(pipex_preprocessing.out)
 }
