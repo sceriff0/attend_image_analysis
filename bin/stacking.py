@@ -110,7 +110,6 @@ def main():
 
 
     files = []
-    dirnames = []
     for path in channels_files:
         dirname = os.path.dirname(path)
         base = os.path.basename(path)
