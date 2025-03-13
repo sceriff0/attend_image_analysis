@@ -54,11 +54,11 @@ def main():
     logger.debug(f"Images: {images}")
 
     unique_files = []
-    bases = []
+    seen_basenames = []
     for file in images:
         base = os.path.basename(file)
-        if not base in bases:
-            bases.append(base)
+        if not base in seen_basenames and len(base.split('_')) == 3:
+            seen_basenames.append(base)
             unique_files.append(file)
     
     logger.debug(f"Unique images: {unique_files}")
