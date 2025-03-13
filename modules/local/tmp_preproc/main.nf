@@ -26,6 +26,9 @@ process pipex_preprocessing {
     done
     channels=`echo \$channels | sed 's/ /,/g'`
 
+    echo "\$(date): pipex_segmentation: Channels to be preprocessed: \$channels" >> ${params.log_file}
+
+    echo "\$(date): pipex_segmentation: Input files: \$channels" >> ${params.log_file}
     ls ./preprocessing_input  >> ${params.log_file}
 
 
