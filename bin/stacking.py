@@ -108,14 +108,21 @@ def main():
     channels_files = args.channels.split()
     output_path = f"{args.patient_id}.h5"
 
-    # # Define the pattern
-    # pattern = r"registered_[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+)+\.h5"
-# 
-    # # Filter strings that match the pattern
-    # nonempty_channels_files = [path for path in channels_files if re.match(pattern, os.path.basename(path))]
 
-    nonempty_channels_files = [path for path in channels_files if len(os.path.basename(path).split('_')) == 3]
+    files = []
+    dirnames = []
+    for path in channels_files:
+        dirname = os.path.dirname(path)
+        base = os.path.basename(path)
+        if '__' in path:
+            files.append(os.path.join(dirname, base.replace('__', '-')))
+        else:
+            files.append(os.path.join(dirname, base))
 
+    nonempty_channels_files = [file for file in files if len(os.path.basename(file).split('_')) == 3]
+    nonempty_channels_files = [file for file in nonempty_channels_files if len(os.path.basename(file).split('.')[0].split('_')[-1]) != 64]
+
+    
     if nonempty_channels_files:
         # Get unique channel paths
         channels_paths = {}
