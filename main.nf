@@ -10,6 +10,8 @@ WorkflowMain.initialise(workflow, params, log)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
+include { split_channels } from './modules/local/split_channels/main.nf'
+include { collect_channels } from './modules/local/collect_channels/main.nf'
 include { get_padding } from './modules/local/image_padding/main.nf'
 include { get_metadata } from './modules/local/image_metadata/main.nf'
 include { apply_padding } from './modules/local/image_padding/main.nf'
@@ -40,12 +42,57 @@ def parse_csv(csv_file_path) {
         }
 }
 
+def parse_csv2(csv_file_path) {
+    csv_file_path
+        .splitCsv(header: true)
+        .map { row ->
+            return [
+                row.patient_id,      // Patient identifier
+                row.image,           // Path to image
+                row.fixed,           // Boolean: true if the image is the fixed one
+            ]
+        }
+}
+
 workflow {
     input_ch = parse_csv(params.input)
-    grouped_input = input_ch.groupTuple()
+
+    split_channels(input_ch)
+
+    preproc_input = split_channels.out.map { it ->
+        def patient_id = it[0]
+        def image = it[1]
+        def tiff_channels = it[2]
+        def is_fixed = it[3]
+
+        tiff_channels.collect { tiff ->
+            return [patient_id, image, tiff, is_fixed]
+        }
+    }
+    .flatMap { it }
+
+    pipex_preprocessing(preproc_input)
+
+    collect_channels_input = pipex_preprocessing.out
+    .groupTuple(by: 0)
+    .collect()
+
+    collect_channels(collect_channels_input)
+
+    csv_files =  collect_channels.out.map { it ->
+        def csv_files = it[3]
+
+        return csv_files
+    }
+
+    h5_input = parse_csv2(csv_files)
+
+    grouped_input = h5_input.groupTuple()
+
+    // grouped_input.view()
 
     check_new_channels(grouped_input)
-
+ 
     get_padding(grouped_input)
 
     joined_channel = input_ch.combine(get_padding.out, by:0)
@@ -139,7 +186,7 @@ workflow {
     stacking(metadata_out)
 
     conversion(stacking.out)
-
+ 
     duplicated_ch = stitching.out.tiff
         .groupTuple()
         .map { tuple ->
@@ -151,8 +198,5 @@ workflow {
 
     deduplicate_files(duplicated_ch)
 
-    preproc_input = deduplicate_files.out
-
-    pipex_preprocessing(preproc_input)
-    pipex_segmentation(pipex_preprocessing.out)
+    pipex_segmentation(deduplicate_files.out)
 }

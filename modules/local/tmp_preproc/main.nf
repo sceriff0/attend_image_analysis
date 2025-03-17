@@ -5,10 +5,10 @@ process pipex_preprocessing {
     container "docker://yinxiu/pipex:latest"
     
     input:
-    tuple val(patient_id), path(tiff)
+    tuple val(patient_id), path(image), path(tiff), val(is_fixed)
 
     output:
-    tuple val(patient_id), path("preprocessing_input/preprocessed"), path(tiff)
+    tuple val(patient_id), path(image), path("preprocessing_input/preprocessed/*tif"), val(is_fixed)
 
     script:
     """
@@ -41,5 +41,12 @@ process pipex_preprocessing {
         -data=./preprocessing_input \
         -preprocess_markers=\$channels \
         -otsu_threshold_levels=0
+
+    cd ./preprocessing_input/preprocessed
+
+    # Combine image basename to output tif file name to create output file
+    for file in *tif; do
+        mv \$file `basename ${image}_\$file`
+    done
     """
 }
