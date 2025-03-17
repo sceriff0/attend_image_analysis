@@ -123,15 +123,18 @@ def save_stacked_crops(areas, fixed_image_path, moving_image_path, reconstructed
     for area in areas:
         logger.debug(f"Affine - processing crop area: {area}")
 
+
         start_row, end_row, start_col, end_col = area
+
 
         fixed_crop = load_h5(fixed_image_path, loading_region=area)
         moving_crop = reconstructed_image[start_row:end_row, start_col:end_col, :]
         patient_id = os.path.basename(moving_image_path)
         output_path = f"{start_row}_{start_col}_{patient_id}.pkl"
         output_path = output_path.replace('padded_', '')
-    
-        if len(np.unique(moving_crop)) != 1 and len(np.unique(fixed_crop)) != 1:
+
+
+        if len(np.unique(moving_crop)) != 1 or len(np.unique(fixed_crop)) != 1:
             logger.debug(f"Affine - computing transformation: {area}")
             try:
                 matrix = compute_affine_mapping_cv2(
@@ -160,7 +163,19 @@ def save_stacked_crops(areas, fixed_image_path, moving_image_path, reconstructed
                            output_path,
                     )
                 else:
-                    raise ValueError("Error to be checked. Look at the image.")
+                    save_pickle((fixed_crop, moving_crop), f"debug_{output_path}")
+                    raise ValueError("Error to be checked. Look at the image")
+        else:
+            logger.debug(f"Affine - saving crop: {output_path}")
+            save_pickle(
+                (
+                    fixed_crop,
+                    moving_crop
+                ),
+                output_path,
+            )
+            logger.debug(f"Affine - saved crop: {output_path}")
+ 
 def main():
     args = _parse_args()
 
