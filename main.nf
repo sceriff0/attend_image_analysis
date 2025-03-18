@@ -89,8 +89,6 @@ workflow {
 
     grouped_input = h5_input.groupTuple()
 
-    // grouped_input.view()
-
     check_new_channels(grouped_input)
  
     get_padding(grouped_input)
