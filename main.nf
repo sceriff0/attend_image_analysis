@@ -54,10 +54,12 @@ def parse_csv2(csv_file_path) {
         }
 }
 
-workflow {
-    input_ch = parse_csv(params.input)
+workflow preprocessing {
+    take:
+    parsed_csv_ch
 
-    split_channels(input_ch)
+    main:
+    split_channels(parsed_csv_ch)
 
     preproc_input = split_channels.out.map { it ->
         def patient_id = it[0]
@@ -85,15 +87,27 @@ workflow {
         return csv_files
     }
 
-    h5_input = parse_csv2(csv_files)
+    preprocessed_parsed_csv_ch = parse_csv2(csv_files)
 
-    grouped_input = h5_input.groupTuple()
+    emit: preprocessed_parsed_csv_ch
+}
+
+workflow {
+    parsed_csv_ch = parse_csv(params.input)
+
+    if (params.preprocessing) {
+        updated_parsed_csv_ch = preprocessing(parsed_csv_ch)
+    } else {
+        updated_parsed_csv_ch = parsed_csv_ch
+    }
+
+    grouped_input = updated_parsed_csv_ch.groupTuple()
 
     check_new_channels(grouped_input)
  
     get_padding(grouped_input)
 
-    joined_channel = input_ch.combine(get_padding.out, by:0)
+    joined_channel = updated_parsed_csv_ch.combine(get_padding.out, by:0)
     
     apply_padding(joined_channel)
 
@@ -183,7 +197,7 @@ workflow {
 
     stacking(metadata_out)
 
-    conversion(stacking.out)
+    // conversion(stacking.out)
  
     duplicated_ch = stitching.out.tiff
         .groupTuple()
