@@ -42,11 +42,15 @@ process pipex_preprocessing {
         -preprocess_markers=\$channels \
         -otsu_threshold_levels=0
 
+    echo "\$(date): pipex_segmentation: Preprocessing complete." >> ${params.log_file}
+
     cd ./preprocessing_input/preprocessed
 
+    echo "\$(date): pipex_segmentation: Renaming output file." >> ${params.log_file}
     # Combine image basename to output tif file name to create output file
     for file in *tif; do
         mv \$file `basename ${image}_\$file`
     done
+    echo "\$(date): pipex_segmentation: output file renamed successfully." >> ${params.log_file}
     """
 }
