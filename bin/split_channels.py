@@ -5,7 +5,7 @@ import os
 import tifffile as tiff
 import logging
 from utils import logging_config
-from utils.io import load_nd2
+from utils.io import load_nd2, load_h5
 
 
 # Set up logging configuration
@@ -51,7 +51,16 @@ def main():
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
-    image = load_nd2(args.image)
+    # image = load_nd2(args.image)
+
+    extension = args.image.split('.')[1]
+    
+
+    if extension == 'nd2':
+        image = load_nd2(args.image)
+    elif extension == 'h5':
+        image = load_h5(args.image)
+    
 
     base = os.path.basename(args.image)
 
