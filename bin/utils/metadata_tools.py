@@ -33,7 +33,7 @@ def get_channel_list():
 
     return channels_list
 
-def get_image_file_shape(file, format=".h5"):
+def get_image_file_shape(file, format=None):
     """
     Get the width and height of a TIFF image without fully loading the image.
 
@@ -43,6 +43,8 @@ def get_image_file_shape(file, format=".h5"):
     Returns:
         tuple: (width, height) of the image.
     """
+    if format is None:
+        format = file.split('.')[-1]
 
     if format == "tiff" or format == ".tiff":
         with tifffile.TiffFile(file) as tiff:

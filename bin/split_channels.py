@@ -73,8 +73,5 @@ def main():
         tiff.imsave(f"{args.patient_id}_{ch}.tiff", image[idx, :, :])
 
 
-
-
-
 if __name__ == "__main__":
     main()

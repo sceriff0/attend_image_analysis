@@ -35,6 +35,11 @@
                     "description": "Path to output directory (the .ome.tiff files).",
                     "examples": ["/path/to/dir"]
                 },
+                "crop_size_preproc": {
+                    "type": "integer",
+                    "description": "Width of crop for preprocessing.",
+                    "examples": [900]
+                },
                 "crop_size_affine": {
                     "type": "integer",
                     "description": "Width of crop for image registration.",
@@ -44,6 +49,11 @@
                     "type": "integer",
                     "description": "Height of crop for image registration.",
                     "examples": [900]
+                },
+                "overlap_size_preproc": {
+                    "type": "integer",
+                    "description": "Horizontal overlap for preprocessing.",
+                    "examples": [300]
                 },
                 "overlap_size_affine": {
                     "type": "integer",
