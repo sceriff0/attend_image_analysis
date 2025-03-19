@@ -202,7 +202,7 @@ def main():
         del fixed, moving
         gc.collect()
 
-        reconstructed_image = np.zeros(moving_shape, dtype='uint16')
+        reconstructed_image = np.zeros(moving_shape)
         areas_affine = get_crops_positions(moving_shape, args.crop_size_affine, args.overlap_size_affine)
         for area in areas_affine:
             logger.debug(f"AREA: {area}")

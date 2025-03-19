@@ -106,16 +106,5 @@ def main():
     tiff.imwrite(reconstructed_channel_file, reconstructed_channel)
 
 
-    # # Save csv with metadata (patient_id and output names)
-    # cwd = os.getcwd()
-    # with open(f"{args.patient_id}.csv", "w") as f:
-    #     f.write("patient_id,image,fixed\n")
-    #     for output_name, is_f in output_names:
-    #         f.write(f"{args.patient_id},{os.path.join(cwd, output_name)},{is_f}\n")
-
-
-
-    
-
 if __name__ == "__main__":
     main()
