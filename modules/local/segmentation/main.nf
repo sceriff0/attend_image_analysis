@@ -1,3 +1,23 @@
+process preprocess_dapi {
+    //cpus 2
+    //memory { task.memory + 10 * task.attempt}
+    
+    input:
+    tuple val(patient_id), path(tiff)
+
+    output:
+    tuple val(patient_id), path("*tiff")
+
+    script:
+    """
+    dapi_preprocessing.py \
+        --patient_id $patient_id \
+        --images $tiff \
+        --log_file ${params.log_file} 
+    """
+}
+
+
 process pipex_segmentation {
     //cpus 2
     //memory { task.memory + 10 * task.attempt}

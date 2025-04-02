@@ -27,6 +27,7 @@ include { check_new_channels } from './modules/local/check_new_channels/main.nf'
 // include { pipex_preprocessing; pipex_segmentation } from './modules/local/pipex/main.nf'
 include { pipex_preprocessing } from './modules/local/preprocessing/main.nf'
 include { pipex_segmentation } from './modules/local/segmentation/main.nf'
+include { preprocess_dapi } from './modules/local/segmentation/main.nf'
 include { deduplicate_files } from './modules/local/deduplicate_files/main.nf'
 
 
@@ -215,9 +216,9 @@ workflow {
         return [it[0], it[1][0], it[2]]
     }
 
-    stacking(metadata_out)
+    // stacking(metadata_out)
 
-    // conversion(stacking.out)
+    conversion(stacking.out)
  
     duplicated_ch = stitching.out.tiff
         .groupTuple()
@@ -230,5 +231,11 @@ workflow {
 
     deduplicate_files(duplicated_ch)
 
-    pipex_segmentation(deduplicate_files.out)
+    // deduplicate_files.out.view()
+
+    preprocess_dapi(deduplicate_files.out)
+
+    preprocess_dapi.out.view()
+
+    pipex_segmentation(preprocess_dapi.out)
 }
