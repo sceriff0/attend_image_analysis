@@ -26,3 +26,30 @@ process quality_control{
             --log_file "${params.log_file}"
     """
 }
+
+process segmentation_quality_control{
+    cpus 1
+    maxRetries = 3
+    // memory { task.memory + 10 * task.attempt}
+    publishDir "${params.outdir}/${patient_id}/segmentation/quality_control", mode: 'copy', pattern: "QC_*"
+    tag "segmentation_quality_control"
+    
+    input:
+        tuple val(patient_id), 
+            path(dapi_image),
+            path(segmentation_mask) 
+
+    output:
+        tuple val(patient_id), path("QC*")
+ 
+    script:
+    """
+    echo "\$(date) Memory allocated to process "segmentation_quality_control": ${task.memory}" >> ${params.log_file}
+
+        quality_control_segmentation.py \
+            --patient_id $patient_id \
+            --dapi_image $dapi_image \
+            --segmentation_mask $segmentation_mask \
+            --log_file "${params.log_file}"
+    """
+}

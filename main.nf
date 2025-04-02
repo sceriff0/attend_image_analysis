@@ -23,8 +23,8 @@ include { stitching } from './modules/local/image_stitching/main.nf'
 include { stacking } from './modules/local/image_stacking/main.nf'
 include { conversion } from './modules/local/image_conversion/main.nf'
 include { quality_control } from './modules/local/quality_control/main.nf'
+include { segmentation_quality_control } from './modules/local/quality_control/main.nf'
 include { check_new_channels } from './modules/local/check_new_channels/main.nf'
-// include { pipex_preprocessing; pipex_segmentation } from './modules/local/pipex/main.nf'
 include { pipex_preprocessing } from './modules/local/preprocessing/main.nf'
 include { pipex_segmentation } from './modules/local/segmentation/main.nf'
 include { preprocess_dapi } from './modules/local/segmentation/main.nf'
@@ -218,7 +218,7 @@ workflow {
 
     // stacking(metadata_out)
 
-    conversion(stacking.out)
+    // conversion(stacking.out)
  
     duplicated_ch = stitching.out.tiff
         .groupTuple()
@@ -238,4 +238,23 @@ workflow {
     preprocess_dapi.out.view()
 
     pipex_segmentation(preprocess_dapi.out)
+
+    pipex_segmentation.out.view()
+
+    segmentation_quality_control_input = pipex_segmentation.out.map { it ->
+            def patient_id = it[0]
+            def dapi = it[1]
+            def cell_data = it[2]
+            def quality_control = it[3]
+            def segmentation_binary_mask  = it[4]
+            def segmentation_data  = it[5]
+            def segmentation_mask  = it[6]
+            def segmentation_mask_show = it[7]
+
+            return [patient_id, dapi, segmentation_mask]
+    }   
+
+    segmentation_quality_control(segmentation_quality_control_input)
+
+    segmentation_quality_control.out.view()
 }

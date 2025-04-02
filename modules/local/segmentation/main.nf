@@ -31,6 +31,7 @@ process pipex_segmentation {
     // tuple val(patient_id), path("analysis/*")
 
     tuple val(patient_id), 
+        path("segmentation_input/*DAPI.tiff"),
         path("segmentation_input/analysis/cell_data.csv"), 
         path("segmentation_input/analysis/quality_control"),
         path("segmentation_input/analysis/segmentation_binary_mask.tif"), 
