@@ -216,9 +216,9 @@ workflow {
         return [it[0], it[1][0], it[2]]
     }
 
-    // stacking(metadata_out)
+    stacking(metadata_out)
 
-    // conversion(stacking.out)
+    conversion(stacking.out)
  
     duplicated_ch = stitching.out.tiff
         .groupTuple()
