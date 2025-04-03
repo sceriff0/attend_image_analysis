@@ -101,17 +101,20 @@ def _parse_args():
     args = parser.parse_args()
     return args
 
+
 #
 def main():
     args = _parse_args()
 
     handler = logging.FileHandler(args.log_file)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
     channel = tiff.imread(args.channel)
-    channel_name = os.path.basename(args.channel).split('.')[0].split('_')[-1]
+    channel_name = os.path.basename(args.channel).split(".")[0].split("_")[-1]
 
     shape = channel.shape
     crop_size = args.crop_size
@@ -122,12 +125,10 @@ def main():
     for pos in crops_positions:
         outname = f"{args.patient_id}_{channel_name}_{pos[0]}_{pos[2]}.tiff"
         logger.debug(f"Crop position: {pos}")
-        crop = channel[pos[0]:pos[1],pos[2]:pos[3]]
+        crop = channel[pos[0] : pos[1], pos[2] : pos[3]]
 
         tiff.imwrite(outname, crop)
 
-
-    
 
 if __name__ == "__main__":
     main()

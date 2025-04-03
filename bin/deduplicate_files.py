@@ -10,6 +10,7 @@ from utils import logging_config
 logging_config.setup_logging()
 logger = logging.getLogger(__name__)
 
+
 def _parse_args():
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser()
@@ -27,7 +28,7 @@ def _parse_args():
         type=str,
         default=None,
         required=True,
-        nargs='*',
+        nargs="*",
         help="String of paths to h5 files (image channels).",
     )
     parser.add_argument(
@@ -41,11 +42,14 @@ def _parse_args():
     args = parser.parse_args()
     return args
 
+
 def main():
     args = _parse_args()
 
     handler = logging.FileHandler(args.log_file)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
@@ -57,16 +61,16 @@ def main():
     seen_basenames = []
     for file in images:
         base = os.path.basename(file)
-        if not base in seen_basenames and len(base.split('_')) == 3:
+        if not base in seen_basenames and len(base.split("_")) == 3:
             seen_basenames.append(base)
             unique_files.append(file)
-    
+
     logger.debug(f"Unique images: {unique_files}")
 
     for file in unique_files:
         logger.debug(f"Copying {file} to current directory")
         shutil.copy(file, "./")
 
-        
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

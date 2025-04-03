@@ -14,11 +14,14 @@ from utils import logging_config
 logging_config.setup_logging()
 logger = logging.getLogger(__name__)
 
+
 def multiply_image_and_scalar(image, s):
     return image * s
 
+
 def power(image, a):
-    return image ** a
+    return image**a
+
 
 def gamma_correction(image, gamma):
     max_intensity = np.max(image)
@@ -27,16 +30,15 @@ def gamma_correction(image, gamma):
     image = multiply_image_and_scalar(image, max_intensity)
 
     return image
-    
+
 
 def dapi_preprocessing(image):
     image = gamma_correction(image, 0.6)
     image = morphology.white_tophat(image, footprint=morphology.disk(50))
-    image = np.array(image, dtype = 'float32')
+    image = np.array(image, dtype="float32")
     image = gaussian(image, sigma=1.0)
 
     return image
-
 
 
 def _parse_args():
@@ -56,7 +58,7 @@ def _parse_args():
         type=str,
         default=None,
         required=True,
-        nargs='*',
+        nargs="*",
         help="List of tiff single channel images.",
     )
     parser.add_argument(
@@ -71,12 +73,13 @@ def _parse_args():
     return args
 
 
-if __name__ == '__main__':
-
+if __name__ == "__main__":
     args = _parse_args()
 
     handler = logging.FileHandler(args.log_file)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
@@ -95,8 +98,3 @@ if __name__ == '__main__':
             outname = f"prep_{filename}"
             logger.info(f"Copying raw channel {file} to {outname}")
             shutil.copy(file, outname)
-
-
-
-
-    

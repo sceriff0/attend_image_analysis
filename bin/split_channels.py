@@ -12,6 +12,7 @@ from utils.io import load_nd2, load_h5
 logging_config.setup_logging()
 logger = logging.getLogger(__name__)
 
+
 def _parse_args():
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser()
@@ -47,25 +48,25 @@ def main():
     args = _parse_args()
 
     handler = logging.FileHandler(args.log_file)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
     # image = load_nd2(args.image)
 
-    extension = args.image.split('.')[1]
-    
+    extension = args.image.split(".")[1]
 
-    if extension == 'nd2':
+    if extension == "nd2":
         image = load_nd2(args.image)
-    elif extension == 'h5':
+    elif extension == "h5":
         image = load_h5(args.image)
-    
 
     base = os.path.basename(args.image)
 
-    if '__' in base:
-        base = base.replace('__', '-')
+    if "__" in base:
+        base = base.replace("__", "-")
 
     channel_names = base.split(".")[0].split("_")[1:][::-1]
 

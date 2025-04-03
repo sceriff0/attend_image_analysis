@@ -36,7 +36,7 @@ def _parse_args():
     parser.add_argument(
         "--crops",
         type=str,
-        nargs='*',
+        nargs="*",
         default=None,
         required=True,
         help="Path to tiff single channel image.",
@@ -72,7 +72,9 @@ def main():
     args = _parse_args()
 
     handler = logging.FileHandler(args.log_file)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
@@ -80,29 +82,27 @@ def main():
 
     crops_files = args.crops
 
-    channel_name = os.path.basename(crops_files[0]).split('.')[1].split('_')[-3]
+    channel_name = os.path.basename(crops_files[0]).split(".")[1].split("_")[-3]
 
     image_name = os.path.basename(args.image)
 
     reconstructed_channel_file = f"{image_name}_{channel_name}.tif"
 
-    original_shape = (get_image_file_shape(args.image)[1], get_image_file_shape(args.image)[2])
+    original_shape = (
+        get_image_file_shape(args.image)[1],
+        get_image_file_shape(args.image)[2],
+    )
 
     reconstructed_channel = np.zeros(original_shape)
     for file in crops_files:
-        sub = os.path.basename(file).split('.')[1].split('_')[-2:]
+        sub = os.path.basename(file).split(".")[1].split("_")[-2:]
         position = tuple([int(pos) for pos in sub])
         crop = tiff.imread(file)
 
         reconstructed_channel = reconstruct_image(
-            reconstructed_channel, 
-            crop, 
-            position, 
-            original_shape, 
-            overlap_size
+            reconstructed_channel, crop, position, original_shape, overlap_size
         )
 
-    
     tiff.imwrite(reconstructed_channel_file, reconstructed_channel)
 
 

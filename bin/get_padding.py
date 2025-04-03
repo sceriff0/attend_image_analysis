@@ -11,9 +11,16 @@ from utils.metadata_tools import get_image_file_shape
 logging_config.setup_logging()
 logger = logging.getLogger(__name__)
 
+
 def get_max_axis_value(files):
-    formats = [os.path.basename(file).split('.')[1] for file in files]
-    shapes = [(get_image_file_shape(file, format=format)[1], get_image_file_shape(file, format=format)[2]) for file, format in zip(files, formats)]
+    formats = [os.path.basename(file).split(".")[1] for file in files]
+    shapes = [
+        (
+            get_image_file_shape(file, format=format)[1],
+            get_image_file_shape(file, format=format)[2],
+        )
+        for file, format in zip(files, formats)
+    ]
     max_shape = tuple(map(max, zip(*shapes)))
 
     return max_shape
@@ -46,7 +53,9 @@ def main():
     args = _parse_args()
 
     handler = logging.FileHandler(args.log_file)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
@@ -54,7 +63,7 @@ def main():
 
     max_shape = get_max_axis_value(files)
 
-    logger.debug(f'MAX SHAPE: {max_shape}')
+    logger.debug(f"MAX SHAPE: {max_shape}")
 
     with open("pad.txt", "w") as file:
         file.write(str(max_shape))

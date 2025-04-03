@@ -14,6 +14,7 @@ from utils.io import load_nd2, load_h5, save_h5
 logging_config.setup_logging()
 logger = logging.getLogger(__name__)
 
+
 def pad_image_to_shape(image, target_shape, constant_values=0):
     if image.shape[:2] != target_shape:
         x, y = image.shape[:2]
@@ -45,7 +46,10 @@ def pad_image_to_shape(image, target_shape, constant_values=0):
 
         # Apply padding
         padded_image = np.pad(
-            image, pad_width=pad_widths, mode="constant", constant_values=constant_values
+            image,
+            pad_width=pad_widths,
+            mode="constant",
+            constant_values=constant_values,
         )
 
         return padded_image
@@ -87,7 +91,9 @@ def main():
     args = _parse_args()
 
     handler = logging.FileHandler(args.log_file)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
@@ -95,25 +101,22 @@ def main():
         data = file.read()
 
     padding_shape = ast.literal_eval(data)
-    file_extension = os.path.basename(args.image).split('.')[1]
+    file_extension = os.path.basename(args.image).split(".")[1]
 
-    if 'nd2' in file_extension:
+    if "nd2" in file_extension:
         padded_image = pad_image_to_shape(
-            np.transpose(load_nd2(args.image), (1, 2, 0)),
-            padding_shape
+            np.transpose(load_nd2(args.image), (1, 2, 0)), padding_shape
         )
         outname = str.replace(os.path.basename(args.image), "nd2", "h5")
-    elif 'h5' in file_extension:
+    elif "h5" in file_extension:
         padded_image = pad_image_to_shape(
-            np.transpose(load_h5(args.image, shape='CYX'), (1, 2, 0)),
-            padding_shape
+            np.transpose(load_h5(args.image, shape="CYX"), (1, 2, 0)), padding_shape
         )
         outname = os.path.basename(args.image)
 
-    
-    output_path = 'padded_' + outname
+    output_path = "padded_" + outname
 
-    logger.debug(f'OUTPUT FILE PADDING: {output_path}')
+    logger.debug(f"OUTPUT FILE PADDING: {output_path}")
     save_h5(padded_image, output_path)
 
     del padded_image
