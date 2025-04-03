@@ -73,6 +73,13 @@ def _parse_args():
 if __name__ == "__main__":
     args = _parse_args()
 
+    handler = logging.FileHandler(args.log_file)
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+
     dapi_image = args.dapi_image
     segmentation_mask = args.segmentation_mask
 

@@ -18,10 +18,10 @@ process preprocess_dapi {
 }
 
 
-process pipex_segmentation {
+process pipex_membrane_segmentation {
     //cpus 2
     //memory { task.memory + 10 * task.attempt}
-    publishDir "${params.outdir}/${patient_id}/segmentation", mode: 'copy'
+    publishDir "${params.outdir}/${patient_id}/segmentation/membrane", mode: 'copy'
     tag "pipex_segmentation"
     container "docker://yinxiu/pipex:latest"
     
@@ -31,13 +31,13 @@ process pipex_segmentation {
     // tuple val(patient_id), path("analysis/*")
 
     tuple val(patient_id), 
-        path("segmentation_input/*DAPI.tiff"),
-        path("segmentation_input/analysis/cell_data.csv"), 
-        path("segmentation_input/analysis/quality_control"),
-        path("segmentation_input/analysis/segmentation_binary_mask.tif"), 
-        path("segmentation_input/analysis/segmentation_data.npy"), 
-        path("segmentation_input/analysis/segmentation_mask.tif"), 
-        path("segmentation_input/analysis/segmentation_mask_show.jpg")
+        path("membrane_segmentation/*DAPI.tiff"),
+        path("membrane_segmentation/analysis/cell_data.csv"), 
+        path("membrane_segmentation/analysis/quality_control"),
+        path("membrane_segmentation/analysis/segmentation_binary_mask.tif"), 
+        path("membrane_segmentation/analysis/segmentation_data.npy"), 
+        path("membrane_segmentation/analysis/segmentation_mask.tif"), 
+        path("membrane_segmentation/analysis/segmentation_mask_show.jpg")
 
     script:
     """
@@ -45,14 +45,14 @@ process pipex_segmentation {
 
     echo "\$(date) Segmentation input files:" >> ${params.log_file}
 
-    mkdir -p ./segmentation_input
+    mkdir -p ./membrane_segmentation
 
     channels=""
     for file in $tiff; do
-        chname=`basename \$file | sed 's/.tiff//g' | sed 's/registered_//g' | cut -d'_' -f2-`
+        chname=`basename \$file | sed 's/.tiff//g' | sed 's/prep_registered_//g' | cut -d'_' -f2-`
         channels+=" \$chname"
 
-        cp \$file ./segmentation_input
+        cp \$file ./membrane_segmentation
     done
     
     channels=`echo \$channels | sed 's/ /,/g'`
@@ -67,12 +67,79 @@ process pipex_segmentation {
     # Segmentation step
 
     python -u -W ignore /pipex/segmentation.py \
-        -data=./segmentation_input \
+        -data=./membrane_segmentation \
+        -measure_markers=\$channels \
         -nuclei_marker=DAPI \
-        -nuclei_diameter=20 \
-        -nuclei_expansion=10 \
+        -nuclei_definition=0.5 \
+        -nuclei_closeness=0.5 \
+        -nuclei_diameter=5 \
+        -nuclei_expansion=15 \
+        -membrane_marker=MEMBRANE \
+        -membrane_diameter=10 \
+        -membrane_compactness=0.9
+
+    echo "\$(date) Image segmentation done." >> ${params.log_file}
+    """
+}
+
+
+process pipex_nuclei_segmentation {
+    //cpus 2
+    //memory { task.memory + 10 * task.attempt}
+    publishDir "${params.outdir}/${patient_id}/segmentation/nuclei", mode: 'copy'
+    tag "pipex_segmentation"
+    container "docker://yinxiu/pipex:latest"
+    
+    input:
+    tuple val(patient_id), path(tiff)
+    output:
+    // tuple val(patient_id), path("analysis/*")
+
+    tuple val(patient_id), 
+        path("nuclei_segmentation/*DAPI.tiff"),
+        path("nuclei_segmentation/analysis/cell_data.csv"), 
+        path("nuclei_segmentation/analysis/quality_control"),
+        path("nuclei_segmentation/analysis/segmentation_binary_mask.tif"), 
+        path("nuclei_segmentation/analysis/segmentation_data.npy"), 
+        path("nuclei_segmentation/analysis/segmentation_mask.tif"), 
+        path("nuclei_segmentation/analysis/segmentation_mask_show.jpg")
+
+    script:
+    """
+    export PIPEX_MAX_RESOLUTION=90000
+
+    echo "\$(date) Segmentation input files:" >> ${params.log_file}
+
+    mkdir -p ./nuclei_segmentation
+
+    channels=""
+    for file in $tiff; do
+        chname=`basename \$file | sed 's/.tiff//g' | sed 's/prep_registered_//g' | cut -d'_' -f2-`
+        channels+=" \$chname"
+
+        cp \$file ./nuclei_segmentation
+    done
+    
+    channels=`echo \$channels | sed 's/ /,/g'`
+    echo "\$(date): pipex_segmentation: Channels to be quantified: \$channels" >> ${params.log_file}
+
+    echo "\$(date) Performing image segmentation..." >> ${params.log_file}
+    
+
+    ##############################################
+    ##############################################
+    ##############################################
+    # Segmentation step
+
+    python -u -W ignore /pipex/segmentation.py \
+        -data=./nuclei_segmentation \
+        -nuclei_marker=DAPI \
+        -nuclei_definition=0.5 \
+        -nuclei_closeness=0.5 \
+        -nuclei_diameter=5 \
         -measure_markers=\$channels
 
     echo "\$(date) Image segmentation done." >> ${params.log_file}
     """
 }
+

@@ -31,13 +31,14 @@ process segmentation_quality_control{
     cpus 1
     maxRetries = 3
     // memory { task.memory + 10 * task.attempt}
-    publishDir "${params.outdir}/${patient_id}/segmentation/quality_control", mode: 'copy', pattern: "QC_*"
+    publishDir "${params.outdir}/${patient_id}/segmentation/quality_control/${type}", mode: 'copy', pattern: "QC_*"
     tag "segmentation_quality_control"
     
     input:
         tuple val(patient_id), 
             path(dapi_image),
-            path(segmentation_mask) 
+            path(segmentation_mask),
+            val(type) 
 
     output:
         tuple val(patient_id), path("QC*")

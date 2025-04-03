@@ -23,12 +23,15 @@ include { stitching } from './modules/local/image_stitching/main.nf'
 include { stacking } from './modules/local/image_stacking/main.nf'
 include { conversion } from './modules/local/image_conversion/main.nf'
 include { quality_control } from './modules/local/quality_control/main.nf'
-include { segmentation_quality_control } from './modules/local/quality_control/main.nf'
 include { check_new_channels } from './modules/local/check_new_channels/main.nf'
 include { pipex_preprocessing } from './modules/local/preprocessing/main.nf'
-include { pipex_segmentation } from './modules/local/segmentation/main.nf'
+include { pipex_membrane_segmentation } from './modules/local/segmentation/main.nf'
+include { pipex_nuclei_segmentation } from './modules/local/segmentation/main.nf'
 include { preprocess_dapi } from './modules/local/segmentation/main.nf'
 include { deduplicate_files } from './modules/local/deduplicate_files/main.nf'
+include { create_membrane_channel } from './modules/local/create_membrane_channel/main.nf'
+include { segmentation_quality_control as nuclei_segmentation_quality_control } from './modules/local/quality_control/main.nf'
+include { segmentation_quality_control as membrane_segmentation_quality_control } from './modules/local/quality_control/main.nf'
 
 
 
@@ -84,21 +87,15 @@ workflow preprocessing {
 
     preprocessed = pipex_preprocessing.out
 
-    // preprocessed.view()
-
     reconstruct_channels(preprocessed)
 
     reconstructed_channels_ch = reconstruct_channels.out
-
-    // reconstructed_channels_ch.view()
 
     collect_channels_input = reconstructed_channels_ch
     .groupTuple(by: 0)
     .collect()
 
     collect_channels(collect_channels_input)
-
-    // collect_channels.out.view()
 
     csv_files =  collect_channels.out.map { it ->
         def csv_files = it[3]
@@ -107,8 +104,6 @@ workflow preprocessing {
     }
 
     preprocessed_parsed_csv_ch = parse_csv2(csv_files)
-
-    // preprocessed_parsed_csv_ch.view()
 
     emit: preprocessed_parsed_csv_ch
 }
@@ -231,17 +226,26 @@ workflow {
 
     deduplicate_files(duplicated_ch)
 
-    // deduplicate_files.out.view()
+    deduplicate_files.out
 
-    preprocess_dapi(deduplicate_files.out)
+    create_membrane_channel(deduplicate_files.out)
 
-    preprocess_dapi.out.view()
+    preprocess_dapi_input = create_membrane_channel.out.map{ it -> 
+        def patient_id = it[0]
+        def markers = it[1]
+        def membrane_marker = it[2]        
 
-    pipex_segmentation(preprocess_dapi.out)
+        return [patient_id, [markers, membrane_marker].flatten()]
+    }
 
-    pipex_segmentation.out.view()
+    preprocess_dapi(preprocess_dapi_input)
 
-    segmentation_quality_control_input = pipex_segmentation.out.map { it ->
+    pipex_segmentation_input = preprocess_dapi.out
+
+    pipex_membrane_segmentation(pipex_segmentation_input)
+    pipex_nuclei_segmentation(pipex_segmentation_input)
+
+    membrane_segmentation_quality_control_input = pipex_membrane_segmentation.out.map { it ->
             def patient_id = it[0]
             def dapi = it[1]
             def cell_data = it[2]
@@ -250,11 +254,25 @@ workflow {
             def segmentation_data  = it[5]
             def segmentation_mask  = it[6]
             def segmentation_mask_show = it[7]
+            def type = 'membrane'
 
-            return [patient_id, dapi, segmentation_mask]
-    }   
+            return [patient_id, dapi, segmentation_mask, type]
+    }
 
-    segmentation_quality_control(segmentation_quality_control_input)
+    nuclei_segmentation_quality_control_input =  pipex_nuclei_segmentation.out.map { it ->
+            def patient_id = it[0]
+            def dapi = it[1]
+            def cell_data = it[2]
+            def quality_control = it[3]
+            def segmentation_binary_mask  = it[4]
+            def segmentation_data  = it[5]
+            def segmentation_mask  = it[6]
+            def segmentation_mask_show = it[7]
+            def type = 'nuclei'
 
-    segmentation_quality_control.out.view()
+            return [patient_id, dapi, segmentation_mask, type]
+    } 
+
+    membrane_segmentation_quality_control(membrane_segmentation_quality_control_input)
+    nuclei_segmentation_quality_control(nuclei_segmentation_quality_control_input)
 }
