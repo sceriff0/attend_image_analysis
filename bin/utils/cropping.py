@@ -119,7 +119,7 @@ def image_reconstruction_loop(crops_files, shape, overlap_size, dtype=None):
 
     for crop_file in crops_files:
         logger.info(f"Loading crop: {crop_file}")
-        crop = load_h5(crop_file, shape='YX')
+        crop = load_h5(crop_file, shape='YX').astype(dtype)
         logger.info(f"Loaded crop: {crop_file}, Shape: {crop.shape}")
 
         if len(shape) > len(crop.shape):

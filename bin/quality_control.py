@@ -31,12 +31,12 @@ def save_dapi_stack(dapi_crops_files, moving_path, fixed_path, shape, overlap_si
     output_path = f'QC_{outname}.tiff'.replace('padded_', '')
 
     reconstructed_image = np.squeeze(
-        image_reconstruction_loop(dapi_crops_files, shape, overlap_size)
+        image_reconstruction_loop(dapi_crops_files, shape, overlap_size, "uint16")
     ).astype("uint16")
 
     fixed_dapi = np.squeeze(
         load_h5(fixed_path, channels_to_load=-1)
-    )
+    ).astype("uint16")
     
     logger.info(f'Quality control - Saving {output_path}')
 

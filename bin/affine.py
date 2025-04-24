@@ -131,7 +131,7 @@ def save_stacked_crops(areas, fixed_image_path, moving_image_path, reconstructed
         output_path = f"{start_row}_{start_col}_{patient_id}.pkl"
         output_path = output_path.replace('padded_', '')
     
-        if len(np.unique(moving_crop)) != 1 and len(np.unique(fixed_crop)) != 1:
+        if len(np.unique(moving_crop[:,:,-1])) != 1 and len(np.unique(fixed_crop[:,:,-1])) != 1:
             logger.debug(f"Affine - computing transformation: {area}")
             try:
                 matrix = compute_affine_mapping_cv2(
@@ -140,7 +140,7 @@ def save_stacked_crops(areas, fixed_image_path, moving_image_path, reconstructed
                 )
                 logger.debug(f"Affine - computed transformation: {area}")
 
-
+ 
                 logger.debug(f"Affine - saving crop: {output_path}")
                 save_pickle(
                     (
@@ -151,16 +151,79 @@ def save_stacked_crops(areas, fixed_image_path, moving_image_path, reconstructed
                 )
                 logger.debug(f"Affine - saved crop: {output_path}")
             except:
-                if np.mean(moving_crop[:,:,-1].squeeze()!=0) < 0.05 or np.mean(fixed_crop[:,:,-1].squeeze()!=0) < 0.05:
+                normalized_fixed_crop = (fixed_crop[:,:,-1] - np.min(fixed_crop[:,:,-1])) / (np.max(fixed_crop[:,:,-1]) - np.min(fixed_crop[:,:,-1]))
+                normalized_moving_crop = (moving_crop[:,:,-1] - np.min(moving_crop[:,:,-1])) / (np.max(moving_crop[:,:,-1]) - np.min(moving_crop[:,:,-1]))
+
+                if np.mean(normalized_moving_crop) < 0.05 or np.mean(normalized_fixed_crop) < 0.05:
                     save_pickle(
                         (
                             fixed_crop,
                             moving_crop
                         ),
-                           output_path,
+                        output_path,
                     )
                 else:
-                    raise ValueError("Error to be checked. Look at the image.")
+                    error_message = "Error in affine transformation. Check the input image."
+                    logger.debug("Raising ValueError: %s", error_message)
+                    raise ValueError(error_message)
+                
+        elif len(np.unique(moving_crop[:,:,-1])) == 1 or len(np.unique(fixed_crop[:,:,-1])) == 1:
+            logger.debug(f"Affine - skipping crop: {output_path}")
+            save_pickle(
+                (
+                    fixed_crop,
+                    moving_crop
+                ),
+                output_path,
+            )
+        else:
+            error_message = "Error in affine transformation. Check the input image."
+            logger.debug("Raising ValueError: %s", error_message)
+            raise ValueError(error_message)
+
+#def save_stacked_crops(areas, fixed_image_path, moving_image_path, reconstructed_image):
+#    for area in areas:
+#        logger.debug(f"Affine - processing crop area: {area}")
+#
+#        start_row, end_row, start_col, end_col = area
+#
+#        fixed_crop = load_h5(fixed_image_path, loading_region=area)
+#        moving_crop = reconstructed_image[start_row:end_row, start_col:end_col, :]
+#        patient_id = os.path.basename(moving_image_path)
+#        output_path = f"{start_row}_{start_col}_{patient_id}.pkl"
+#        output_path = output_path.replace('padded_', '')
+#    
+#        if len(np.unique(moving_crop)) != 1 and len(np.unique(fixed_crop)) != 1:
+#            logger.debug(f"Affine - computing transformation: {area}")
+#            try:
+#                matrix = compute_affine_mapping_cv2(
+#                    y=fixed_crop[:,:,-1].squeeze(),
+#                    x=moving_crop[:,:,-1].squeeze()
+#                )
+#                logger.debug(f"Affine - computed transformation: {area}")
+#
+#
+#                logger.debug(f"Affine - saving crop: {output_path}")
+#                save_pickle(
+#                    (
+#                        fixed_crop,
+#                        apply_mapping(matrix, moving_crop, method="cv2"),
+#                    ),
+#                    output_path,
+#                )
+#                logger.debug(f"Affine - saved crop: {output_path}")
+#            except:
+#                if np.mean(moving_crop[:,:,-1].squeeze()!=0) < 0.05 or np.mean(fixed_crop[:,:,-1].squeeze()!=0) < 0.05:
+#                    save_pickle(
+#                        (
+#                            fixed_crop,
+#                            moving_crop
+#                        ),
+#                           output_path,
+#                    )
+#                else:
+#                    raise ValueError("Error to be checked. Look at the image.")
+
 def main():
     args = _parse_args()
 
