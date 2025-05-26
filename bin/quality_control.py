@@ -19,7 +19,6 @@ from utils import logging_config
 logging_config.setup_logging()
 logger = logging.getLogger(__name__)
 
-
 def normalize_image(image):
     """Normalize each channel of the image independently to [0, 255] uint8."""
     min_val = image.min(axis=(1, 2), keepdims=True)
@@ -27,20 +26,19 @@ def normalize_image(image):
     scaled_image = (image - min_val) / (max_val - min_val) * 255
     return scaled_image.astype(np.uint8)
 
-
-def save_dapi_stack(
-    dapi_crops_files, moving_path, fixed_path, shape, overlap_size, scale=1
-):
+def save_dapi_stack(dapi_crops_files, moving_path, fixed_path, shape, overlap_size, scale=1):
     outname = os.path.basename(moving_path).split(".")[0]
-    output_path = f"QC_{outname}.tiff".replace("padded_", "")
+    output_path = f'QC_{outname}.tiff'.replace('padded_', '')
 
     reconstructed_image = np.squeeze(
-        image_reconstruction_loop(dapi_crops_files, shape, overlap_size)
+        image_reconstruction_loop(dapi_crops_files, shape, overlap_size, "uint16")
     ).astype("uint16")
 
-    fixed_dapi = np.squeeze(load_h5(fixed_path, channels_to_load=-1))
-
-    logger.info(f"Quality control - Saving {output_path}")
+    fixed_dapi = np.squeeze(
+        load_h5(fixed_path, channels_to_load=-1)
+    ).astype("uint16")
+    
+    logger.info(f'Quality control - Saving {output_path}')
 
     # Stack images along the channel axis (c, n, m)
     dapi_stack = np.stack((reconstructed_image, fixed_dapi), axis=0)
@@ -52,9 +50,9 @@ def save_dapi_stack(
     dapi_stack = normalize_image(dapi_stack)
 
     # Downsample each channel separately
-    downsampled_image = np.array(
-        [rescale(channel, scale=0.25, anti_aliasing=True) for channel in dapi_stack]
-    )
+    downsampled_image = np.array([
+        rescale(channel, scale=0.25, anti_aliasing=True) for channel in dapi_stack
+    ])
 
     del dapi_stack
     gc.collect()
@@ -66,8 +64,7 @@ def save_dapi_stack(
     downsampled_image = downsampled_image.astype(np.uint8)
 
     tiff.imwrite(output_path, downsampled_image, imagej=True)
-
-
+    
 def touch(file_path):
     # Check if the file exists
     if os.path.exists(file_path):
@@ -75,9 +72,8 @@ def touch(file_path):
         os.utime(file_path, None)
     else:
         # Create an empty file
-        with open(file_path, "a"):
+        with open(file_path, 'a'):
             os.utime(file_path, None)
-
 
 def _parse_args():
     """Parse command-line arguments."""
@@ -96,7 +92,7 @@ def _parse_args():
         type=str,
         default=None,
         required=True,
-        nargs="+",
+        nargs='+',
         help="A list of crops (DAPI channel)",
     )
     parser.add_argument(
@@ -105,7 +101,7 @@ def _parse_args():
         type=str,
         default=None,
         required=True,
-        nargs="+",
+        nargs='+',
         help="A list of crops",
     )
     parser.add_argument(
@@ -163,19 +159,15 @@ def main():
     args = _parse_args()
 
     handler = logging.FileHandler(args.log_file)
-    formatter = logging.Formatter(
-        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    )
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
-    original_shape = get_image_file_shape(args.moving, format=".h5")
+    original_shape = get_image_file_shape(args.moving, format='.h5')
 
     matches = []
     for crop_name in args.crops:
-        matches.append(
-            len(crop_name.split(".")[0].split("_")[-1]) == 64
-        )  # Check if filename ends in a 64 characters hash
+        matches.append(len(crop_name.split('.')[0].split('_')[-1]) == 64) # Check if filename ends in a 64 characters hash
 
     if not all(matches):
         crops_files = args.crops
@@ -184,12 +176,9 @@ def main():
 
         if not isinstance(cr, int):
             shape = (original_shape[0], original_shape[1])
-            save_dapi_stack(
-                dapi_crops_files, args.moving, args.fixed, shape, args.overlap_size
-            )
+            save_dapi_stack(dapi_crops_files, args.moving, args.fixed, shape, args.overlap_size)
     else:
         touch(f"QCNULL_{args.patient_id}.tiff")
-
 
 if __name__ == "__main__":
     main()

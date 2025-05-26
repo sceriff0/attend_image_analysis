@@ -138,8 +138,8 @@ def main():
             if image_base in ch:
                 channels_to_be_collected.append((ch, is_f))
 
-        # logger.debug(f"Channels in image {image_base}: {channels_in_image}")
-        # logger.debug(f"Channels to be collected: {channels_to_be_collected}")
+        logger.debug(f"Channels in image {image_base}: {channels_in_image}")
+        logger.debug(f"Channels to be collected: {channels_to_be_collected}")
 
         sorted_channels = sorted(
             channels_to_be_collected,

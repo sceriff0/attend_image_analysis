@@ -160,6 +160,9 @@ workflow {
 
     affine(affine_input)
 
+    
+
+
     crops_data = affine.out.map { it ->
         def patient_id = it[0]
         def moving_image = it[1]
@@ -167,11 +170,23 @@ workflow {
         def crops_paths = it[3] // Paths to *.pkl files
         def channels_to_register = it[4]
 
-        return crops_paths.collect { crops_path ->                    
-            return [patient_id, moving_image, fixed_image, crops_path, channels_to_register]
+        if (crops_paths.getClass() == sun.nio.fs.UnixPath) {
+            // Handle the case where aug_data is a String
+            return [patient_id, moving_image, fixed_image, crops_paths, channels_to_register].collate(5)
+        } else if (crops_paths instanceof List) {
+            // Handle the case where aug_data is a List
+            return crops_paths.collect { crops_path ->                    
+                return [patient_id, moving_image, fixed_image, crops_path, channels_to_register]
+            }
         }
+        
+        // return crops_paths.collect { crops_path ->                    
+        //     return [patient_id, moving_image, fixed_image, crops_path, channels_to_register]
+        // }
     } 
     .flatMap { it }
+
+    crops_data.view()
 
     diffeomorphic(crops_data)
 
@@ -211,9 +226,11 @@ workflow {
         return [it[0], it[1][0], it[2]]
     }
 
-    stacking(metadata_out)
 
-    conversion(stacking.out)
+    if (params.conversion) {
+        stacking(metadata_out)
+        conversion(stacking.out)
+    }
  
     duplicated_ch = stitching.out.tiff
         .groupTuple()
@@ -242,22 +259,7 @@ workflow {
 
     pipex_segmentation_input = preprocess_dapi.out
 
-    pipex_membrane_segmentation(pipex_segmentation_input)
     pipex_nuclei_segmentation(pipex_segmentation_input)
-
-    membrane_segmentation_quality_control_input = pipex_membrane_segmentation.out.map { it ->
-            def patient_id = it[0]
-            def dapi = it[1]
-            def cell_data = it[2]
-            def quality_control = it[3]
-            def segmentation_binary_mask  = it[4]
-            def segmentation_data  = it[5]
-            def segmentation_mask  = it[6]
-            def segmentation_mask_show = it[7]
-            def type = 'membrane'
-
-            return [patient_id, dapi, segmentation_mask, type]
-    }
 
     nuclei_segmentation_quality_control_input =  pipex_nuclei_segmentation.out.map { it ->
             def patient_id = it[0]
@@ -273,6 +275,5 @@ workflow {
             return [patient_id, dapi, segmentation_mask, type]
     } 
 
-    membrane_segmentation_quality_control(membrane_segmentation_quality_control_input)
     nuclei_segmentation_quality_control(nuclei_segmentation_quality_control_input)
 }

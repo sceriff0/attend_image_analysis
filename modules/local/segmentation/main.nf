@@ -131,7 +131,7 @@ process pipex_nuclei_segmentation {
     ##############################################
     # Segmentation step
 
-    python -u -W ignore /pipex/segmentation.py \
+    python -u -W ignore /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/bin/segmentation.py \
         -data=./nuclei_segmentation \
         -nuclei_marker=DAPI \
         -nuclei_definition=0.5 \
@@ -139,7 +139,17 @@ process pipex_nuclei_segmentation {
         -nuclei_diameter=5 \
         -measure_markers=\$channels
 
+
     echo "\$(date) Image segmentation done." >> ${params.log_file}
     """
 }
+
+
+    // python -u -W ignore /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/bin/segmentation.py \
+    //     -data=./nuclei_segmentation \
+    //     -nuclei_marker=DAPI \
+    //     -nuclei_definition=0.5 \
+    //     -nuclei_closeness=0.5 \
+    //     -nuclei_diameter=5 \
+    //     -measure_markers=\$channels
 

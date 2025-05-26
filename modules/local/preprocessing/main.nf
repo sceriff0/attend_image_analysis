@@ -37,7 +37,7 @@ process pipex_preprocessing {
     ##############################################
     # Preprocessing step
 
-    python -u -W ignore /pipex/preprocessing.py \
+    python -u -W ignore /hpcnfs/scratch/DIMA/chiodin/repositories/attend_image_analysis/bin/pipex_preprocessing.py \
         -data=./preprocessing_input \
         -preprocess_markers=\$channels \
         -otsu_threshold_levels=0

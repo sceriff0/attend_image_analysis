@@ -10,7 +10,6 @@ from utils.io import load_h5
 logging_config.setup_logging()
 logger = logging.getLogger(__name__)
 
-
 def create_crops(image, crop_size, overlap_size):
     """
     Create overlapping crops from a 3D image.
@@ -39,15 +38,12 @@ def create_crops(image, crop_size, overlap_size):
 
     return crops, positions
 
-
 def get_crop_areas(shape, n_crops):
     if int(np.sqrt(n_crops)) != np.sqrt(n_crops):
-        ValueError(
-            "Argument `n_crops` must be a number whose square root is an integer."
-        )
+            ValueError('Argument `n_crops` must be a number whose square root is an integer.')
 
     n_crops = int(np.sqrt(n_crops))
-
+    
     # Calculate row and column step size based on n_crops
     row_step = shape[0] // n_crops
     col_step = shape[1] // n_crops
@@ -63,7 +59,6 @@ def get_crop_areas(shape, n_crops):
             crop_areas.append((top, bottom, left, right))
 
     return crop_areas
-
 
 def reconstruct_image(reconstructed, crop, position, original_shape, overlap_size):
     """
@@ -113,10 +108,9 @@ def reconstruct_image(reconstructed, crop, position, original_shape, overlap_siz
 
     return reconstructed
 
-
 def image_reconstruction_loop(crops_files, shape, overlap_size, dtype=None):
     if dtype is None:
-        dtype = load_h5(crops_files[0], shape="YX").dtype
+        dtype = load_h5(crops_files[0], shape='YX').dtype
 
     logger.debug(f"Reconstruction dtype: {dtype}")
 
@@ -125,7 +119,7 @@ def image_reconstruction_loop(crops_files, shape, overlap_size, dtype=None):
 
     for crop_file in crops_files:
         logger.info(f"Loading crop: {crop_file}")
-        crop = load_h5(crop_file, shape="YX")
+        crop = load_h5(crop_file, shape='YX').astype(dtype)
         logger.info(f"Loaded crop: {crop_file}, Shape: {crop.shape}")
 
         if len(shape) > len(crop.shape):
@@ -133,8 +127,6 @@ def image_reconstruction_loop(crops_files, shape, overlap_size, dtype=None):
 
         x, y = map(int, os.path.basename(crop_file).split("_")[1:3])
         position = (x, y)
-        reconstructed_image = reconstruct_image(
-            reconstructed_image, crop, position, (shape[0], shape[1]), overlap_size
-        )
-
+        reconstructed_image = reconstruct_image(reconstructed_image, crop, position, (shape[0], shape[1]), overlap_size)
+    
     return reconstructed_image

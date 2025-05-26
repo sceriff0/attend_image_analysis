@@ -32,7 +32,9 @@ def apply_mapping(mapping, x, method="dipy"):
     return mapped
 
 
-def compute_affine_mapping_cv2(y: np.ndarray, x: np.ndarray, n_features=2000):
+def compute_affine_mapping_cv2(
+    y: np.ndarray, x: np.ndarray, n_features=2000
+):
     """
     Compute affine mapping using OpenCV.
 
@@ -61,6 +63,7 @@ def compute_affine_mapping_cv2(y: np.ndarray, x: np.ndarray, n_features=2000):
         raise ValueError("Object 'descriptors1' is None")
     elif descriptors2 is None:
         raise ValueError("Object 'descriptors2' is None")
+
 
     # Convert descriptors to uint8 if they are not already in that format
     if descriptors1 is not None and descriptors1.dtype != np.uint8:
