@@ -217,7 +217,7 @@ def main():
                 matrix, 
                 load_h5(args.moving_image, loading_region=area), # uint16 
                 method="cv2"
-            )  
+            ).astype('uint16')  # Ensure the crop is in uint16 format
             logger.debug(f"AFFINE: transformed CROP image dtype : {crop.dtype}")  
 
             logger.debug(f"CROP SHAPE: {crop.shape}")

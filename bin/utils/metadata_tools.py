@@ -30,6 +30,7 @@ def get_channel_list():
         "PD1",  # Membrane
         "PDL1",  # Membrane
         "L1CAM",  # Membrane
+        "ARPC1B"
     ]
 
     return channels_list

@@ -67,33 +67,38 @@ workflow preprocessing {
     main:
     split_channels(parsed_csv_ch)
 
-    crop_channels_input = split_channels.out.map { it ->
-        def patient_id = it[0]
-        def image = it[1]
-        def tiff_channels = it[2]
-        def is_fixed = it[3] 
+    // crop_channels_input = split_channels.out.map { it ->
+    //     def patient_id = it[0]
+    //     def image = it[1]
+    //     def tiff_channels = it[2]
+    //     def is_fixed = it[3] 
+// 
+    //     tiff_channels.collect { tiff ->
+    //         return [patient_id, image, tiff, is_fixed]
+    //     }
+    // }
+    // .flatMap { it }
+// 
+    // crop_channels(crop_channels_input)
+// 
+    // preproc_input = crop_channels.out
+// 
+    pipex_preprocessing(split_channels.out)
 
-        tiff_channels.collect { tiff ->
-            return [patient_id, image, tiff, is_fixed]
-        }
-    }
-    .flatMap { it }
+    preprocessed_ch = pipex_preprocessing.out
 
-    crop_channels(crop_channels_input)
+    // preprocessed_ch.view()
 
-    preproc_input = crop_channels.out
+    // reconstruct_channels(preprocessed)
 
-    pipex_preprocessing(preproc_input)
+    // reconstructed_channels_ch = reconstruct_channels.out
 
-    preprocessed = pipex_preprocessing.out
-
-    reconstruct_channels(preprocessed)
-
-    reconstructed_channels_ch = reconstruct_channels.out
-
-    collect_channels_input = reconstructed_channels_ch
+    collect_channels_input = preprocessed_ch
     .groupTuple(by: 0)
     .collect()
+    .view()
+
+    // collect_channels_input.view()
 
     collect_channels(collect_channels_input)
 
@@ -111,11 +116,13 @@ workflow preprocessing {
 workflow {
     parsed_csv_ch = parse_csv(params.input)
 
-    if (params.preprocessing) {
-        updated_parsed_csv_ch = preprocessing(parsed_csv_ch)
-    } else {
-        updated_parsed_csv_ch = parsed_csv_ch
-    }
+    updated_parsed_csv_ch = preprocessing(parsed_csv_ch)
+    
+    // if (params.preprocessing) {
+    //     updated_parsed_csv_ch = preprocessing(parsed_csv_ch)
+    // } else {
+    //     updated_parsed_csv_ch = parsed_csv_ch
+    // }
 
     grouped_input = updated_parsed_csv_ch.groupTuple()
 
@@ -204,76 +211,77 @@ workflow {
     }
 
     stitching(collapsed)
-    quality_control(collapsed)
-
-    grouped_stitching_out = stitching.out.h5.groupTuple()
-
-    stitching_out = grouped_stitching_out.map { entry ->
-        def channels = entry[1].flatten()
-        return [
-            entry[0],
-            channels
-        ]
-    }
-
-    meta_input = grouped_input.combine(stitching_out, by: 0).map{
-        return [it[0], it[1], it[3]]
-    }
-
-    get_metadata(meta_input) 
-
-    metadata_out = get_metadata.out.groupTuple().map{
-        return [it[0], it[1][0], it[2]]
-    }
-
-
-    if (params.conversion) {
-        stacking(metadata_out)
-        conversion(stacking.out)
-    }
- 
-    duplicated_ch = stitching.out.tiff
-        .groupTuple()
-        .map { tuple ->
-            def patient_id = tuple[0]
-            def tiff_files = tuple[1].flatten()
-
-            return [patient_id, tiff_files]
-        }
-
-    deduplicate_files(duplicated_ch)
-
-    deduplicate_files.out
-
-    create_membrane_channel(deduplicate_files.out)
-
-    preprocess_dapi_input = create_membrane_channel.out.map{ it -> 
-        def patient_id = it[0]
-        def markers = it[1]
-        def membrane_marker = it[2]        
-
-        return [patient_id, [markers, membrane_marker].flatten()]
-    }
-
-    preprocess_dapi(preprocess_dapi_input)
-
-    pipex_segmentation_input = preprocess_dapi.out
-
-    pipex_nuclei_segmentation(pipex_segmentation_input)
-
-    nuclei_segmentation_quality_control_input =  pipex_nuclei_segmentation.out.map { it ->
-            def patient_id = it[0]
-            def dapi = it[1]
-            def cell_data = it[2]
-            def quality_control = it[3]
-            def segmentation_binary_mask  = it[4]
-            def segmentation_data  = it[5]
-            def segmentation_mask  = it[6]
-            def segmentation_mask_show = it[7]
-            def type = 'nuclei'
-
-            return [patient_id, dapi, segmentation_mask, type]
-    } 
-
-    nuclei_segmentation_quality_control(nuclei_segmentation_quality_control_input)
-}
+    
+    // quality_control(collapsed)
+// 
+    // grouped_stitching_out = stitching.out.h5.groupTuple()
+// 
+    // stitching_out = grouped_stitching_out.map { entry ->
+    //     def channels = entry[1].flatten()
+    //     return [
+    //         entry[0],
+    //         channels
+    //     ]
+    // }
+// 
+    // meta_input = grouped_input.combine(stitching_out, by: 0).map{
+    //     return [it[0], it[1], it[3]]
+    // }
+// 
+    // get_metadata(meta_input) 
+// 
+    // metadata_out = get_metadata.out.groupTuple().map{
+    //     return [it[0], it[1][0], it[2]]
+    // }
+// 
+// 
+    // if (params.conversion) {
+    //     stacking(metadata_out)
+    //     conversion(stacking.out)
+    // }
+ // 
+    // duplicated_ch = stitching.out.tiff
+    //     .groupTuple()
+    //     .map { tuple ->
+    //         def patient_id = tuple[0]
+    //         def tiff_files = tuple[1].flatten()
+// 
+    //         return [patient_id, tiff_files]
+    //     }
+// 
+    // deduplicate_files(duplicated_ch)
+// 
+    // deduplicate_files.out
+// 
+    // create_membrane_channel(deduplicate_files.out)
+// 
+    // preprocess_dapi_input = create_membrane_channel.out.map{ it -> 
+    //     def patient_id = it[0]
+    //     def markers = it[1]
+    //     def membrane_marker = it[2]        
+// 
+    //     return [patient_id, [markers, membrane_marker].flatten()]
+    // }
+// 
+    // preprocess_dapi(preprocess_dapi_input)
+// 
+    // pipex_segmentation_input = preprocess_dapi.out
+// 
+    // pipex_nuclei_segmentation(pipex_segmentation_input)
+// 
+    // nuclei_segmentation_quality_control_input =  pipex_nuclei_segmentation.out.map { it ->
+    //         def patient_id = it[0]
+    //         def dapi = it[1]
+    //         def cell_data = it[2]
+    //         def quality_control = it[3]
+    //         def segmentation_binary_mask  = it[4]
+    //         def segmentation_data  = it[5]
+    //         def segmentation_mask  = it[6]
+    //         def segmentation_mask_show = it[7]
+    //         def type = 'nuclei'
+// 
+    //         return [patient_id, dapi, segmentation_mask, type]
+    // } 
+// 
+    // nuclei_segmentation_quality_control(nuclei_segmentation_quality_control_input)
+} 
