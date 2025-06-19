@@ -5,6 +5,7 @@ import math
 import numpy as np
 import argparse
 import os
+os.environ["JAX_PLATFORM_NAME"] = "cpu"
 import logging
 from basicpy import BaSiC
 import tifffile as tiff
@@ -101,6 +102,7 @@ def crop_image_to_grid(img, crop_height, crop_width):
             x_start = col * crop_width
             x_end = x_start + crop_width
             crop = img[y_start:y_end, x_start:x_end]
+            
             crops.append(crop)
 
     return np.stack(crops, axis=0)
@@ -193,8 +195,8 @@ if __name__ == "__main__":
     image = args.image
     os.makedirs(args.output_dir, exist_ok=True)
     
-    # fov_size = (1950, 1950)
-    fov_size = (512, 512)
+    fov_size = (1950, 1950)
+    # fov_size = (512, 512)
     scale_factor = 1.0
     autotune = True
 
@@ -224,6 +226,18 @@ if __name__ == "__main__":
         cropped = crop_image_to_grid(image, crop_height=crop_height, crop_width=crop_width)
 
         print(f'Image shape: {image.shape}, Crop height: {crop_height}, Crop width: {crop_width}')
+        print(f'Cropped shape: {cropped.shape}')
+
+        # Force C-contiguity (critical for JAX)
+
+        # cropped = np.ascontiguousarray(cropped)
+        # 
+        # # Sanity check for NaNs/Infs
+# 
+        # assert not np.isnan(cropped).any(), "NaN values in cropped array"
+# 
+        # assert not np.isinf(cropped).any(), "Inf values in cropped array"
+ 
 
         basic = BaSiC(get_darkfield=True)
 
@@ -266,4 +280,4 @@ if __name__ == "__main__":
 
     print("Writing out")
     #tiff.imwrite(output_path, preprocessed)
-    save_h5(preprocessed, output_path.replace('.tiff', '.h5'))
+    save_h5(preprocessed, output_path.replace('.nd2', '.h5'))
