@@ -1,7 +1,8 @@
 process pipex_preprocessing {
     //cpus 2
-    //memory { task.memory + 10 * task.attempt}
+    memory { 300.GB }
     tag "basicpy_preprocessing"
+    container 'docker://alech00/attend_image_analysis:v2.1'
     
     input:
     tuple val(patient_id), path(image), path(tiff), val(is_fixed)
