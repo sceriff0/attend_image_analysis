@@ -151,21 +151,18 @@ def save_stacked_crops(areas, fixed_image_path, moving_image_path, reconstructed
                 )
                 logger.debug(f"Affine - saved crop: {output_path}")
             except:
-                normalized_fixed_crop = (fixed_crop[:,:,-1] - np.min(fixed_crop[:,:,-1])) / (np.max(fixed_crop[:,:,-1]) - np.min(fixed_crop[:,:,-1]))
-                normalized_moving_crop = (moving_crop[:,:,-1] - np.min(moving_crop[:,:,-1])) / (np.max(moving_crop[:,:,-1]) - np.min(moving_crop[:,:,-1]))
-
-                if np.mean(normalized_moving_crop) < 0.05 or np.mean(normalized_fixed_crop) < 0.05:
-                    save_pickle(
-                        (
-                            fixed_crop,
-                            moving_crop
-                        ),
-                        output_path,
-                    )
-                else:
-                    error_message = "Error in affine transformation. Check the input image."
-                    logger.debug("Raising ValueError: %s", error_message)
-                    raise ValueError(error_message)
+                #if np.mean(fixed_crop!=0) < 0.1 or np.mean(moving_crop!=0) < 0.1:
+                save_pickle(
+                    (
+                        fixed_crop,
+                        moving_crop
+                    ),
+                    output_path,
+                )
+                #else:
+                #    error_message = "Error in affine transformation. Check the input image."
+                #    logger.debug("Raising ValueError: %s", error_message)
+                #    raise ValueError(error_message)
                 
         elif len(np.unique(moving_crop[:,:,-1])) == 1 or len(np.unique(fixed_crop[:,:,-1])) == 1:
             logger.debug(f"Affine - skipping crop: {output_path}")
@@ -217,8 +214,15 @@ def main():
                 matrix, 
                 load_h5(args.moving_image, loading_region=area), # uint16 
                 method="cv2"
-            ).astype('uint16')  # Ensure the crop is in uint16 format
+            )
+
             logger.debug(f"AFFINE: transformed CROP image dtype : {crop.dtype}")  
+            logger.debug(f"AFFINE: transformed CROP image min and max: {np.min(crop)} , {np.max(crop)}")  
+            
+            crop = crop.astype('uint16')  # Ensure the crop is in uint16 format
+            logger.debug(f"AFFINE: transformed CROP image dtype : {crop.dtype}")
+            logger.debug(f"AFFINE: transformed CROP image min and max: {np.min(crop)} , {np.max(crop)}")  
+            # logger.debug(f"AFFINE: all zeros in CROP: {np.all(crop == 0)}")
 
             logger.debug(f"CROP SHAPE: {crop.shape}")
             reconstructed_image = reconstruct_image(
