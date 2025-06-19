@@ -138,7 +138,7 @@ def main():
             
             fixed_channels = os.path.basename(args.fixed).replace('padded_', '') \
                 .split('.')[0] \
-                .split('_')[1:] \
+                .split('_')[2:] \
                 [::-1] # Select all channels and reverse list
             
             moving_channels_to_export = remove_lowercase_channels(moving_channels)
@@ -147,10 +147,10 @@ def main():
 
             # Save moving channels
             for idx, ch in enumerate(moving_channels_to_export_no_dapi):
-                save_h5(
-                    np.expand_dims(reconstructed_image[:,:,idx], axis=0).astype(np.float32), 
-                    f"registered_{args.patient_id}_{ch}.h5"
-                )
+                # save_h5(
+                #     np.expand_dims(reconstructed_image[:,:,idx], axis=0).astype(np.float32), 
+                #     f"registered_{args.patient_id}_{ch}.h5"
+                # )
                 save_tiff(reconstructed_image[:,:,idx], 
                     f"registered_{args.patient_id}_{ch}.tiff")
             
@@ -160,10 +160,10 @@ def main():
                 image = image.astype(np.float32)
                 save_tiff(image, f"registered_{args.patient_id}_{ch}.tiff")
                 image = np.expand_dims(image, axis=0)
-                save_h5(
-                    image, 
-                    f"registered_{args.patient_id}_{ch}.h5"
-                )
+                # save_h5(
+                #     image, 
+                #     f"registered_{args.patient_id}_{ch}.h5"
+                # )
                 
     else:
         tiff.imwrite(
@@ -171,10 +171,10 @@ def main():
             0
         )
 
-        save_h5(
-                0, 
-                f"registered_{args.patient_id}.h5"
-            )
+        # save_h5(
+        #         0, 
+        #         f"registered_{args.patient_id}.h5"
+        # )
 
 
 
