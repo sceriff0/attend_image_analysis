@@ -1,7 +1,7 @@
 process split_channels{
     cpus 1
     maxRetries = 3
-    memory { 1.GB * task.attempt }
+    memory { 50.GB * task.attempt }
     tag "split_channels"
 
     input:
