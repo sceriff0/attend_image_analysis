@@ -104,7 +104,7 @@ def main():
     if current_channels_to_register_no_dapi:
         if any([e for e in current_channels_to_register_no_dapi if e in channels_to_register]):
             fixed, moving = load_pickle(args.crop_image)
-            if len(np.unique(moving)) != 1 and len(np.unique(fixed)) != 1:
+            if len(np.unique(moving[:,:,-1])) != 1 and len(np.unique(fixed[:,:,-1])) != 1:
                 logger.debug(f"Computing mapping: {args.crop_image}")
                 mapping = compute_diffeomorphic_mapping_dipy(
                     y=fixed[:, :, -1].squeeze(), 
@@ -132,7 +132,7 @@ def main():
                     output_path
                 )
 
-            elif len(np.unique(moving)) == 1 or len(np.unique(fixed)) == 1:
+            elif len(np.unique(moving[:,:,-1])) == 1 or len(np.unique(fixed[:,:,-1])) == 1:
                 moving_channels_images = []
                 for idx, ch in enumerate(moving_channels_no_dapi):
                     if ch in current_channels_to_register_no_dapi:
