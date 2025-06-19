@@ -8,7 +8,7 @@ process stitching{
     input:
         tuple val(patient_id), path(moving), path(fixed), path(dapi_crops), path(crops)
     output:
-        tuple val(patient_id), path("registered_${patient_id}*h5"), emit: "h5"
+        // tuple val(patient_id), path("registered_${patient_id}*h5"), emit: "h5"
         tuple val(patient_id), path("registered_${patient_id}*tiff"), emit: "tiff"
  
     script:
