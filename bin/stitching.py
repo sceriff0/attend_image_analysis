@@ -133,7 +133,7 @@ def main():
 
             moving_channels = os.path.basename(args.moving).replace('padded_', '') \
                 .split('.')[0] \
-                .split('_')[2:] \
+                .split('_')[3:] \
                 [::-1] # Select first two channels (omit DAPI) and reverse list
             
             fixed_channels = os.path.basename(args.fixed).replace('padded_', '') \
