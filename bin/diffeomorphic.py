@@ -152,13 +152,21 @@ def main():
                     output_path_dapi
                 )
         else:
+            # Generate random bytes
+            random_data = os.urandom(16)
+
+            # Create a hash object using SHA256
+            hash_object = hashlib.sha256(random_data)
+
+            # Get the hexadecimal representation of the hash
+            random_hash = hash_object.hexdigest()
             save_h5(
                 0, 
-                f"registered_0_0_{patient_id}.h5"
+                f"registered_0_0_{patient_id}_{random_hash}.h5"
             )
             save_h5(
                 0, 
-                f"qc_0_0_{patient_id}.h5"
+                f"qc_0_0_{patient_id}_{random_hash}.h5"
             )
     else:
         # Generate random bytes
