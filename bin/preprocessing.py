@@ -234,4 +234,13 @@ if __name__ == "__main__":
     preprocessed = np.stack(preprocessed, axis=0)
 
     logger.info("Writing out")
-    save_h5(preprocessed, output_path.replace('.nd2', '.h5'))
+
+    if output_path.endswith('.nd2'):
+        output_path = output_path.replace('.nd2', '.h5')
+    
+    elif output_path.endswith('.tiff'):
+        output_path = output_path.replace('.tiff', '.h5')
+    else:
+        ValueError("Input path must end with .nd2 or .tiff")
+
+    save_h5(preprocessed, output_path)
