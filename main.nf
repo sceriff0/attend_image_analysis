@@ -24,7 +24,7 @@ include { stacking } from './modules/local/image_stacking/main.nf'
 include { conversion } from './modules/local/image_conversion/main.nf'
 include { quality_control } from './modules/local/quality_control/main.nf'
 include { check_new_channels } from './modules/local/check_new_channels/main.nf'
-include { pipex_preprocessing } from './modules/local/preprocessing/main.nf'
+include { preprocessing_basicpy } from './modules/local/preprocessing/main.nf'
 include { pipex_membrane_segmentation } from './modules/local/segmentation/main.nf'
 include { pipex_nuclei_segmentation } from './modules/local/segmentation/main.nf'
 include { preprocess_dapi } from './modules/local/segmentation/main.nf'
@@ -67,38 +67,15 @@ workflow preprocessing {
     main:
     split_channels(parsed_csv_ch)
 
-    // crop_channels_input = split_channels.out.map { it ->
-    //     def patient_id = it[0]
-    //     def image = it[1]
-    //     def tiff_channels = it[2]
-    //     def is_fixed = it[3] 
-// 
-    //     tiff_channels.collect { tiff ->
-    //         return [patient_id, image, tiff, is_fixed]
-    //     }
-    // }
-    // .flatMap { it }
-// 
-    // crop_channels(crop_channels_input)
-// 
-    // preproc_input = crop_channels.out
-// 
-    pipex_preprocessing(split_channels.out)
+    preprocessing_basicpy(split_channels.out)
 
-    preprocessed_ch = pipex_preprocessing.out
+    preprocessed_ch = preprocessing_basicpy.out
 
-    // preprocessed_ch.view()
-
-    // reconstruct_channels(preprocessed)
-
-    // reconstructed_channels_ch = reconstruct_channels.out
+    preprocessed_ch.view()
 
     collect_channels_input = preprocessed_ch
     .groupTuple(by: 0)
     .collect()
-    .view()
-
-    // collect_channels_input.view()
 
     collect_channels(collect_channels_input)
 
@@ -115,14 +92,14 @@ workflow preprocessing {
 
 workflow {
     parsed_csv_ch = parse_csv(params.input)
-
-    updated_parsed_csv_ch = preprocessing(parsed_csv_ch)
     
-    // if (params.preprocessing) {
-    //     updated_parsed_csv_ch = preprocessing(parsed_csv_ch)
-    // } else {
-    //     updated_parsed_csv_ch = parsed_csv_ch
-    // }
+    if (params.preprocessing) {
+        updated_parsed_csv_ch = preprocessing(parsed_csv_ch)
+    } else {
+        updated_parsed_csv_ch = parsed_csv_ch
+    }
+
+    updated_parsed_csv_ch.view()
 
     grouped_input = updated_parsed_csv_ch.groupTuple()
 
@@ -186,14 +163,10 @@ workflow {
                 return [patient_id, moving_image, fixed_image, crops_path, channels_to_register]
             }
         }
-        
-        // return crops_paths.collect { crops_path ->                    
-        //     return [patient_id, moving_image, fixed_image, crops_path, channels_to_register]
-        // }
     } 
     .flatMap { it }
 
-    crops_data.view()
+    // crops_data.view()
 
     diffeomorphic(crops_data)
 
@@ -212,7 +185,7 @@ workflow {
 
     stitching(collapsed)
     
-    // quality_control(collapsed)
+    quality_control(collapsed)
 // 
     // grouped_stitching_out = stitching.out.h5.groupTuple()
 // 
