@@ -7,6 +7,7 @@ import gc
 import os
 import numpy as np
 import logging
+import tifffile
 from utils import logging_config
 from utils.io import load_nd2, load_h5, save_h5
 
@@ -113,8 +114,16 @@ def main():
             np.transpose(load_h5(args.image, shape="CYX"), (1, 2, 0)), padding_shape
         )
         outname = os.path.basename(args.image)
-
-    output_path = "padded_" + outname
+    elif "tiff" in file_extension:
+        padded_image = pad_image_to_shape(
+            np.transpose(tifffile.imread(args.image), (1, 2, 0)), padding_shape
+        )
+        outname = str.replace(os.path.basename(args.image), "tiff", "h5")
+    
+    if "preprocessed_" not in outname:
+        output_path = "padded_preprocessed_" + outname
+    else:
+        output_path = "padded_" + outname
 
     logger.debug(f"OUTPUT FILE PADDING: {output_path}")
     save_h5(padded_image, output_path)
