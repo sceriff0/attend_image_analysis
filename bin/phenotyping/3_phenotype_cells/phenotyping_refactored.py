@@ -209,9 +209,9 @@ if __name__ == "__main__":
             cell_df.copy(), mask.copy(), args.output_dir
         )
         
-        logging.info(f"Saving {os.path.join(args.output_dir, 'phenotypes_222.csv')} and {os.path.join(args.output_dir, 'mask222.tiff')}")
-        phenotypes_data.to_csv(os.path.join(args.output_dir, 'phenotypes_222.csv')) 
-        tiff.imwrite(os.path.join(args.output_dir, 'mask222.tiff'), phenotypes_mask)
+        logging.info(f"Saving {os.path.join(args.output_dir, 'phenotypes_data.csv')} and {os.path.join(args.output_dir, 'phenotypes_mask.tiff')}")
+        phenotypes_data.to_csv(os.path.join(args.output_dir, 'phenotypes_data.csv')) 
+        tiff.imwrite(os.path.join(args.output_dir, 'phenotypes_mask.tiff'), phenotypes_mask)
         logging.info("Cell phenotyping pipeline completed successfully")
         
     except Exception as e:
