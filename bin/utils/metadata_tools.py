@@ -9,31 +9,36 @@ import json
 import os
 from nd2reader import ND2Reader
 
+
 def get_channel_list():
     channels_list = [
         "DAPI",
-        "PANCK",
+        "PANCK",  # Membrane
         "MLH1",
         "P53",
         "ARID1A",
         "PAX2",
-        "VIMENTIN",
-        "SMA", # Alpha-SMA
-        "CD163",
-        "CD14",
-        "CD45",
-        "CD3",
-        "CD4",
-        "CD8",
+        "VIMENTIN",  # Membrane
+        "SMA",
+        "CD163",  # Membrane
+        "CD14",  # Membrane
+        "CD45",  # Membrane
+        "CD3",  # Membrane (if CD4 or CD8)
+        "CD4",  # Membrane
+        "CD8",  # Membrane
         "FOXP3",
-        "PD1",
-        "PDL1",
-        "L1CAM"
+        "PD1",  # Membrane
+        "PDL1",  # Membrane
+        "L1CAM",  # Membrane
+        "ARPC1B",
+        "CD74",
+        "GZMB"
     ]
 
     return channels_list
 
-def get_image_file_shape(file, format=".h5"):
+
+def get_image_file_shape(file, format=None):
     """
     Get the width and height of a TIFF image without fully loading the image.
 
@@ -43,6 +48,8 @@ def get_image_file_shape(file, format=".h5"):
     Returns:
         tuple: (width, height) of the image.
     """
+    if format is None:
+        format = file.split(".")[-1]
 
     if format == "tiff" or format == ".tiff":
         with tifffile.TiffFile(file) as tiff:
@@ -54,7 +61,11 @@ def get_image_file_shape(file, format=".h5"):
             # Access metadata about the dimensions
             shape_metadata = nd2_file.sizes  # Example: "XYCZT" or similar
             shape_metadata = dict(shape_metadata)
-            shape = (shape_metadata.get("Y", 0), shape_metadata.get("X", 0))
+            shape = (
+                shape_metadata.get("C", 0),
+                shape_metadata.get("Y", 0),
+                shape_metadata.get("X", 0),
+            )
 
     if format == ".h5" or format == "h5":
         with h5py.File(file, "r") as f:
@@ -63,6 +74,7 @@ def get_image_file_shape(file, format=".h5"):
 
     return shape
 
+
 def get_metadata_nd2(path):
     with ND2Reader(path) as data:
         # Print general metadata
@@ -70,39 +82,38 @@ def get_metadata_nd2(path):
 
     return metadata
 
+
 def get_metadata_tiff(file_path):
     """
     Extract and print metadata from a TIFF file.
-    
+
     Args:
         file_path (str): Path to the TIFF file.
         method (str): Method to use for extraction. Options are 'pillow', 'tifffile', or 'imageio'.
-    
+
     Returns:
         dict: A dictionary containing the metadata.
     """
-    metadata = {}    
+    metadata = {}
     with tifffile.TiffFile(file_path) as tiff:
-        metadata['TIFF Tags'] = {}
+        metadata["TIFF Tags"] = {}
         for page in tiff.pages:
             for tag in page.tags.values():
-                metadata['TIFF Tags'][tag.name] = tag.value
+                metadata["TIFF Tags"][tag.name] = tag.value
 
-    
     return metadata
+
 
 def get_image_channel_names(file_path):
     if os.path.exists(file_path):
         metadata = get_metadata_tiff(file_path)
-        image_description = metadata['TIFF Tags']['ImageDescription']
+        image_description = metadata["TIFF Tags"]["ImageDescription"]
         root = ET.fromstring(image_description)
-        namespace = {'ome': 'http://www.openmicroscopy.org/Schemas/OME/2016-06'}
-        description_text = root.find('.//ome:Description', namespace).text
+        namespace = {"ome": "http://www.openmicroscopy.org/Schemas/OME/2016-06"}
+        description_text = root.find(".//ome:Description", namespace).text
         description_json = json.loads(description_text)
-        channel_info = description_json.get('Channel', {}).get('Name', [])
+        channel_info = description_json.get("Channel", {}).get("Name", [])
     else:
         channel_info = []
 
     return channel_info
-
-

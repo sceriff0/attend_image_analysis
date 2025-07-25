@@ -35,10 +35,10 @@
                     "description": "Path to output directory (the .ome.tiff files).",
                     "examples": ["/path/to/dir"]
                 },
-                "conda_dir": {
-                    "type": "string",
-                    "description": "Directory to conda environment.",
-                    "examples": ["/path/to/dir"]
+                "crop_size_preproc": {
+                    "type": "integer",
+                    "description": "Width of crop for preprocessing.",
+                    "examples": [900]
                 },
                 "crop_size_affine": {
                     "type": "integer",
@@ -49,6 +49,11 @@
                     "type": "integer",
                     "description": "Height of crop for image registration.",
                     "examples": [900]
+                },
+                "overlap_size_preproc": {
+                    "type": "integer",
+                    "description": "Horizontal overlap for preprocessing.",
+                    "examples": [300]
                 },
                 "overlap_size_affine": {
                     "type": "integer",
@@ -98,6 +103,10 @@
                 "test": {
                     "type": "boolean",
                     "description": "Flag to indicate whether the pipeline should run in test mode (reduced memory usage)."
+                },
+                "preprocessing": {
+                    "type": "boolean",
+                    "description": "Flag to indicate whether preprocessing should be performed."
                 },
                 "executor": {
                     "type": "string",

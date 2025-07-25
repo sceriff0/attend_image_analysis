@@ -131,33 +131,53 @@ def save_stacked_crops(areas, fixed_image_path, moving_image_path, reconstructed
         output_path = f"{start_row}_{start_col}_{patient_id}.pkl"
         output_path = output_path.replace('padded_', '')
     
-        if len(np.unique(moving_crop)) != 1 and len(np.unique(fixed_crop)) != 1:
+        if len(np.unique(moving_crop[:,:,-1])) != 1 and len(np.unique(fixed_crop[:,:,-1])) != 1:
             logger.debug(f"Affine - computing transformation: {area}")
-            matrix = compute_affine_mapping_cv2(
-                y=fixed_crop[:,:,-1].squeeze(), 
-                x=moving_crop[:,:,-1].squeeze()
-            )
-            logger.debug(f"Affine - computed transformation: {area}")
+            try:
+                matrix = compute_affine_mapping_cv2(
+                    y=fixed_crop[:,:,-1].squeeze(),
+                    x=moving_crop[:,:,-1].squeeze()
+                )
+                logger.debug(f"Affine - computed transformation: {area}")
 
-            logger.debug(f"Affine - saving crop: {output_path}")
+ 
+                logger.debug(f"Affine - saving crop: {output_path}")
+                save_pickle(
+                    (
+                        fixed_crop,
+                        apply_mapping(matrix, moving_crop, method="cv2"),
+                    ),
+                    output_path,
+                )
+                logger.debug(f"Affine - saved crop: {output_path}")
+            except:
+                #if np.mean(fixed_crop!=0) < 0.1 or np.mean(moving_crop!=0) < 0.1:
+                save_pickle(
+                    (
+                        fixed_crop,
+                        moving_crop
+                    ),
+                    output_path,
+                )
+                #else:
+                #    error_message = "Error in affine transformation. Check the input image."
+                #    logger.debug("Raising ValueError: %s", error_message)
+                #    raise ValueError(error_message)
+                
+        elif len(np.unique(moving_crop[:,:,-1])) == 1 or len(np.unique(fixed_crop[:,:,-1])) == 1:
+            logger.debug(f"Affine - skipping crop: {output_path}")
             save_pickle(
-                (  
-                    fixed_crop,
-                    apply_mapping(matrix, moving_crop, method="cv2"),
-                ),
-                output_path,
-            )
-            logger.debug(f"Affine - saved crop: {output_path}")
-        else:
-            logger.debug(f"Affine - saving crop: {output_path}")
-            save_pickle(
-                (  
+                (
                     fixed_crop,
                     moving_crop
                 ),
                 output_path,
             )
-            logger.debug(f"Affine - saved crop: {output_path}")
+        else:
+            error_message = "Error in affine transformation. Check the input image."
+            logger.debug("Raising ValueError: %s", error_message)
+            raise ValueError(error_message)
+
 
 def main():
     args = _parse_args()
@@ -174,9 +194,6 @@ def main():
     if channels_to_register:
         moving = load_h5(args.moving_image)
         fixed = load_h5(args.fixed_image)
-
-        logger.debug(f'AFFINE - MOVING SHAPE: {moving.shape}')
-        logger.debug(f'AFFINE - FIXED SHAPE: {fixed.shape}')
 
         moving_shape = moving.shape
 
@@ -195,9 +212,17 @@ def main():
             position = (area[0], area[2])
             crop = apply_mapping(
                 matrix, 
-                load_h5(args.moving_image, loading_region=area), 
+                load_h5(args.moving_image, loading_region=area), # uint16 
                 method="cv2"
-            )    
+            )
+
+            logger.debug(f"AFFINE: transformed CROP image dtype : {crop.dtype}")  
+            logger.debug(f"AFFINE: transformed CROP image min and max: {np.min(crop)} , {np.max(crop)}")  
+            
+            crop = crop.astype('uint16')  # Ensure the crop is in uint16 format
+            logger.debug(f"AFFINE: transformed CROP image dtype : {crop.dtype}")
+            logger.debug(f"AFFINE: transformed CROP image min and max: {np.min(crop)} , {np.max(crop)}")  
+            # logger.debug(f"AFFINE: all zeros in CROP: {np.all(crop == 0)}")
 
             logger.debug(f"CROP SHAPE: {crop.shape}")
             reconstructed_image = reconstruct_image(
@@ -207,6 +232,7 @@ def main():
                 moving_shape, 
                 args.overlap_size_affine
             )
+            logger.debug(f"AFFINE: RECONSTRUCTED IMAGE image dtype : {reconstructed_image.dtype}")  
 
         areas_diffeo = get_crops_positions(moving_shape, args.crop_size_diffeo, args.overlap_size_diffeo)
 
@@ -221,4 +247,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

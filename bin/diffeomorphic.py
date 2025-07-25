@@ -83,7 +83,12 @@ def main():
     current_channels_to_register = remove_lowercase_channels(moving_channels)
     current_channels_to_register_no_dapi = [ch for ch in current_channels_to_register if ch != 'DAPI']
 
-    patient_id = os.path.basename(args.crop_image).split('.')[0].split('_')[2]
+    # if len(current_channels_to_register_no_dapi) == 3:
+    #     patient_id = os.path.basename(args.crop_image).split('.')[0].split('_')[2]
+    # elif len(current_channels_to_register_no_dapi) == 2:
+    #     patient_id = os.path.basename(args.crop_image).split('.')[0].split('_')[1]
+
+    patient_id = args.moving_image.split('.')[0].split('_')[1]
 
     crop_id_pos = os.path.basename(args.crop_image).split('.')[0].split('_')[0:3]
     crop_id_pos = [str(e) for e in crop_id_pos]
@@ -95,19 +100,17 @@ def main():
     
     output_path_dapi = f"qc_{'_'.join(crop_id_pos)}_DAPI.h5"
     output_path_dapi = output_path_dapi.replace('padded_', '')
-
-
     
     if current_channels_to_register_no_dapi:
         if any([e for e in current_channels_to_register_no_dapi if e in channels_to_register]):
             fixed, moving = load_pickle(args.crop_image)
-            if len(np.unique(moving)) != 1:
+            if len(np.unique(moving[:,:,-1])) != 1 and len(np.unique(fixed[:,:,-1])) != 1:
                 logger.debug(f"Computing mapping: {args.crop_image}")
                 mapping = compute_diffeomorphic_mapping_dipy(
                     y=fixed[:, :, -1].squeeze(), 
                     x=moving[:, :, -1].squeeze()
                 )
-                
+#                
                 # Save registered dapi channel for quality control
                 save_h5(
                     np.squeeze(apply_mapping(mapping, moving[:, :, -1])), 
@@ -123,15 +126,13 @@ def main():
 
                 registered_images = np.stack(registered_images, axis=-1)
 
-                logger.debug(f"REGISTERED IMAGE SHAPE: {registered_images.shape}")
-
                 logger.debug(f"Saving registered image: {args.crop_image}")
                 save_h5(
                     registered_images, 
                     output_path
                 )
 
-            else:
+            elif len(np.unique(moving[:,:,-1])) == 1 or len(np.unique(fixed[:,:,-1])) == 1:
                 moving_channels_images = []
                 for idx, ch in enumerate(moving_channels_no_dapi):
                     if ch in current_channels_to_register_no_dapi:
@@ -151,13 +152,21 @@ def main():
                     output_path_dapi
                 )
         else:
+            # Generate random bytes
+            random_data = os.urandom(16)
+
+            # Create a hash object using SHA256
+            hash_object = hashlib.sha256(random_data)
+
+            # Get the hexadecimal representation of the hash
+            random_hash = hash_object.hexdigest()
             save_h5(
                 0, 
-                f"registered_0_0_{patient_id}.h5"
+                f"registered_0_0_{patient_id}_{random_hash}.h5"
             )
             save_h5(
                 0, 
-                f"qc_0_0_{patient_id}.h5"
+                f"qc_0_0_{patient_id}_{random_hash}.h5"
             )
     else:
         # Generate random bytes
@@ -180,3 +189,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

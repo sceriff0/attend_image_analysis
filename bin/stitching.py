@@ -6,6 +6,7 @@ import argparse
 import os
 import numpy as np
 import re
+import tifffile as tiff
 from utils.io import load_h5, save_h5
 from utils.cropping import image_reconstruction_loop
 from utils.metadata_tools import get_image_file_shape
@@ -26,18 +27,6 @@ def remove_lowercase_channels(channels):
             filtered_channels.append(ch)
     return filtered_channels
 
-# def image_reconstruction_loop(crops_files, shape, overlap_size):
-#     reconstructed_image = np.zeros(shape, dtype='float32')
-# 
-#     for crop_file in crops_files:
-#         crop = load_h5(path=crop_file, shape='YX')
-#         logger.info(f"Loaded crop: {crop_file}")
-# 
-#         x, y = map(int, os.path.basename(crop_file).split("_")[1:3])
-#         position = (x, y)
-#         reconstructed_image = reconstruct_image(reconstructed_image, crop, position, (shape[0], shape[1]), overlap_size)
-#         
-#     return reconstructed_image
 
 def _parse_args():
     """Parse command-line arguments."""
@@ -110,6 +99,15 @@ def _parse_args():
     args = parser.parse_args()
     return args
 
+def save_tiff(image, output_path, resolution=None, bigtiff=True, ome=True, metadata=None):
+    tiff.imwrite(
+        output_path, 
+        image, 
+        resolution=resolution,
+        bigtiff=bigtiff, 
+        ome=ome,
+        metadata=metadata
+    )
 
 def main():
     args = _parse_args()
@@ -121,11 +119,9 @@ def main():
 
     original_shape = get_image_file_shape(args.moving, format='.h5')
 
-    pattern = r'^registered_[a-zA-Z0-9]+_[a-fA-F0-9]{64}.h5$'
-
     matches = []
     for crop_name in args.crops:
-        matches.append(bool(re.match(pattern, crop_name)))
+        matches.append(len(crop_name.split('.')[0].split('_')[-1]) == 64) # Check if filename ends in a 64 characters hash 
 
     if not all(matches):
         crops_files = args.crops
@@ -137,12 +133,12 @@ def main():
 
             moving_channels = os.path.basename(args.moving).replace('padded_', '') \
                 .split('.')[0] \
-                .split('_')[2:] \
+                .split('_')[3:] \
                 [::-1] # Select first two channels (omit DAPI) and reverse list
             
             fixed_channels = os.path.basename(args.fixed).replace('padded_', '') \
                 .split('.')[0] \
-                .split('_')[1:] \
+                .split('_')[2:] \
                 [::-1] # Select all channels and reverse list
             
             moving_channels_to_export = remove_lowercase_channels(moving_channels)
@@ -151,25 +147,34 @@ def main():
 
             # Save moving channels
             for idx, ch in enumerate(moving_channels_to_export_no_dapi):
-                save_h5(
-                    np.expand_dims(reconstructed_image[:,:,idx], axis=0).astype(np.float32), 
-                    f"registered_{args.patient_id}_{ch}.h5"
-                )
+                # save_h5(
+                #     np.expand_dims(reconstructed_image[:,:,idx], axis=0).astype(np.float32), 
+                #     f"registered_{args.patient_id}_{ch}.h5"
+                # )
+                save_tiff(reconstructed_image[:,:,idx], 
+                    f"registered_{args.patient_id}_{ch}.tiff")
             
             # Save fixed channels
             for idx, ch in enumerate(fixed_channels_to_export):
                 image = load_h5(args.fixed, channels_to_load=idx)
                 image = image.astype(np.float32)
+                save_tiff(image, f"registered_{args.patient_id}_{ch}.tiff")
                 image = np.expand_dims(image, axis=0)
-                save_h5(
-                    image, 
-                    f"registered_{args.patient_id}_{ch}.h5"
-                )
+                # save_h5(
+                #     image, 
+                #     f"registered_{args.patient_id}_{ch}.h5"
+                # )
+                
     else:
-        save_h5(
-                0, 
-                f"registered_{args.patient_id}.h5"
-            )
+        tiff.imwrite(
+            f"registered_{args.patient_id}.tiff",
+            0
+        )
+
+        # save_h5(
+        #         0, 
+        #         f"registered_{args.patient_id}.h5"
+        # )
 
 
 
