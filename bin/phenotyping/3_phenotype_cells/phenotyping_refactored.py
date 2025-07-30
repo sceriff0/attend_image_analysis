@@ -33,7 +33,7 @@ def labels_to_phenotype(arr, phenotype_df):
         max_val = max(map_arr[:, 0].max(), arr.max()) + 1
         lookup = np.zeros(max_val + 1, dtype=map_arr[:, 1].dtype)
         lookup[map_arr[:, 0]] = map_arr[:, 1]
-        remapped_arr = np.where(arr <= max_val, lookup[arr], arr)
+        remapped_arr = lookup[arr]
         logging.info("Label to phenotype mapping completed")
         return remapped_arr
     except Exception as e:
@@ -47,10 +47,6 @@ def run_phenotyping_pipeline(cell_df, mask, output_dir):
     """
     # Import the original functions (assuming they're available)
     # For this example, we'll simulate the key steps
-    
-    # Step 1: Add region_num if missing
-    if 'region_num' not in cell_df.columns:
-        cell_df['region_num'] = 1
     
     # Step 2: Reorder columns (original column order)
     cols_order = [
@@ -97,10 +93,6 @@ def run_phenotyping_pipeline(cell_df, mask, output_dir):
     df_nn = dfz_copy[~((dfz_copy.iloc[:, :col_num_last_marker + 1].ge(0).sum(axis=1) > count_threshold) | 
                       (dfz_copy.iloc[:, :col_num_last_marker + 1].sum(axis=1) > z_sum_threshold))].copy().reset_index(drop=True)
 
-    df_nn = dfz_copy[
-    ~(dfz_copy["z_sum"] > z_sum_threshold) | (dfz_copy["Count"] > count_threshold)
-    ]
-    
     # Step 6: Phenotyping (original logic)
     MARK_LIST = [
         ['CD163', 'CD14'], 'CD163', 'CD14', 'CD45', 'CD3', 'CD8', 'CD4', 'FOXP3', 'PANCK',
