@@ -51,7 +51,7 @@ def run_phenotyping_pipeline(cell_df, mask, output_dir):
     # Step 2: Reorder columns (original column order)
     cols_order = [
         'y', 'x', 'eccentricity', 'perimeter', 'convex_area', 'area',
-        'axis_major_length', 'axis_minor_length', 'region_num', 'label',
+        'axis_major_length', 'axis_minor_length', 'label',
         'ARID1A', 'CD14', 'CD163', 'CD3', 'CD4', 'CD45', 'CD8', 'FOXP3',
         'L1CAM', 'P53', 'PANCK', 'PAX2', 'PD1', 'PDL1', 'SMA', 'GZMB', 'CD74', 'VIMENTIN', 'DAPI'
     ]
@@ -65,7 +65,7 @@ def run_phenotyping_pipeline(cell_df, mask, output_dir):
     
     # Step 4: Normalization (original format function logic)
     list_out = ['eccentricity', 'perimeter', 'convex_area', 'axis_major_length', 'axis_minor_length']
-    list_keep = ['DAPI', 'x', 'y', 'area', 'region_num', 'label']
+    list_keep = ['DAPI', 'x', 'y', 'area', 'label']
     
     # Remove excluded columns
     dfin = cell_df_filtered.drop(list_out, axis=1)
@@ -191,7 +191,7 @@ if __name__ == "__main__":
     try:
         # Parse arguments
         args = parse_arguments()
-        cell_df = pd.read_csv(args.cell_data)
+        cell_df = pd.read_csv(args.cell_data).drop_duplicates(subset='label', keep='first')
         mask = np.load(args.segmentation_mask)
         # Setup logging
         setup_logging(args.output_dir)
