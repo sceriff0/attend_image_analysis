@@ -24,14 +24,9 @@ include { stacking } from './modules/local/image_stacking/main.nf'
 include { conversion } from './modules/local/image_conversion/main.nf'
 include { quality_control } from './modules/local/quality_control/main.nf'
 include { check_new_channels } from './modules/local/check_new_channels/main.nf'
-include { preprocessing_basicpy } from './modules/local/preprocessing/main.nf'
-include { pipex_membrane_segmentation } from './modules/local/segmentation/main.nf'
-include { pipex_nuclei_segmentation } from './modules/local/segmentation/main.nf'
-include { preprocess_dapi } from './modules/local/segmentation/main.nf'
+include { pipex_preprocessing } from './modules/local/preprocessing/main.nf'
 include { deduplicate_files } from './modules/local/deduplicate_files/main.nf'
 include { create_membrane_channel } from './modules/local/create_membrane_channel/main.nf'
-include { segmentation_quality_control as nuclei_segmentation_quality_control } from './modules/local/quality_control/main.nf'
-include { segmentation_quality_control as membrane_segmentation_quality_control } from './modules/local/quality_control/main.nf'
 
 
 
@@ -67,9 +62,9 @@ workflow preprocessing {
     main:
     split_channels(parsed_csv_ch)
 
-    preprocessing_basicpy(split_channels.out)
+    pipex_preprocessing(split_channels.out)
 
-    preprocessed_ch = preprocessing_basicpy.out
+    preprocessed_ch = pipex_preprocessing.out
 
     preprocessed_ch.view()
 
@@ -184,8 +179,10 @@ workflow {
     }
 
     stitching(collapsed)
-    
     quality_control(collapsed)
+
+    stitching.out.view()
+    
 // 
     // grouped_stitching_out = stitching.out.h5.groupTuple()
 // 
