@@ -27,6 +27,8 @@ include { check_new_channels } from './modules/local/check_new_channels/main.nf'
 include { pipex_preprocessing } from './modules/local/preprocessing/main.nf'
 include { deduplicate_files } from './modules/local/deduplicate_files/main.nf'
 include { create_membrane_channel } from './modules/local/create_membrane_channel/main.nf'
+include { segmentation } from './modules/local/segmentation/main.nf'
+include { quantification } from './modules/local/quantification/main.nf'
 
 
 
@@ -66,8 +68,6 @@ workflow preprocessing {
 
     preprocessed_ch = pipex_preprocessing.out
 
-    preprocessed_ch.view()
-
     collect_channels_input = preprocessed_ch
     .groupTuple(by: 0)
     .collect()
@@ -93,8 +93,6 @@ workflow {
     } else {
         updated_parsed_csv_ch = parsed_csv_ch
     }
-
-    updated_parsed_csv_ch.view()
 
     grouped_input = updated_parsed_csv_ch.groupTuple()
 
@@ -161,8 +159,6 @@ workflow {
     } 
     .flatMap { it }
 
-    // crops_data.view()
-
     diffeomorphic(crops_data)
 
     collapsed = diffeomorphic.out.map{
@@ -181,9 +177,10 @@ workflow {
     stitching(collapsed)
     quality_control(collapsed)
 
-    stitching.out.view()
-    
-// 
+    ch_single_dapi = stitching.out.map { id, files, dapi -> tuple(id, dapi) }.unique { it[0] }
+    segmentation(ch_single_dapi)
+
+//
     // grouped_stitching_out = stitching.out.h5.groupTuple()
 // 
     // stitching_out = grouped_stitching_out.map { entry ->
