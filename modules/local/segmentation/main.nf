@@ -3,7 +3,7 @@ process segmentation{
     maxRetries = 3
     memory 300.GB
     time 48.h
-    publishDir "${params.outdir}/${patient_id}/segmentation", mode: 'copy'
+    publishDir "${params.outdir}/${patient_id}/segmentation", mode: 'copy', pattern: "*.{pkl,npy}"
     container "docker://yinxiu/attend_seg:v0.0"
     tag "segmentation"
 
@@ -22,5 +22,18 @@ process segmentation{
         --overlap "${params.segmentation_overlap}" \
         --output-dir "./" \
         --verbose
+        
+        # Verify expected output files exist
+        if [ ! -f "positions.pkl" ]; then
+            echo "ERROR: positions.pkl not created by segmentation.py" >&2
+            exit 1
+        fi
+        
+        if [ ! -f "segmentation_mask.npy" ]; then
+            echo "ERROR: segmentation_mask.npy not created by segmentation.py" >&2
+            exit 1
+        fi
+        
+        echo "Segmentation completed successfully"
     """
 }

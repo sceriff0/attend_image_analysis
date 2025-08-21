@@ -28,8 +28,7 @@ include { pipex_preprocessing } from './modules/local/preprocessing/main.nf'
 include { deduplicate_files } from './modules/local/deduplicate_files/main.nf'
 include { create_membrane_channel } from './modules/local/create_membrane_channel/main.nf'
 include { segmentation } from './modules/local/segmentation/main.nf'
-include { quantification } from './modules/local/quantification/main.nf'
-
+include { quantification } from './modules/local/markers_quantification/main.nf'
 
 
 def parse_csv(csv_file_path) {
@@ -177,13 +176,31 @@ workflow {
     stitching(collapsed)
     quality_control(collapsed)
 
-    ch_single_dapi = stitching.out.map { id, files, dapi -> tuple(id, dapi) }.unique { it[0] }
+    ch_single_dapi = stitching.out
+        .map { id, files, dapi -> tuple(id, dapi) }
+        .groupTuple()
+        .map { id, dapis -> tuple(id, dapis.sort { it.name }[0]) }
+    
     segmentation(ch_single_dapi)
 
-//
-    // grouped_stitching_out = stitching.out.h5.groupTuple()
-// 
-    // stitching_out = grouped_stitching_out.map { entry ->
+    ch_files_per_id = stitching.out.map { id, files, _ ->
+        // drop the DAPI file from the inner list
+        tuple(id, files)
+    }.groupTuple(by:0).map { id, nestedLists ->
+        def flat = nestedLists.flatten() as List
+        // sort for determinism, then unique by basename
+        def uniq = flat.sort { it.toString() }.unique { it.name }
+        tuple(id, uniq)
+    }
+    
+    // join with segmentation: [id, files] ⨝ [id, file1, file2, dapi_seg]
+    ch_combined = ch_files_per_id.join(segmentation.out, by:0)
+
+    quantification(ch_combined)
+    ch_combined.view()    
+
+    //tching_out = grouped_stitching_out.map { entry ->
+
     //     def channels = entry[1].flatten()
     //     return [
     //         entry[0],
