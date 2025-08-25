@@ -100,17 +100,51 @@
                     "description": "Path to log file.",
                     "examples": ["/path/to/log.log"]
                 },
+                "conversion": {
+                    "type": "boolean",
+                    "description": "Flag to indicate whether image conversion should be performed.",
+                    "default": false
+                },
+                "segmentation_overlap": {
+                    "type": "integer",
+                    "description": "Overlap size for segmentation processing.",
+                    "default": 2500,
+                    "examples": [2500]
+                },
+                "segmentation_model_dir": {
+                    "type": "string",
+                    "description": "Directory path containing segmentation models.",
+                    "default": "/hpcnfs/scratch/P_DIMA_ATTEND/models/",
+                    "examples": ["/path/to/models/"]
+                },
+                "segmentation_model": {
+                    "type": "string",
+                    "description": "Name of the segmentation model to use.",
+                    "default": "stardist_full_e200_lr00001_aug1_seed10_es50p0.001_rlr0.5p50",
+                    "examples": ["stardist_model_name"]
+                },
+                "pixel_microns": {
+                    "type": "number",
+                    "description": "Pixel size in micrometers for spatial calibration.",
+                    "default": 0.34533768547788,
+                    "examples": [0.34533768547788]
+                },
                 "test": {
                     "type": "boolean",
-                    "description": "Flag to indicate whether the pipeline should run in test mode (reduced memory usage)."
+                    "description": "Flag to indicate whether the pipeline should run in test mode (reduced memory usage).",
+                    "default": false
                 },
                 "preprocessing": {
                     "type": "boolean",
-                    "description": "Flag to indicate whether preprocessing should be performed."
+                    "description": "Flag to indicate whether preprocessing should be performed.",
+                    "default": false
                 },
                 "executor": {
                     "type": "string",
-                    "description": "Process executor ('pbspro' or 'local')."
+                    "description": "Process executor ('slurm', 'pbspro' or 'local').",
+                    "default": "slurm",
+                    "enum": ["slurm", "pbspro", "local"],
+                    "examples": ["slurm"]
                 }
             }
         },

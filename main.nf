@@ -29,6 +29,7 @@ include { deduplicate_files } from './modules/local/deduplicate_files/main.nf'
 include { create_membrane_channel } from './modules/local/create_membrane_channel/main.nf'
 include { segmentation } from './modules/local/segmentation/main.nf'
 include { quantification } from './modules/local/markers_quantification/main.nf'
+include {phenotyping} from './modules/local/phenotyping/main.nf'
 
 
 def parse_csv(csv_file_path) {
@@ -136,9 +137,6 @@ workflow {
 
     affine(affine_input)
 
-    
-
-
     crops_data = affine.out.map { it ->
         def patient_id = it[0]
         def moving_image = it[1]
@@ -197,7 +195,24 @@ workflow {
     ch_combined = ch_files_per_id.join(segmentation.out, by:0)
 
     quantification(ch_combined)
-    ch_combined.view()    
+    phenotyping(quantification.out)
+
+    // create all channels
+    all_tiff_ch = ch_files_per_id.join(phenotyping.out).map { id, files, phenotypes_data, phenotypes_mask ->
+        // return the final output structure
+        def all_files = tuple(files, phenotypes_mask)
+        def all_files_flat = all_files.flatten() as List
+        tuple(id, all_files_flat)
+    }
+
+    // get metadata
+    //get_metadata(all_tiff_ch)
+    stacking(all_tiff_ch)
+    conversion(stacking.out)
+
+
+
+
 
     //tching_out = grouped_stitching_out.map { entry ->
 

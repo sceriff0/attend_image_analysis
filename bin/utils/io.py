@@ -9,14 +9,11 @@ import nd2
 def load_h5(path, loading_region=None, channels_to_load=None, shape="YXC"):
     with h5py.File(path, "r") as hdf5_file:
         dataset = hdf5_file["dataset"]
-
         # Handle empty datasets
         if dataset.shape == ():
             return dataset[()]
-
         # Define default slicing
         slices = [slice(None)] * len(shape)
-
         if loading_region:
             start_row, end_row, start_col, end_col = loading_region
             if shape == "YXC" or shape == "YX":
@@ -25,16 +22,13 @@ def load_h5(path, loading_region=None, channels_to_load=None, shape="YXC"):
             elif shape == "CYX":
                 slices[1] = slice(start_row, end_row)
                 slices[2] = slice(start_col, end_col)
-
         if channels_to_load is not None:
             if shape == "YXC":
                 slices[2] = channels_to_load
             elif shape == "CYX":
                 slices[0] = channels_to_load
-
         # Extract data using slices
         data = dataset[tuple(slices)]
-
     return data
 
 
@@ -49,7 +43,6 @@ def save_h5(data, path, dtype=None):
         maxshape = tuple([None] * ndim)
         if dtype is None:
             dtype = data.dtype
-
     with h5py.File(path, "w") as hdf5_file:
         hdf5_file.create_dataset(
             "dataset", data=data, chunks=chunks, maxshape=maxshape, dtype=dtype

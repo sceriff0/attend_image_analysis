@@ -5,16 +5,16 @@ process get_metadata{
     tag "metadata"
 
     input:
-        tuple val(patient_id), path(image_files), path(channels, stageAs: "?/*")
+        tuple val(patient_id), path(image_files)
     output:
-        tuple val(patient_id), path(channels), path("*.pkl")
+        tuple val(patient_id), path("*.pkl")
  
     script:
     """
         get_metadata.py \
             --image_files "$image_files" \
-            --channels "$channels" \
             --patient_id "$patient_id" \
-            --log_file "${params.log_file}"
+            --log_file "${params.log_file}" \
+            --pixel_microns ${params.pixel_microns}
     """ 
 }

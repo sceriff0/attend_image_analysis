@@ -2,9 +2,9 @@ process conversion {
     cpus 2
     memory "2G"
     tag "ome_tiff"
-    time "28.h"
+    time "48.h"
     
-    publishDir "${params.outdir}/${patient_id}/registration/results", mode: 'copy'
+    publishDir "${params.outdir}/${patient_id}/ome.tiff", mode: 'copy'
 
 
     input:
@@ -23,29 +23,19 @@ process conversion {
     for file in $image; do
         # Get the base name and output directory path
         name="\${file%.*}"
-        output="${params.outdir}/\${name}.ome.tiff"
 
-        # Check if the output file already exists
-        if [ \${name} != "null" ] && [ ! -f \${output} ]; then
-            # Log the start of the conversion
-            echo "\$(date): Converting \${file} to \${output}..." >> ${params.log_file}
-            
-            bfconvert \
-                -noflat \
-                -bigtiff \
-                -tilex 512 \
-                -tiley 512 \
-                -pyramid-resolutions 3 \
-                -pyramid-scale 2 \
-                \${file} \
-                \${name}.ome.tiff
-            
-            # Log the completion of the conversion
-            echo "\$(date): Conversion of \${file} to \${output} completed." >> ${params.log_file}
-        else
-            # Log if the file already exists
-            echo "\$(date): File \${output} already exists, skipping conversion." >> ${params.log_file}
-        fi
+        
+        bfconvert \
+            -noflat \
+            -bigtiff \
+            -tilex ${params.tilex} \
+            -tiley ${params.tiley} \
+            -pyramid-resolutions ${params.pyramid_resolutions} \
+            -pyramid-scale ${params.pyramid_scale} \
+            \${file} \
+            \${name}.ome.tiff
+        
+    
     done
 
     # Log the end of the script

@@ -11,7 +11,7 @@ process quantification{
         tuple val(patient_id), path(markers), path(positions_file), path(mask_file)
     output:
         // tuple val(patient_id), path("registered_${patient_id}*h5"), emit: "h5"
-        tuple val(patient_id), path("*segmentation_markers_data_FULL.csv"), emit: "quantification"
+        tuple val(patient_id), path("*segmentation_markers_data_FULL.csv"), path(mask_file), emit: "quantification"
 
     script:
     """
@@ -27,7 +27,7 @@ process quantification{
         --positions_file ${positions_file} \
         --outdir .
 
-        rm crop*
+        # rm crop*
 
     """
 }

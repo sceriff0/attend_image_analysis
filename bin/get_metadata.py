@@ -14,11 +14,7 @@ logging_config.setup_logging()
 logger = logging.getLogger(__name__)
 
 
-def create_tiff_metadata(src_path=None, channel_names=None, pixel_microns=[]):
-    if not pixel_microns:
-        metadata = get_metadata_nd2(src_path)
-        pixel_microns = metadata["pixel_microns"]
-
+def create_tiff_metadata(channel_names=None, pixel_microns=[]):
     resolution = (1 / pixel_microns, 1 / pixel_microns)
     metadata = {
         "axes": "CYX",
@@ -68,12 +64,12 @@ def _parse_args():
         help="A string of nd2 files.",
     )
     parser.add_argument(
-        "-c",
-        "--channels",
-        type=str,
-        default=None,
-        required=True,
-        help="String of paths to h5 files (registered images).",
+        "-pm",
+        "--pixel_microns",
+        type=float,
+        default=0.34533768547788,
+        required=False,
+        help="Pixel size in microns.",
     )
     parser.add_argument(
         "-p",
@@ -110,40 +106,19 @@ def main():
 
     image_files = args.image_files.split()
 
-    nd2_files = [
-        file for file in image_files if os.path.basename(file).split(".")[1] == "nd2"
-    ]
-
-    channels_files = args.channels.split()
-
     channel_names = []
-    for file in channels_files:
-        filename = os.path.basename(file).split(".")[0]
-        filename = filename.split("_")
-        if len(filename) >= 3:
-            channel_name = filename[2]
-            channel_names.append(channel_name)
+    for ch in channels_list:
+        # if ch is within the name of any image_files
+        if any(ch in img for img in image_files):
+            channel_names.append(ch)
 
     if channel_names:
-        channels_to_register = remove_lowercase_channels(list(set(channel_names)))
-        channels_to_register = sorted(
-            channels_to_register, key=lambda x: channels_list.index(x)
+        resolution, metadata = create_tiff_metadata(
+            channel_names=channel_names, pixel_microns=0.34533768547788
         )
-
-        if nd2_files:
-            resolution, metadata = create_tiff_metadata(
-                src_path=nd2_files[0], channel_names=channels_to_register
-            )
-            meta = (resolution, metadata)
-        else:
-            resolution, metadata = create_tiff_metadata(
-                channel_names=channels_to_register, pixel_microns=0.34533768547788
-            )
-            meta = (resolution, metadata)
-
+        meta = (resolution, metadata)
     else:
         meta = []
-
     save_path = f"metadata_{args.patient_id}.pkl"
     save_pickle(meta, save_path)
 

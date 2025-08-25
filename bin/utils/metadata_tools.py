@@ -12,6 +12,7 @@ from nd2reader import ND2Reader
 
 def get_channel_list():
     channels_list = [
+        "phenotypes_mask",
         "DAPI",
         "PANCK",  # Membrane
         "MLH1",
@@ -34,45 +35,38 @@ def get_channel_list():
         "CD74",
         "GZMB"
     ]
-
     return channels_list
 
 
 def get_image_file_shape(file, format=None):
     """
-    Get the width and height of a TIFF image without fully loading the image.
-
-    Parameters:
-        file (str): Path to the TIFF image.
-
-    Returns:
-        tuple: (width, height) of the image.
+    Get the width and height (or shape) of TIFF, ND2, or HDF5 images 
+    without fully loading them.
     """
+
+    # if format has . before extension, remove it
+    if format and format.startswith("."):
+        format = format[1:]
+
     if format is None:
-        format = file.split(".")[-1]
+        format = file.split(".")[-1].lower()
 
-    if format == "tiff" or format == ".tiff":
+    if format in ("tiff", "tif"):
         with tifffile.TiffFile(file) as tiff:
-            image_shape = tiff.pages[0].shape  # (height, width)
-            shape = (image_shape[1], image_shape[0])  # Extract width and height
+            h, w = tiff.pages[0].shape[:2]
+            return (w, h)
 
-    if format == "nd2" or format == ".nd2":
+    elif format == "nd2":
         with nd2.ND2File(file) as nd2_file:
-            # Access metadata about the dimensions
-            shape_metadata = nd2_file.sizes  # Example: "XYCZT" or similar
-            shape_metadata = dict(shape_metadata)
-            shape = (
-                shape_metadata.get("C", 0),
-                shape_metadata.get("Y", 0),
-                shape_metadata.get("X", 0),
-            )
+            s = dict(nd2_file.sizes)
+            return (s.get("C", 0), s.get("Y", 0), s.get("X", 0))
 
-    if format == ".h5" or format == "h5":
+    elif format == "h5":
         with h5py.File(file, "r") as f:
-            shape = f["dataset"].shape
-            f.close()
+            return f["dataset"].shape
 
-    return shape
+    else:
+        raise ValueError(f"Unsupported format: {format}")
 
 
 def get_metadata_nd2(path):

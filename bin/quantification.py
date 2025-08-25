@@ -10,12 +10,17 @@ import psutil
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 from skimage.measure import regionprops_table
 from aicsimageio import AICSImage
 
 import dask
-from dask import delayed, compute
-from dask.distributed import Client, LocalCluster 
+from dask import delayed, compute, config
+from dask.diagnostics import ProgressBar
+from dask.threaded import get as threaded_get
+from dask.multiprocessing import get as multiprocessing_get
+from dask.distributed import Client, LocalCluster
+from tqdm.dask import TqdmCallback
 
 
 def print_memory_usage(prefix=""):
