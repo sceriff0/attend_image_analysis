@@ -1,7 +1,7 @@
 process phenotyping{
     cpus 1
     maxRetries = 3
-    memory 300.GB
+    memory 200.GB
     time 48.h
     publishDir "${params.outdir}/${patient_id}/phenotyping", mode: 'copy'
     container "docker://yinxiu/attend_seg:v0.0"

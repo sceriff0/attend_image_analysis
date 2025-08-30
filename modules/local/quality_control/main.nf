@@ -2,6 +2,7 @@ process quality_control{
     cpus 1
     maxRetries = 3
     memory { task.memory + 10 * task.attempt}
+    time "12.h"
     publishDir "${params.outdir}/${patient_id}/registration/quality_control", mode: 'copy', pattern: "QC_*"
     tag "quality_control"
     

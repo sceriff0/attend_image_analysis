@@ -1,7 +1,7 @@
 process quantification{
     cpus 48
     maxRetries = 3
-    memory 400.GB
+    memory 250.GB
     time 48.h
     publishDir "${params.outdir}/${patient_id}/quantification", mode: 'copy'
     container "docker://yinxiu/attend_quant:v0.0"
