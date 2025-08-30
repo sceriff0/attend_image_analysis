@@ -44,7 +44,7 @@ def save_tiff(
 ):
     tiff.imwrite(
         output_path,
-        image.astype(np.int32),
+        image,
         resolution=resolution,
         bigtiff=bigtiff,
         ome=ome,
@@ -163,7 +163,7 @@ def main():
                 logger.info(f"Loading region {area} from {output_path}")
                 stacked_image = load_h5(
                     output_path, loading_region=area, shape="CYX"
-                )
+                ).astype(np.int32)
                 logger.info(f"Region {area} loaded successfully")
                 save_tiff(
                     image=stacked_image,
