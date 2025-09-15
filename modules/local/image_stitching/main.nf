@@ -3,6 +3,7 @@ process stitching{
     cpus 1
     maxRetries = 3
     memory { task.memory + 10 * task.attempt}
+    time "10.h"
     publishDir "${params.outdir}/${patient_id}/registration/channels", mode: 'copy'
     tag "stitching"
 

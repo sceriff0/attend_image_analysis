@@ -1,6 +1,6 @@
 process stacking {
     cpus 2
-    memory 300.GB
+    memory 500.GB
     tag "stacking"
     
     input:
