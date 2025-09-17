@@ -2,8 +2,8 @@
 
 import cv2
 import numpy as np
-from dipy.align.imwarp import SymmetricDiffeomorphicRegistration
-from dipy.align.metrics import CCMetric
+from cudipy.align.imwarp import SymmetricDiffeomorphicRegistration
+from cudipy.align.metrics import CCMetric
 
 
 def apply_mapping(mapping, x, method="dipy"):
