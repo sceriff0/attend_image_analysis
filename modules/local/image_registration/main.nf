@@ -3,7 +3,7 @@
 */
 
 process affine{
-    cpus 2
+    cpus 4
     maxRetries = 3
     memory { task.memory + 10 * task.attempt}
     tag "affine"
