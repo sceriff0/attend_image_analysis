@@ -37,6 +37,9 @@ process diffeomorphic{
     memory { 2.GB * task.attempt }
     array { task.array }
     tag "diffeomorphic"
+    
+    clusterOptions '--gpus-per-task=1'
+    maxForks 100
 
     input:
         tuple val(patient_id), path(moving), path(fixed), path(crop), path(channels_to_register)
