@@ -8,6 +8,8 @@ process affine{
     memory { task.memory + 10 * task.attempt}
     tag "affine"
 
+    clusterOptions = '--gres=gpu:1'
+
     input:
         tuple val(patient_id), path(moving), path(fixed), path(channels_to_register)
     output:
