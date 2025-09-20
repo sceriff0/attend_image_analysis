@@ -42,7 +42,7 @@ process diffeomorphic{
     tag "diffeomorphic"
     
     clusterOptions '--gpus=4'
-    container "docker://bolt3x/attend_image_analysis:v2.3"
+    container "docker://bolt3x/attend_image_analysis:v2.4"
 
     input:
         tuple val(patient_id), path(moving), path(fixed), path(crop), path(channels_to_register)
