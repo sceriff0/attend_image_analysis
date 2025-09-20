@@ -9,7 +9,7 @@ process affine{
     tag "affine"
 
     clusterOptions = '--gres=gpu:1'
-    container "docker://bolt3x/attend_image_analysis:latest"
+    container "docker://bolt3x/attend_image_analysis:2.3"
 
     input:
         tuple val(patient_id), path(moving), path(fixed), path(channels_to_register)
