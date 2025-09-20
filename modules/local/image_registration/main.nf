@@ -3,7 +3,7 @@
 */
 
 process affine{
-    cpus 4
+    cpus 8
     maxRetries = 3
     memory { task.memory + 10 * task.attempt}
     tag "affine"
@@ -41,6 +41,7 @@ process diffeomorphic{
     tag "diffeomorphic"
     
     clusterOptions '--gpus=4'
+    container "docker://bolt3x/attend_image_analysis:latest"
 
     input:
         tuple val(patient_id), path(moving), path(fixed), path(crop), path(channels_to_register)
