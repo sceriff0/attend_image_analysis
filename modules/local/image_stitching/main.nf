@@ -1,6 +1,6 @@
 process stitching{
     fair true
-    cpus 1
+    cpus 3
     maxRetries = 3
     memory { task.memory + 10 * task.attempt}
     time "10.h"
