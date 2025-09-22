@@ -33,8 +33,7 @@ def get_channel_list():
         "L1CAM",  # Membrane
         "ARPC1B",
         "CD74",
-        "GZMB",
-        "MLH1"
+        "GZMB"
     ]
     return channels_list
 
