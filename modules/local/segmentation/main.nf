@@ -4,7 +4,7 @@ process segmentation{
     memory 120.GB
     time 48.h
     publishDir "${params.outdir}/${patient_id}/segmentation", mode: 'copy', pattern: "*.{pkl,npy}"
-    container "docker://bolt3x/attend_image_analysis:segmentation"
+    container "docker://bolt3x/attend_image_analysis:seg"
     clusterOptions '--gpus=1'
     tag "segmentation"
 
