@@ -1,7 +1,7 @@
 process segmentation{
     cpus 2
     maxRetries = 3
-    memory 300.GB
+    memory 120.GB
     time 48.h
     publishDir "${params.outdir}/${patient_id}/segmentation", mode: 'copy', pattern: "*.{pkl,npy}"
     container "docker://bolt3x/attend_image_analysis:segmentation"
