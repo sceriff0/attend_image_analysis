@@ -8,7 +8,7 @@ process affine{
     memory { task.memory + 20 * task.attempt}
     tag "affine"
 
-    clusterOptions '--gpus=2'
+    clusterOptions '--gpus=1'
     container "docker://bolt3x/attend_image_analysis:v2.4"
 
     input:
