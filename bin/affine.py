@@ -9,7 +9,7 @@ import logging
 from utils.io import load_h5
 from utils.io import save_pickle, load_pickle
 from utils.cropping import reconstruct_image
-from utils.mapping import compute_affine_mapping_cv2, apply_mapping
+from utils.mapping_no_gpu import compute_affine_mapping_cv2, apply_mapping
 from utils import logging_config
 
 # Set up logging configuration
