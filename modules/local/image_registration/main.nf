@@ -2,7 +2,7 @@
     Register images with respect to a predefined fixed image
 */
 
-process registration{
+process affine{
     cpus 2
     maxRetries = 3
     memory { task.memory + 20 * task.attempt}
