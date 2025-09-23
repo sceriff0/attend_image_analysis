@@ -137,28 +137,7 @@ workflow {
 
     affine(affine_input)
 
-    crops_data = affine.out.map { it ->
-        def patient_id = it[0]
-        def moving_image = it[1]
-        def fixed_image = it[2]
-        def crops_paths = it[3] // Paths to *.pkl files
-        def channels_to_register = it[4]
-
-        if (crops_paths.getClass() == sun.nio.fs.UnixPath) {
-            // Handle the case where aug_data is a String
-            return [patient_id, moving_image, fixed_image, crops_paths, channels_to_register].collate(5)
-        } else if (crops_paths instanceof List) {
-            // Handle the case where aug_data is a List
-            return crops_paths.collect { crops_path ->                    
-                return [patient_id, moving_image, fixed_image, crops_path, channels_to_register]
-            }
-        }
-    } 
-    .flatMap { it }
-
-    diffeomorphic(crops_data)
-
-    collapsed = diffeomorphic.out.map{
+    collapsed = affine.out.map{
         def patient_id = it[0]
         def moving = it[1]
         def fixed = it[2]
