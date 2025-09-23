@@ -37,7 +37,7 @@ process affine{
 process diffeomorphic{
     cpus 12
     maxRetries = 3
-    memory { 10.GB * task.attempt }
+    memory { 15.GB * task.attempt }
     array { task.array }
     tag "diffeomorphic"
     
