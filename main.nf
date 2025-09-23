@@ -18,7 +18,7 @@ include { get_padding } from './modules/local/image_padding/main.nf'
 include { get_metadata } from './modules/local/image_metadata/main.nf'
 include { apply_padding } from './modules/local/image_padding/main.nf'
 include { affine } from './modules/local/image_registration/main.nf' 
-include { diffeomorphic} from './modules/local/image_registration/main.nf'
+/*include { diffeomorphic} from './modules/local/image_registration/main.nf'*/
 include { stitching } from './modules/local/image_stitching/main.nf'
 include { stacking } from './modules/local/image_stacking/main.nf'
 include { conversion } from './modules/local/image_conversion/main.nf'
