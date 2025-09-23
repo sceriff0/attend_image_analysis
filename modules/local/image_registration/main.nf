@@ -2,25 +2,31 @@
     Register images with respect to a predefined fixed image
 */
 
-process affine{
-    cpus 4
+process registration{
+    cpus 2
     maxRetries = 3
-    memory { task.memory + 10 * task.attempt}
+    memory { task.memory + 20 * task.attempt}
     tag "affine"
 
-    clusterOptions = '--gres=gpu:1'
-    container "docker://bolt3x/attend_image_analysis:v2.3"
+    clusterOptions '--gpus=2'
+    container "docker://bolt3x/attend_image_analysis:v2.4"
 
     input:
         tuple val(patient_id), path(moving), path(fixed), path(channels_to_register)
+
     output:
-        tuple val(patient_id), path(moving), path(fixed), path("*pkl"), path(channels_to_register)
+        tuple val(patient_id), 
+        path(moving), 
+        path(fixed), 
+        path("qc*"), 
+        path("registered*"), 
+        path(channels_to_register)
  
     script:
     """
-    echo "\$(date) Memory allocated to process "affine": ${task.memory}" >> ${params.log_file}
+    echo "\$(date) Memory allocated to registration: ${task.memory}" >> ${params.log_file}
 
-        affine.py \
+        registration.py \
             --patient_id $patient_id \
             --channels_to_register $channels_to_register \
             --moving_image $moving \
@@ -33,7 +39,7 @@ process affine{
     """
 }
  
-
+'''
 process diffeomorphic{
     cpus 12
     maxRetries = 3
@@ -66,3 +72,4 @@ process diffeomorphic{
             --log_file "${params.log_file}"
     """
 }
+'''

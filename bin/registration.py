@@ -6,15 +6,27 @@ import gc
 import os
 import numpy as np
 import logging
-from utils.io import load_h5
+import hashlib
+from utils.io import load_h5, save_h5
 from utils.io import save_pickle, load_pickle
 from utils.cropping import reconstruct_image
-from utils.mapping import compute_affine_mapping_cv2, apply_mapping
+from utils.mapping import compute_affine_mapping_cv2, compute_diffeomorphic_mapping_dipy, apply_mapping
 from utils import logging_config
 
 # Set up logging configuration
 logging_config.setup_logging()
 logger = logging.getLogger(__name__)
+
+def are_all_alphabetic_lowercase(string):
+            # Filter alphabetic characters and check if all are lowercase
+            return all(char.islower() for char in string if char.isalpha())
+
+def remove_lowercase_channels(channels):
+            filtered_channels = []
+            for ch in channels:
+                if not are_all_alphabetic_lowercase(ch):
+                    filtered_channels.append(ch)
+            return filtered_channels
 
 def _parse_args():
     """Parse command-line arguments."""
@@ -119,7 +131,8 @@ def get_crops_positions(shape, crop_size, overlap_size):
 
     return positions
 
-def save_stacked_crops(areas, fixed_image_path, moving_image_path, reconstructed_image):
+def save_stacked_crops(areas, fixed_image_path, moving_image_path, reconstructed_image, channels_to_register, 
+                       current_channels_to_register_no_dapi, moving_channels_no_dapi):
     for area in areas:
         logger.debug(f"Affine - processing crop area: {area}")
 
@@ -128,9 +141,16 @@ def save_stacked_crops(areas, fixed_image_path, moving_image_path, reconstructed
         fixed_crop = load_h5(fixed_image_path, loading_region=area)
         moving_crop = reconstructed_image[start_row:end_row, start_col:end_col, :]
         patient_id = os.path.basename(moving_image_path)
-        output_path = f"{start_row}_{start_col}_{patient_id}.pkl"
+
+        crop_name = crop_id_pos + current_channels_to_register_no_dapi[::-1]   
+        crop_name = '_'.join(crop_name)
+        output_path = f"registered_{crop_name}.h5"
         output_path = output_path.replace('padded_', '')
     
+        crop_id_pos = [str(start_row), str(start_col)]
+        output_path_dapi = f"qc_{'_'.join(crop_id_pos)}_DAPI.h5"
+        output_path_dapi = output_path_dapi.replace('padded_', '')
+
         if len(np.unique(moving_crop[:,:,-1])) != 1 and len(np.unique(fixed_crop[:,:,-1])) != 1:
             logger.debug(f"Affine - computing transformation: {area}")
             try:
@@ -138,18 +158,38 @@ def save_stacked_crops(areas, fixed_image_path, moving_image_path, reconstructed
                     y=fixed_crop[:,:,-1].squeeze(),
                     x=moving_crop[:,:,-1].squeeze()
                 )
-                logger.debug(f"Affine - computed transformation: {area}")
 
- 
-                logger.debug(f"Affine - saving crop: {output_path}")
-                save_pickle(
-                    (
-                        fixed_crop,
-                        apply_mapping(matrix, moving_crop, method="cv2"),
-                    ),
-                    output_path,
-                )
-                logger.debug(f"Affine - saved crop: {output_path}")
+                moving_crop = apply_mapping(matrix, moving_crop, method="cv2")
+
+                if current_channels_to_register_no_dapi:
+                    if any([e for e in current_channels_to_register_no_dapi if e in channels_to_register]):
+                        if len(np.unique(moving_crop[:,:,-1])) != 1 and len(np.unique(fixed_crop[:,:,-1])) != 1:
+                            logger.debug(f"Computing mapping: {crop_id_pos}")
+                            mapping = compute_diffeomorphic_mapping_dipy(
+                                y=fixed_crop[:, :, -1].squeeze(), 
+                                x=moving_crop[:, :, -1].squeeze()
+                            )
+                        # Save registered dapi channel for quality control
+                            save_h5(
+                                np.squeeze(apply_mapping(mapping, moving_crop[:, :, -1])), 
+                                output_path_dapi
+                            )
+
+                            logger.debug(f"Applying mapping: {crop_id_pos}")
+                            registered_images = []
+
+                            for idx, ch in enumerate(moving_channels_no_dapi):
+                                if ch in current_channels_to_register_no_dapi:
+                                    registered_images.append(apply_mapping(mapping, moving_crop[:, :, idx]))
+
+                            registered_images = np.stack(registered_images, axis=-1)
+
+                            logger.debug(f"Saving registered image: {crop_id_pos}")
+                            save_h5(
+                                registered_images, 
+                                output_path
+                            )
+
             except:
                 #if np.mean(fixed_crop!=0) < 0.1 or np.mean(moving_crop!=0) < 0.1:
                 save_pickle(
@@ -189,7 +229,17 @@ def main():
 
     logger.debug(f"Fixed image: {args.fixed_image}, Moving image: {args.moving_image}")
 
+    moving_channels = os.path.basename(args.moving_image) \
+        .split('.')[0] \
+        .split('_')[2:][::-1] 
+    
+    logger.debug(f'DIFFEOMORPHIC - MOVING CHANNELS: {moving_channels}')
+
+    moving_channels_no_dapi = [ch for ch in moving_channels if ch != 'DAPI']
+
     channels_to_register = load_pickle(args.channels_to_register)
+    current_channels_to_register = remove_lowercase_channels(moving_channels)
+    current_channels_to_register_no_dapi = [ch for ch in current_channels_to_register if ch != 'DAPI']
 
     if channels_to_register:
         moving = load_h5(args.moving_image)
@@ -236,7 +286,8 @@ def main():
 
         areas_diffeo = get_crops_positions(moving_shape, args.crop_size_diffeo, args.overlap_size_diffeo)
 
-        save_stacked_crops(areas_diffeo, args.fixed_image, args.moving_image, reconstructed_image)
+        save_stacked_crops(areas_diffeo, args.fixed_image, args.moving_image, reconstructed_image, channels_to_register, 
+                           current_channels_to_register_no_dapi, moving_channels_no_dapi)
 
         del reconstructed_image
         gc.collect()
