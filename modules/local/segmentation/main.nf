@@ -1,10 +1,10 @@
 process segmentation{
     cpus 2
     maxRetries = 3
-    memory 50.GB
+    memory 60.GB
     publishDir "${params.outdir}/${patient_id}/segmentation", mode: 'copy', pattern: "*.{pkl,npy}"
     container "docker://bolt3x/attend_image_analysis:segmentation_gpu"
-    clusterOptions '--gpus=1'
+    clusterOptions '--partition=long --gpus=1'
     tag "segmentation"
 
     input:
