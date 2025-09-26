@@ -5,7 +5,7 @@ process segmentation{
     time 73.h
     publishDir "${params.outdir}/${patient_id}/segmentation", mode: 'copy', pattern: "*.{pkl,npy}"
     container "docker://bolt3x/attend_image_analysis:segmentation_gpu"
-    clusterOptions '--partition=long --gres=gpu:nvidia_h200:1'
+    clusterOptions '--gpus=1'
 
     tag "segmentation"
 
