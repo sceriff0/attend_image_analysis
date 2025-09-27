@@ -38,6 +38,7 @@ process diffeomorphic{
     maxRetries = 3
     memory { 15.GB * task.attempt }
     array { task.array }
+    time '5m'
     tag "diffeomorphic"
     
     clusterOptions '--gpus=1'
