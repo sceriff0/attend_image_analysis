@@ -38,10 +38,10 @@ process diffeomorphic{
     maxRetries = 3
     memory { 15.GB * task.attempt }
     array { task.array }
-    time '5m'
+    time '10m'
     tag "diffeomorphic"
     
-    clusterOptions = '--gres=gpu:nvidia_h200:1'
+    clusterOptions = '--gpus=l40s'
     container "docker://bolt3x/attend_image_analysis:v2.4"
 
     input:
