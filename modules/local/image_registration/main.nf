@@ -41,7 +41,7 @@ process diffeomorphic{
     time '5m'
     tag "diffeomorphic"
     
-    clusterOptions '--gpus=1'
+    clusterOptions = '--gres=gpu:nvidia_h200:1'
     container "docker://bolt3x/attend_image_analysis:v2.4"
 
     input:
