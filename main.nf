@@ -110,10 +110,10 @@ workflow {
             def fixed = tuple[2]
 
             // Find the file associated with the `true` value
-            for (int i = 0; i < records.size(); i++){
-                if(fixed[i] == "true"){
-                    trueFile = records[i]
-                    break
+            def trueFile = null
+            records.eachWithIndex { record, i ->
+                if (fixed[i] == "true") {
+                    trueFile = record
                 }
             }
             

@@ -42,7 +42,8 @@ process diffeomorphic{
     tag "diffeomorphic"
     
     clusterOptions = '--gres=gpu:nvidia_h200:1'
-    container "docker://bolt3x/attend_image_analysis:v2.4"
+    /*container "docker://bolt3x/attend_image_analysis:v2.4"*/
+    container "docker://bolt3x/attend_image_analysis:debug_diffeo"
 
     input:
         tuple val(patient_id), path(moving), path(fixed), path(crop), path(channels_to_register)
