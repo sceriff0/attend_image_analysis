@@ -38,10 +38,12 @@ process diffeomorphic{
     maxRetries = 3
     memory { 15.GB * task.attempt }
     array { task.array }
+    time '10m'
     tag "diffeomorphic"
     
-    clusterOptions '--gpus=1'
-    container "docker://bolt3x/attend_image_analysis:v2.4"
+    clusterOptions = '--gres=gpu:nvidia_h200:1'
+    /*container "docker://bolt3x/attend_image_analysis:v2.4"*/
+    container "docker://bolt3x/attend_image_analysis:debug_diffeo"
 
     input:
         tuple val(patient_id), path(moving), path(fixed), path(crop), path(channels_to_register)
