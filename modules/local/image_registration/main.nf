@@ -36,9 +36,9 @@ process affine{
 process diffeomorphic{
     cpus 4
     maxRetries = 3
-    memory { 15.GB * task.attempt }
+    memory { 60.GB * task.attempt }
     array { task.array }
-    time '10m'
+    time '30m'
     tag "diffeomorphic"
     
     clusterOptions = '--gres=gpu:nvidia_h200:1'
