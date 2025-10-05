@@ -34,7 +34,7 @@ process affine{
  
 
 process diffeomorphic{
-    cpus 4
+    cpus 8
     maxRetries = 3
     memory { 90.GB * task.attempt }
     array { task.array }
