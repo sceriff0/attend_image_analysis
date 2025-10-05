@@ -150,11 +150,11 @@ def main():
                 )
 
                 normalized_fixed = normalize(dapi_preprocessing(fixed[:, :, -1]), 1.0, 99.8, axis=(0,1))
-                pred_fixed, _ = model.predict_instances(normalized_fixed[:, :, -1], n_tiles=(8,8), verbose=False)
+                pred_fixed, _ = model.predict_instances(normalized_fixed, n_tiles=(8,8), verbose=False)
                 expanded_pred_fixed = segmentation.expand_labels(pred_fixed, distance=10, spacing=1)
 
                 normalized_moving = normalize(dapi_preprocessing(moving[:, :, -1]), 1.0, 99.8, axis=(0,1))
-                pred_moving, _ = model.predict_instances(normalized_moving[:, :, -1], n_tiles=(8,8), verbose=False)
+                pred_moving, _ = model.predict_instances(normalized_moving, n_tiles=(8,8), verbose=False)
                 expanded_pred_moving = segmentation.expand_labels(pred_moving, distance=10, spacing=1)
 
                 registered_moving_labels = apply_mapping(mapping, expanded_pred_moving)
