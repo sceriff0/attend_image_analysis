@@ -15,6 +15,10 @@ from csbdeep.utils import normalize
 from skimage import segmentation
 from skimage import morphology
 from skimage.filters import gaussian
+import tensorflow as tf
+gpus = tf.config.experimental.list_physical_devices('GPU')
+for gpu in gpus:
+    tf.config.experimental.set_memory_growth(gpu, True)
 
 # Set up logging configuration
 logging_config.setup_logging()
