@@ -10,9 +10,40 @@ from utils.io import load_pickle, save_h5
 from utils.mapping import compute_diffeomorphic_mapping_dipy, apply_mapping
 from utils import logging_config
 
+from stardist.models import StarDist2D
+from csbdeep.utils import normalize
+from skimage import segmentation
+from skimage import morphology
+from skimage.filters import gaussian
+
 # Set up logging configuration
 logging_config.setup_logging()
 logger = logging.getLogger(__name__)
+
+def multiply_image_and_scalar(image, s):
+    return image * s
+
+
+def power(image, a):
+    return image**a
+
+
+def gamma_correction(image, gamma):
+    max_intensity = np.max(image)
+    image = multiply_image_and_scalar(image, 1.0 / max_intensity)
+    image = power(image, gamma)
+    image = multiply_image_and_scalar(image, max_intensity)
+
+    return image
+
+
+def dapi_preprocessing(image):
+    image = gamma_correction(image, 0.6)
+    image = morphology.white_tophat(image, footprint=morphology.disk(50))
+    image = np.array(image, dtype="float32")
+    image = gaussian(image, sigma=1.0)
+
+    return image
 
 def are_all_alphabetic_lowercase(string):
             # Filter alphabetic characters and check if all are lowercase
@@ -71,6 +102,9 @@ def main():
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
+    model = StarDist2D(None, name="stardist_full_e200_lr00001_aug1_seed10_es50p0.001_rlr0.5p50", basedir="/hpcnfs/scratch/P_DIMA_ATTEND/models/")
+    model.config.use_gpu = True
+
     moving_channels = os.path.basename(args.moving_image) \
         .split('.')[0] \
         .split('_')[2:][::-1] 
@@ -110,6 +144,23 @@ def main():
                     y=fixed[:, :, -1].squeeze(), 
                     x=moving[:, :, -1].squeeze()
                 )
+
+                normalized_fixed = normalize(dapi_preprocessing(fixed[:, :, -1]), 1.0, 99.8, axis=(0,1))
+                pred_fixed, _ = model.predict_instances(normalized_fixed[:, :, -1], verbose=False)
+                expanded_pred_fixed = segmentation.expand_labels(pred_fixed, distance=10, spacing=1)
+
+                normalized_moving = normalize(dapi_preprocessing(moving[:, :, -1]), 1.0, 99.8, axis=(0,1))
+                pred_moving, _ = model.predict_instances(normalized_moving[:, :, -1], verbose=False)
+                expanded_pred_moving = segmentation.expand_labels(pred_moving, distance=10, spacing=1)
+
+                registered_moving_labels = apply_mapping(mapping, expanded_pred_moving)
+                iou = segmentation.compare_labels(expanded_pred_fixed, registered_moving_labels, method='jaccard')
+                
+                # Make debug dir inside work dir
+                if not os.path.exists('debug'):
+                    os.makedirs('debug')
+                # Save iou to text file
+                np.savetxt(f'debug/iou_{crop_name}.txt', [iou])
 #                
                 # Save registered dapi channel for quality control
                 save_h5(
