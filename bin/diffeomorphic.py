@@ -158,7 +158,11 @@ def main():
                 expanded_pred_moving = segmentation.expand_labels(pred_moving, distance=10, spacing=1)
 
                 registered_moving_labels = apply_mapping(mapping, expanded_pred_moving)
-                iou = segmentation.compare_labels(expanded_pred_fixed, registered_moving_labels, method='jaccard')
+                
+                # Compute IoU only for non-zero labels
+                intersection = np.logical_and(registered_moving_labels > 0, expanded_pred_fixed > 0)
+                union = np.logical_or(registered_moving_labels > 0, expanded_pred_fixed > 0)
+                iou = np.sum(intersection) / np.sum(union) if np.sum(union) != 0 else 0
                 
                 # Make debug dir inside work dir
                 if not os.path.exists('debug'):
