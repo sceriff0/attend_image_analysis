@@ -208,7 +208,16 @@ workflow {
     // get metadata
     //get_metadata(all_tiff_ch)
     stacking(all_tiff_ch)
-    conversion(stacking.out)
+
+        // Split the stacking output for parallel conversion
+    stacking.out
+        .flatMap { patient_id, tiff_files -> 
+            tiff_files.collect { file -> [patient_id, file] }
+        }
+        .set { individual_tiffs }
+    
+    // Each TIFF now converts in parallel
+    conversion(individual_tiffs)
 
 
 
