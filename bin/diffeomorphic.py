@@ -6,7 +6,7 @@ import os
 import numpy as np
 import logging
 import hashlib
-from utils.io import load_pickle, save_h5
+from utils.io import load_pickle, save_pickle, save_h5
 from utils.mapping import compute_diffeomorphic_mapping_dipy, apply_mapping
 from utils import logging_config
 
@@ -51,6 +51,13 @@ def _parse_args():
         default=None,
         required=True,
         help="h5 image file",
+    )
+    parser.add_argument(
+        "-d",
+        "--debug",
+        type=bool,
+        default=False,
+        help="If true, saves intermediate files for debugging purposes."
     )
     parser.add_argument(
         "-l",
@@ -110,6 +117,9 @@ def main():
                     y=fixed[:, :, -1].squeeze(), 
                     x=moving[:, :, -1].squeeze()
                 )
+
+                if args.debug:
+                    save_pickle(mapping, f"debug_diffeo_{crop_name}.pkl")
 #                
                 # Save registered dapi channel for quality control
                 save_h5(

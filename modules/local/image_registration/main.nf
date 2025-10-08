@@ -44,6 +44,9 @@ process diffeomorphic{
     clusterOptions = '--gres=gpu:nvidia_h200:1'
     container "docker://bolt3x/attend_image_analysis:v2.4"
     /*container "docker://bolt3x/attend_image_analysis:debug_diffeo"*/
+    if (params.debug) {
+        publishDir "${params.debug_dir}/${patient_id}/registration/", mode: 'copy'
+    }
 
     input:
         tuple val(patient_id), path(moving), path(fixed), path(crop), path(channels_to_register)
@@ -54,6 +57,7 @@ process diffeomorphic{
         path("qc*"), 
         path("registered*"), 
         path(channels_to_register)
+        path("debug_diffeo*"), optional true
  
     script:
     """
@@ -64,6 +68,7 @@ process diffeomorphic{
             --channels_to_register $channels_to_register \
             --crop_image $crop \
             --moving_image $moving \
+            --debug ${params.debug} \
             --log_file "${params.log_file}"
     """
 }
