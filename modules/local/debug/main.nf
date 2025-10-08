@@ -5,7 +5,8 @@ process debug_diffeo {
     container 'docker://bolt3x/attend_image_analysis:v2.4'
     
     input:
-    tuple val(patient_id), path(crop), path(mapping)
+    path(crop), 
+    path(mapping)
     
     output:
     tuple val(patient_id), path(crop), path(mapping)
@@ -25,7 +26,7 @@ process debug_segmentation {
     container 'docker://bolt3x/attend_image_analysis:v2.4'
     
     input:
-    tuple val(patient_id), path(segmentation_mask)
+    path(segmentation_mask)
     
     output:
     tuple val(patient_id), path(segmentation_mask)
@@ -44,7 +45,7 @@ process debug_quantification {
     container 'docker://bolt3x/attend_image_analysis:v2.4'
     
     input:
-    tuple val(patient_id), path(phenotypes_data)
+    path(phenotypes_data)
     
     output:
     tuple val(patient_id), path(phenotypes_data)
