@@ -93,6 +93,13 @@ def _parse_args():
         help="Number of image crops to export.",
     )
     parser.add_argument(
+        "-op",
+        "--optional_channels",
+        nargs='*',
+        default=[],  
+        help="List of optional channels"
+    )
+    parser.add_argument(
         "-l",
         "--log_file",
         type=str,
@@ -109,6 +116,7 @@ def main():
 
     # Fixed-order list of channels
     channels_list = get_channel_list()
+    channels_list.extend(args.optional_channels)
 
     channels_files = args.channels.split()
 
