@@ -32,7 +32,6 @@ process affine{
     """
 }
  
-
 process diffeomorphic{
     cpus 4
     maxRetries = 3
@@ -56,7 +55,7 @@ process diffeomorphic{
         path(fixed), 
         path("qc*"), 
         path("registered*"), 
-        path(channels_to_register)
+        path(channels_to_register),
         path("debug_diffeo*", optional: true)
  
     script:
