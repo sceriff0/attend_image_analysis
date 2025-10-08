@@ -57,7 +57,7 @@ process diffeomorphic{
         path("qc*"), 
         path("registered*"), 
         path(channels_to_register)
-        path("debug_diffeo*"), optional true
+        path("debug_diffeo*", optional: true)
  
     script:
     """
