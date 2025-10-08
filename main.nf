@@ -30,6 +30,9 @@ include { create_membrane_channel } from './modules/local/create_membrane_channe
 include { segmentation } from './modules/local/segmentation/main.nf'
 include { quantification } from './modules/local/markers_quantification/main.nf'
 include {phenotyping} from './modules/local/phenotyping/main.nf'
+include { debug_diffeo} from './modules/local/debug/main.nf'
+include { debug_segmentation} from './modules/local/debug/main.nf'
+include { debug_quantification} from './modules/local/debug/main.nf'
 
 
 def parse_csv(csv_file_path) {
@@ -165,7 +168,7 @@ workflow {
         def registered_dapi = it[3]
         def registered_crop = it[4]
         def channels_to_register = it[5]
-        
+
         return [patient_id, moving.getName(), moving, fixed, registered_dapi, registered_crop, channels_to_register]
     }.groupTuple(by:1).map{
         return [it[0][0], it[2][0], it[3][0], it[4], it[5]]
@@ -211,7 +214,16 @@ workflow {
     conversion(stacking.out)
 
 
+    if params.debug {
+        // take as input crops_data and only the 6th element from diffeomorphoc output (mapping file)
+        debug_diffeo(crops_data, diffeomorphic.out.map{ it[6] })
 
+        // take as input segmentation 2th element (segmentation_mask.npy)
+        debug_segmentation(segmentation.out.map{ it[2] })
+
+        // take as input quantification 2th element (phenotypes_data.csv)
+        debug_quantification(quantification.out.map{ it[2] })    
+    }
 
 
     //tching_out = grouped_stitching_out.map { entry ->
