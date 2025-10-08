@@ -240,6 +240,8 @@ if __name__ == "__main__":
     
     elif output_path.endswith('.tiff'):
         output_path = output_path.replace('.tiff', '.h5')
+    elif output_path.endswith('.tif'):
+        output_path = output_path.replace('.tif', '.h5')
     else:
         ValueError("Input path must end with .nd2 or .tiff")
 
