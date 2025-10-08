@@ -54,6 +54,12 @@ def _parse_args():
         help="A string of nd2 files.",
     )
     parser.add_argument(
+        "-oc",
+        "--optional_channels",
+        nargs="*",
+        help="List of optional channels",
+    )
+    parser.add_argument(
         "-l",
         "--log_file",
         type=str,
@@ -77,6 +83,7 @@ def main():
 
     nd2_files = args.nd2_files.split()
     channels_list = get_channel_list()
+    channels_list.extend(args.optional_channels)
     save_path = f"channels_{args.patient_id}.pkl"
 
     channel_names = []
