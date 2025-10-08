@@ -214,7 +214,7 @@ workflow {
     conversion(stacking.out)
 
 
-    if params.debug {
+    if (params.debug) {
         // take as input crops_data and only the 6th element from diffeomorphoc output (mapping file)
         debug_diffeo(crops_data, diffeomorphic.out.map{ it[6] })
 
