@@ -29,7 +29,7 @@ process debug_segmentation {
     cpus 2
     memory '10.GB'
     tag "debug_segmentation"
-    container 'docker://bolt3x/attend_image_analysis:v2.4'
+    container 'docker://bolt3x/attend_image_analysis:debug_diffeo'
 
     publishDir "${params.debug_dir}/segmentation", mode: 'copy'
     
