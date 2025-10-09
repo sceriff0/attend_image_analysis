@@ -32,7 +32,7 @@ include { quantification } from './modules/local/markers_quantification/main.nf'
 include {phenotyping} from './modules/local/phenotyping/main.nf'
 include { debug_diffeo} from './modules/local/debug/main.nf'
 include { debug_segmentation} from './modules/local/debug/main.nf'
-include { debug_quantification} from './modules/local/debug/main.nf'
+//include { debug_quantification} from './modules/local/debug/main.nf'
 
 
 def parse_csv(csv_file_path) {
