@@ -2,7 +2,7 @@ process debug_diffeo {
     cpus 2
     memory '10.GB'
     tag "debug_diffeo"
-    container 'docker://bolt3x/attend_image_analysis:v2.4'
+    container 'docker://bolt3x/attend_image_analysis:debug_diffeo'
     
     input:
     tuple path(crop), path(mapping)
