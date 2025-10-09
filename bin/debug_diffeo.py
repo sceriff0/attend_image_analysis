@@ -117,4 +117,6 @@ def main():
     logger.debug(f'DIFFEOMORPHIC - IoU: {iou}')
     with open(os.path.join(args.output_dir, args.output_file), 'w') as f:
         f.write(f'IoU: {iou}\n')
-    
+
+if __name__ == "__main__":
+    main()   

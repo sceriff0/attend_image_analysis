@@ -70,3 +70,6 @@ def main():
 
     with open(os.path.join(args.output_dir, args.output_file), 'w') as f:
         f.write(f"{quality_score}\n")
+
+if __name__ == "__main__":
+    main()
