@@ -43,9 +43,6 @@ process diffeomorphic{
     clusterOptions = '--gres=gpu:nvidia_h200:1'
     container "docker://bolt3x/attend_image_analysis:v2.4"
     /*container "docker://bolt3x/attend_image_analysis:debug_diffeo"*/
-    publishDir path: { params.debug ? "${params.debug_dir}/${patient_id}/registration/" : null }, 
-               mode: 'copy',
-               enabled: params.debug
 
     input:
         tuple val(patient_id), path(moving), path(fixed), path(crop), path(channels_to_register)

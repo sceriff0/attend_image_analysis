@@ -24,3 +24,27 @@ process debug_diffeo {
         --output_file ${crop.baseName}_IoU.txt
     """
 }
+
+process debug_segmentation {
+    cpus 2
+    memory '10.GB'
+    tag "debug_segmentation"
+    container 'docker://bolt3x/attend_image_analysis:v2.4'
+
+    publishDir "${params.debug_dir}/segmentation", mode: 'copy'
+    
+    input:
+    path(segmentation)
+    
+    output:
+    path "quality_score.txt"
+    
+    script:
+    """
+    debug_segmentation.py \
+        --segmentation ${segmentation} \
+        --output_dir ${params.debug_dir}/segmentation/ \
+        --log_file ${params.log_file} \
+        --output_file quality_score.txt
+    """
+}
