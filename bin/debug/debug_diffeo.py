@@ -8,6 +8,13 @@ from utils import logging_config
 from utils.io import load_h5, save_h5, save_pickle, load_pickle
 from utils.mapping import apply_mapping
 
+import numpy as np
+from aicsimageio import AICSImage
+from csbdeep.utils import normalize
+from skimage import segmentation
+from stardist.models import StarDist2D
+
+
 
 # Set up logging configuration
 logging_config.setup_logging()
@@ -34,6 +41,22 @@ def _parse_args():
         help="Pickle file containing diffeomorphic mapping.",
     )
     parser.add_argument(
+        "-md",
+        "--model-dir",
+        type=str,
+        default=None,
+        required=True,
+        help="Directory containing StarDist model.",
+    )
+    parser.add_argument(
+        "-mn",
+        "--model-name",
+        type=str,
+        default=None,
+        required=True,
+        help="Name of the StarDist model.",
+    )
+    parser.add_argument(
         "-o",
         "--output_dir",
         type=str,
@@ -42,13 +65,19 @@ def _parse_args():
         help="Directory to save debug files.",
     )
     parser.add_argument(
-        "-l",
+        "-l",   
         "--log_file",
         type=str,
         required=False,
         help="Path to log file.",
     )
-
+    parser.add_argument(
+        "-of",
+        "--output_file",
+        type=str,
+        required=True,
+        help="Path to output file containing IoU score.",
+    )
     args = parser.parse_args()
     return args
 
@@ -69,7 +98,23 @@ def main():
     fixed_crop = crops[0]
     moving_crop = crops[1]
 
-    # Apply mapping to moving crop
-    registered_crop = apply_mapping(moving_crop, mapping)
+    fixed_crop_norm = normalize(fixed_crop, 1, 99.8, axis=(0, 1))
+    moving_crop_norm = normalize(moving_crop, 1, 99.8, axis=(0, 1))
 
-    logger.info(f"Saved fixed, moving, and registered crops to {args.output_dir}")
+    model = StarDist2D(None, name=args.model_name, basedir=args.model_dir)
+    model.config.use_gpu = True
+
+    fixed_pred, _ = model.predict_instances(fixed_crop_norm, n_tiles=(8,8), verbose=False)
+    moving_pred, _ = model.predict_instances(moving_crop_norm, n_tiles=(8,8), verbose=False)
+
+    registered_moving_pred = apply_mapping(mapping, moving_pred)
+
+    # Compute IoU between fixed_pred and registered_moving_pred
+    intersection = np.logical_and(fixed_pred > 0, registered_moving_pred > 0)
+    union = np.logical_or(fixed_pred > 0, registered_moving_pred > 0)
+    iou = np.sum(intersection) / np.sum(union)
+
+    logger.debug(f'DIFFEOMORPHIC - IoU: {iou}')
+    with open(os.path.join(args.output_dir, args.output_file), 'w') as f:
+        f.write(f'IoU: {iou}\n')
+    
