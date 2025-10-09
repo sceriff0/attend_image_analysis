@@ -227,11 +227,11 @@ workflow {
         
         debug_diffeo(debug_diffeo_input)
 
-        // For segmentation - this looks correct
+        // For segmentation 
         debug_segmentation(segmentation.out.map{ it[2] })
 
-        // For quantification - this looks correct
-        debug_quantification(quantification.out.map{ it[2] })    
+        // For quantification
+        //debug_quantification(quantification.out.map{ it[2] })    
     }
 
 
