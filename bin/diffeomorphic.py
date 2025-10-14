@@ -161,6 +161,10 @@ def main():
                     np.squeeze(moving[:,:,-1]), 
                     output_path_dapi
                 )
+                save_pickle(
+                     0, 
+                     f"debug_diffeo_{crop_name}.pkl"
+                )
         else:
             # Generate random bytes
             random_data = os.urandom(16)
