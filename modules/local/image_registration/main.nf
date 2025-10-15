@@ -40,8 +40,8 @@ process diffeomorphic{
     time '10m'
     tag "diffeomorphic"
     
-    clusterOptions = '--gres=gpu:nvidia_h200:1'
-    container "docker://bolt3x/attend_image_analysis:v2.4"
+    container = params.use_gpu ? "docker://bolt3x/attend_image_analysis:segmentation_gpu" : null
+    clusterOptions = params.use_gpu ? '--gres=gpu:nvidia_h200:1' : null
     /*container "docker://bolt3x/attend_image_analysis:debug_diffeo"*/
 
     input:
@@ -64,6 +64,7 @@ process diffeomorphic{
             --channels_to_register $channels_to_register \
             --crop_image $crop \
             --moving_image $moving \
+            --use_gpu ${params.use_gpu} \
             --debug ${params.debug} \
             --log_file "${params.log_file}"
     """
