@@ -84,7 +84,8 @@ def main():
 
     nd2_files = args.nd2_files.split()
     channels_list = get_channel_list()
-    channels_list.extend(args.optional_channels.split(","))
+    optional_channels = args.optional_channels.split(",")
+    channels_list.extend(optional_channels)
     logger.info(f"Full channel list: {channels_list}")
     save_path = f"channels_{args.patient_id}.pkl"
 
