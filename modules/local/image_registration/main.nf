@@ -40,7 +40,7 @@ process diffeomorphic{
     time '10m'
     tag "diffeomorphic"
     
-    container = params.use_gpu ? "docker://bolt3x/attend_image_analysis:segmentation_gpu" : null
+    container = params.use_gpu ? "docker://bolt3x/attend_image_analysis:v2.4" : null
     clusterOptions = params.use_gpu ? '--gres=gpu:nvidia_h200:1' : null
     /*container "docker://bolt3x/attend_image_analysis:debug_diffeo"*/
 
