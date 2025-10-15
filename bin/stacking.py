@@ -116,7 +116,7 @@ def main():
 
     # Fixed-order list of channels
     channels_list = get_channel_list()
-    channels_list.extend(args.optional_channels)
+    channels_list.extend(args.optional_channels.spliot(","))
 
     channels_files = args.channels.split()
 
