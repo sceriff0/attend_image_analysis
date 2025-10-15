@@ -305,7 +305,7 @@ class SegmentationPipeline:
         self.log(f'Processing entire image (shape: {image.shape})')
         
         # Predict instances on whole image
-        pred, _ = self.model.predict_instances(image, n_tiles=(16,16), verbose=False)
+        pred, _ = self.model.predict_instances(image, n_tiles=(32,32), verbose=False)
         
         # Expand labels
         expanded_pred = segmentation.expand_labels(pred, distance=10, spacing=1)
