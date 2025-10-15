@@ -95,8 +95,8 @@ def _parse_args():
     parser.add_argument(
         "-oc",
         "--optional_channels",
-        nargs="*",
-        default=[],
+        type=str,
+        default="",
         help="List of optional channels",
     )
     parser.add_argument(
