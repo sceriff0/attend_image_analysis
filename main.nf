@@ -60,6 +60,12 @@ def parse_csv2(csv_file_path) {
         }
 }
 
+// Split optional channels 
+if (params.optional_channels && params.optional_channels instanceof String) {
+    // Split by comma or whitespace
+    params.optional_channels = params.optional_channels.tokenize(', ') as List
+}
+
 workflow preprocessing {
     take:
     parsed_csv_ch
