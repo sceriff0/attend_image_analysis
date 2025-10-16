@@ -231,7 +231,7 @@ workflow {
 
         // For quantification
         //debug_quantification(quantification.out.map{ it[2] })    
-    }
+    
 
 
     //tching_out = grouped_stitching_out.map { entry ->
