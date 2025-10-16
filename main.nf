@@ -213,18 +213,18 @@ workflow {
     conversion(stacking.out)
 
 
-    if (params.debug) {
-        // Combine crops_data with the corresponding mapping files from diffeomorphic output
-        debug_diffeo_input = crops_data.join(
-            diffeomorphic.out.map { it -> 
-                tuple(it[0], it[1], it[6])  // [patient_id, moving_image, mapping_file]
-            },
-            by: [0, 1]  // join by patient_id and moving_image
-        ).map { patient_id, moving_image, fixed_image, crops_path, channels_to_register, mapping_file ->
+
+     // Combine crops_data with the corresponding mapping files from diffeomorphic output
+    debug_diffeo_input = crops_data.join(
+        diffeomorphic.out.map { it -> 
+            tuple(it[0], it[1], it[6])  // [patient_id, moving_image, mapping_file]
+        },
+        by: [0, 1]  // join by patient_id and moving_image
+    ).map { patient_id, moving_image, fixed_image, crops_path, channels_to_register, mapping_file ->
             tuple(crops_path, mapping_file)  // Only pass the two paths needed
         }
         
-        debug_diffeo(debug_diffeo_input)
+    debug_diffeo(debug_diffeo_input)
 
         // For segmentation 
         //debug_segmentation(segmentation.out.map{ it[2] })
