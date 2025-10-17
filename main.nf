@@ -210,7 +210,12 @@ workflow {
     // get metadata
     //get_metadata(all_tiff_ch)
     stacking(all_tiff_ch)
-    conversion(stacking.out)
+    
+    expanded_conversion_input = stacking.out.flatMap { id, images ->
+        images.collect { img -> tuple(id, img) }
+    }
+
+    conversion(expanded_conversion_input)
 
     // Create a channel of crops that produced debug files
     ch_debug_files = diffeomorphic.out
