@@ -210,7 +210,7 @@ workflow {
     // get metadata
     //get_metadata(all_tiff_ch)
     stacking(all_tiff_ch)
-    
+
     expanded_conversion_input = stacking.out.flatMap { id, images ->
         images.collect { img -> tuple(id, img) }
     }
@@ -233,6 +233,9 @@ workflow {
         def crop_basename = crop_path.name.replace(".pkl", "")
         tuple(crop_basename, crop_path)
     }
+
+    ch_crop_files.view { "CROP KEY: ${it[0]}" }
+    ch_debug_files.view { "DEBUG KEY: ${it[0]}" }   
 
     // Join them together
     debug_diffeo_input = ch_crop_files
