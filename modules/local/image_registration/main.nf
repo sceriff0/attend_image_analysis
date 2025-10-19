@@ -32,7 +32,6 @@ process affine{
     """
 }
  
-
 process diffeomorphic{
     cpus 4
     maxRetries = 3
@@ -41,19 +40,20 @@ process diffeomorphic{
     time '10m'
     tag "diffeomorphic"
     
-    clusterOptions = '--gres=gpu:nvidia_h200:1'
-    /*container "docker://bolt3x/attend_image_analysis:v2.4"*/
-    container "docker://bolt3x/attend_image_analysis:debug_diffeo"
+    container = params.use_gpu ? "docker://bolt3x/attend_image_analysis:v2.4" : null
+    clusterOptions = params.use_gpu ? '--gres=gpu:nvidia_h200:1' : null
+    /*container "docker://bolt3x/attend_image_analysis:debug_diffeo"*/
 
     input:
         tuple val(patient_id), path(moving), path(fixed), path(crop), path(channels_to_register)
     output:
         tuple val(patient_id), 
-        path(moving), 
-        path(fixed), 
-        path("qc*"), 
-        path("registered*"), 
-        path(channels_to_register)
+            path(moving), 
+            path(fixed), 
+            path("qc*"), 
+            path("registered*"), 
+            path(channels_to_register),
+            path("debug_diffeo*", optional: true)
  
     script:
     """
@@ -64,6 +64,8 @@ process diffeomorphic{
             --channels_to_register $channels_to_register \
             --crop_image $crop \
             --moving_image $moving \
+            --use_gpu ${params.use_gpu} \
+            --debug ${params.debug} \
             --log_file "${params.log_file}"
     """
 }

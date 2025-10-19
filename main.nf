@@ -30,6 +30,9 @@ include { create_membrane_channel } from './modules/local/create_membrane_channe
 include { segmentation } from './modules/local/segmentation/main.nf'
 include { quantification } from './modules/local/markers_quantification/main.nf'
 include {phenotyping} from './modules/local/phenotyping/main.nf'
+include { debug_diffeo} from './modules/local/debug/main.nf'
+//include { debug_segmentation} from './modules/local/debug/main.nf'
+//include { debug_quantification} from './modules/local/debug/main.nf'
 
 
 def parse_csv(csv_file_path) {
@@ -56,7 +59,6 @@ def parse_csv2(csv_file_path) {
             ]
         }
 }
-
 workflow preprocessing {
     take:
     parsed_csv_ch
@@ -208,10 +210,49 @@ workflow {
     // get metadata
     //get_metadata(all_tiff_ch)
     stacking(all_tiff_ch)
-    conversion(stacking.out)
 
+    expanded_conversion_input = stacking.out.flatMap { id, images ->
+        images.collect { img -> tuple(id, img) }
+    }
 
+    conversion(expanded_conversion_input)
 
+    // Create a channel of crops that produced debug files
+    ch_debug_files = diffeomorphic.out
+        .filter { it.size() > 6 && it[6] != null }
+        .map { patient_id, moving, fixed, qc, registered, channels, debug_file ->
+            // Parse the registered filename to get crop position
+            def reg_basename = registered.name.replace("registered_", "")
+            def tokens = reg_basename.tokenize("_")
+            def crop_key = "${tokens[0]}_${tokens[1]}_${patient_id}"
+            tuple(crop_key, debug_file)
+        }
+
+    // Create a channel of crop files with their keys
+    ch_crop_files = crops_data.map { patient_id, moving, fixed, crop_path, channels ->
+        def crop_basename = crop_path.name.replace(".pkl", "")
+        tuple(crop_basename, crop_path)
+    }
+
+    ch_crop_files.view { "CROP KEY: ${it[0]}" }
+    ch_debug_files.view { "DEBUG KEY: ${it[0]}" }   
+
+    // Join them together
+    debug_diffeo_input = ch_crop_files
+        .join(ch_debug_files, by: 0)
+        .map { key, crop_path, debug_file ->
+            tuple(crop_path, debug_file)
+        }
+
+    // Run debug process
+    debug_diffeo(debug_diffeo_input)
+
+        // For segmentation 
+        //debug_segmentation(segmentation.out.map{ it[2] })
+
+        // For quantification
+        //debug_quantification(quantification.out.map{ it[2] })    
+    
 
 
     //tching_out = grouped_stitching_out.map { entry ->

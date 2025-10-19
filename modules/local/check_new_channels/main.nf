@@ -14,6 +14,7 @@ process check_new_channels{
             --patient_id $patient_id \
             --nd2_files "$files" \
             --ome_tiff_image "${params.outdir}/${patient_id}.ome.tiff" \
+            --optional_channels "${params.optional_channels}" \
             --log_file "${params.log_file}"
     """ 
 }

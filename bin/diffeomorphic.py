@@ -6,8 +6,7 @@ import os
 import numpy as np
 import logging
 import hashlib
-from utils.io import load_pickle, save_h5
-from utils.mapping import compute_diffeomorphic_mapping_dipy, apply_mapping
+from utils.io import load_pickle, save_pickle, save_h5
 from utils import logging_config
 
 # Set up logging configuration
@@ -53,6 +52,20 @@ def _parse_args():
         help="h5 image file",
     )
     parser.add_argument(
+        "-ug",
+        "--use_gpu",
+        type=bool,
+        default=True,
+        help="If true, uses GPU for computation.",
+    )
+    parser.add_argument(
+        "-d",
+        "--debug",
+        type=bool,
+        default=False,
+        help="If true, saves intermediate files for debugging purposes."
+    )
+    parser.add_argument(
         "-l",
         "--log_file",
         type=str,
@@ -65,6 +78,11 @@ def _parse_args():
 
 def main():
     args = _parse_args()
+
+    if args.use_gpu:
+        from utils.mapping import compute_diffeomorphic_mapping_dipy, apply_mapping
+    else:
+        from utils.mapping_no_gpu import compute_diffeomorphic_mapping_dipy, apply_mapping
 
     handler = logging.FileHandler(args.log_file)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -110,6 +128,9 @@ def main():
                     y=fixed[:, :, -1].squeeze(), 
                     x=moving[:, :, -1].squeeze()
                 )
+
+                if args.debug:
+                    save_pickle(mapping, f"debug_diffeo_{crop_name}.pkl")
 #                
                 # Save registered dapi channel for quality control
                 save_h5(
@@ -150,6 +171,10 @@ def main():
                 save_h5(
                     np.squeeze(moving[:,:,-1]), 
                     output_path_dapi
+                )
+                save_pickle(
+                     0, 
+                     f"debug_diffeo_{crop_name}.pkl"
                 )
         else:
             # Generate random bytes

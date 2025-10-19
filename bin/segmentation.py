@@ -241,7 +241,7 @@ class ImageProcessor:
 class SegmentationPipeline:
     """Main pipeline for cell segmentation using StarDist."""
     
-    def __init__(self, model_path: str, model_name: str, verbose: bool = True):
+    def __init__(self, model_path: str, model_name: str, use_gpu: bool = True, verbose: bool = True):
         """
         Initialize the segmentation pipeline.
         
@@ -251,7 +251,7 @@ class SegmentationPipeline:
             verbose: Whether to print progress messages
         """
         self.model = StarDist2D(None, name=model_name, basedir=model_path)
-        self.model.config.use_gpu = True
+        self.model.config.use_gpu = use_gpu 
         self.verbose = verbose
         self.processor = ImageProcessor()
     
@@ -305,7 +305,7 @@ class SegmentationPipeline:
         self.log(f'Processing entire image (shape: {image.shape})')
         
         # Predict instances on whole image
-        pred, _ = self.model.predict_instances(image, n_tiles=(8,8), verbose=False)
+        pred, _ = self.model.predict_instances(image, n_tiles=(16,16), verbose=False)
         
         # Expand labels
         expanded_pred = segmentation.expand_labels(pred, distance=10, spacing=1)
@@ -417,6 +417,13 @@ Example usage:
     )
     
     parser.add_argument(
+        '--use_gpu',
+        type=bool,
+        default=True,
+        help='Whether to use GPU for model inference (default: True)'
+    )
+
+    parser.add_argument(
         '--output-dir',
         type=str,
         default='./output',
@@ -447,7 +454,7 @@ def main():
     os.makedirs(args.output_dir, exist_ok=True)
     
     # Initialize pipeline
-    pipeline = SegmentationPipeline(args.model_dir, args.model_name, args.verbose)
+    pipeline = SegmentationPipeline(args.model_dir, args.model_name, args.use_gpu, args.verbose)
     
     # Load and process DAPI image
     pipeline.log(f"Loading DAPI image: {args.dapi_file}")

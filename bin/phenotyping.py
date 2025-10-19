@@ -91,8 +91,8 @@ def run_phenotyping_pipeline(cell_df, mask, output_dir):
     z_sum_threshold = dfz_copy["z_sum"].quantile(1 - 0.01)
     
     # Remove noise
-    df_nn = dfz_copy[~((dfz_copy.iloc[:, :col_num_last_marker + 1].ge(0).sum(axis=1) > count_threshold) | 
-                      (dfz_copy.iloc[:, :col_num_last_marker + 1].sum(axis=1) > z_sum_threshold))].copy().reset_index(drop=True)
+    df_nn = dfz_copy#[~((dfz_copy.iloc[:, :col_num_last_marker + 1].ge(0).sum(axis=1) > count_threshold) | 
+                     # (dfz_copy.iloc[:, :col_num_last_marker + 1].sum(axis=1) > z_sum_threshold))].copy().reset_index(drop=True)
 
     # Step 6: Phenotyping (original logic)
     mark_list = ['CD163', 'CD14', 'CD45', 'CD3', 'CD8', 'CD4', 'FOXP3', 'PANCK', 'VIMENTIN', 'SMA', 'L1CAM', 'PAX2', 'CD74', 'GZMB', 'PD1', 'PDL1']
