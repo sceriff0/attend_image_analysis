@@ -25,7 +25,8 @@ process conversion {
         -tiley ${params.tiley} \
         -pyramid-resolutions ${params.pyramid_resolutions} \
         -pyramid-scale ${params.pyramid_scale} \
-        "\${image}" "\${name}.ome.tiff"
+        "${image}" \
+        "\${name}.ome.tiff"
 
     echo "\$(date): Completed image conversion for ${image}" >> ${params.log_file}
     """
