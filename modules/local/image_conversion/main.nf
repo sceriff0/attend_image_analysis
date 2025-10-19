@@ -16,7 +16,7 @@ process conversion {
     """
     echo "\$(date): Starting image conversion for ${image}..." >> ${params.log_file}
 
-    name="\${image%.*}"
+    name="${image.baseName}"
 
     bfconvert \
         -noflat \
