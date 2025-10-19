@@ -17,6 +17,7 @@ process conversion {
     echo "\$(date): Starting image conversion for ${image}..." >> ${params.log_file}
 
     name="${image.baseName}"
+    image="${image}"
 
     bfconvert \
         -noflat \
@@ -25,7 +26,7 @@ process conversion {
         -tiley ${params.tiley} \
         -pyramid-resolutions ${params.pyramid_resolutions} \
         -pyramid-scale ${params.pyramid_scale} \
-        "${image}" \
+        "\$image"  \
         "\${name}.ome.tiff"
 
     echo "\$(date): Completed image conversion for ${image}" >> ${params.log_file}
