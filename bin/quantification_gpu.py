@@ -203,13 +203,10 @@ def parse_args():
         "--mask_file", required=True, help="Path to segmentation mask .npy file"
     )
     parser.add_argument(
+        "--positions_file", required=True, help="Path to crop positions .pkl file"
+    )
+    parser.add_argument(
         "--outdir", required=True, help="Output directory to save quantification results"
-    )
-    parser.add_argument(
-        "--positions_file", required=True, help="Path to crop positions .pkl file"
-    )
-    parser.add_argument(
-        "--positions_file", required=True, help="Path to crop positions .pkl file"
     )
     return parser.parse_args()
 
