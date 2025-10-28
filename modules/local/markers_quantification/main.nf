@@ -1,5 +1,5 @@
 process quantification{
-    cpus 48
+    cpus 8
     maxRetries = 3
     memory 250.GB
     time 48.h

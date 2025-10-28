@@ -107,9 +107,9 @@ def gpu_extract_features(
     flat_image = channel_gpu.ravel()
     
     # Use CuPy bincount for efficient computation
-    max_label = int(mask_filtered.max()) + 1
-    sum_per_label = cp.bincount(flat_mask, weights=flat_image, minlength=max_label)
-    count_per_label = cp.bincount(flat_mask, minlength=max_label)
+    #max_label = int(mask_filtered.max()) + 1
+    sum_per_label = cp.bincount(flat_mask, weights=flat_image)#, minlength=max_label)
+    count_per_label = cp.bincount(flat_mask)#, minlength=max_label)
     
     # Compute means
     with cp.errstate(divide='ignore', invalid='ignore'):
@@ -204,6 +204,9 @@ def parse_args():
     )
     parser.add_argument(
         "--outdir", required=True, help="Output directory to save quantification results"
+    )
+    parser.add_argument(
+        "--positions_file", required=True, help="Path to crop positions .pkl file"
     )
     parser.add_argument(
         "--positions_file", required=True, help="Path to crop positions .pkl file"
