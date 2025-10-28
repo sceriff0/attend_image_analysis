@@ -257,7 +257,7 @@ def main():
         mask_file=args.mask_file,
         outdir=args.outdir,
         patient_id=args.patient_id,
-        size_cutoff=args.size_cutoff,
+        size_cutoff=0,
     )
     
     end_time = time.time()
