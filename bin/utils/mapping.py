@@ -112,6 +112,21 @@ def compute_diffeomorphic_mapping_dipy(
     y_gpu = cp.asarray(y)
     x_gpu = cp.asarray(x)
     
+        # Auto-detect crop_size from the input image
+    crop_size = y.shape[0]  # Assuming square crops
+    
+    # If not square, use the maximum dimension
+    # crop_size = max(y.shape[0], y.shape[1])
+    
+    # Scale parameters based on detected crop size
+    scale_factor = crop_size / 2000
+    
+    # Scale radius linearly with image size
+    radius = int(20 * scale_factor)
+    
+    # Scale sigma_diff with square root of scale factor (empirically better)
+    sigma_diff = int(20 * scale_factor)
+    
     # Define the metric and create the Symmetric Diffeomorphic Registration object
     metric = CCMetric(2, sigma_diff=sigma_diff, radius=radius)
     sdr = SymmetricDiffeomorphicRegistration(metric, opt_tol=1e-04, inv_tol=0.01)

@@ -173,7 +173,7 @@ def main():
                     output_path_dapi
                 )
                 save_pickle(
-                     0, 
+                     {"status": "uniform_crop", "crop": args.crop_image}, 
                      f"debug_diffeo_{crop_name}.pkl"
                 )
         else:
@@ -193,6 +193,10 @@ def main():
                 0, 
                 f"qc_0_0_{patient_id}_{random_hash}.h5"
             )
+            save_pickle(
+                {"status": "channels_not_registered"}, 
+                f"debug_diffeo_{crop_name}.pkl"
+            )
     else:
         # Generate random bytes
         random_data = os.urandom(16)
@@ -210,6 +214,10 @@ def main():
             save_h5(
                 0, 
                 f"qc_{patient_id}_{random_hash}.h5"
+            )
+            save_pickle(
+                {"status": "no_channels"}, 
+                f"debug_diffeo_{crop_name}.pkl"
             )
 
 if __name__ == "__main__":

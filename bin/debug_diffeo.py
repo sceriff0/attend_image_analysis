@@ -94,31 +94,48 @@ def main():
     logger.addHandler(handler)
 
     # Load crop data and mapping
-    crops = load_pickle(args.crop)
-    mapping = load_pickle(args.mapping)
+    debug_data = load_pickle(args.mapping)
+    #Check what type of debug data we have
+    if isinstance(debug_data, dict):
+        # Handle status messages
+        status = debug_data.get("status", "unknown")
+        logger.debug(f'DIFFEOMORPHIC - Status: {status}')
+        with open(os.path.join(args.output_dir, args.output_file), 'w') as f:
+            f.write(f'Status: {status}\n')
+            if status == "uniform_crop":
+                f.write('IoU: N/A (uniform crop - no registration)\n')
+            elif status in ["channels_not_registered", "no_channels"]:
+                f.write('IoU: N/A (no registration required)\n')
+    elif debug_data == 0:
+        # Handle old-style uniform crop indicator
+        logger.debug('DIFFEOMORPHIC - Uniform crop detected')
+        with open(os.path.join(args.output_dir, args.output_file), 'w') as f:
+            f.write('IoU: N/A (uniform crop)\n')
+    else:
+        mapping = debug_data
+        crops = load_pickle(args.crop)
+        fixed_crop = crops[0]
+        moving_crop = crops[1]
 
-    fixed_crop = crops[0]
-    moving_crop = crops[1]
+        fixed_crop_norm = normalize(fixed_crop, 1, 99.8, axis=(0, 1))
+        moving_crop_norm = normalize(moving_crop, 1, 99.8, axis=(0, 1))
 
-    fixed_crop_norm = normalize(fixed_crop, 1, 99.8, axis=(0, 1))
-    moving_crop_norm = normalize(moving_crop, 1, 99.8, axis=(0, 1))
+        model = StarDist2D(None, name=args.model_name, basedir=args.model_dir)
+        model.config.use_gpu = True
 
-    model = StarDist2D(None, name=args.model_name, basedir=args.model_dir)
-    model.config.use_gpu = True
+        fixed_pred, _ = model.predict_instances(fixed_crop_norm, n_tiles=(8,8), verbose=False)
+        moving_pred, _ = model.predict_instances(moving_crop_norm, n_tiles=(8,8), verbose=False)
 
-    fixed_pred, _ = model.predict_instances(fixed_crop_norm, n_tiles=(8,8), verbose=False)
-    moving_pred, _ = model.predict_instances(moving_crop_norm, n_tiles=(8,8), verbose=False)
+        registered_moving_pred = apply_mapping(mapping, moving_pred)
 
-    registered_moving_pred = apply_mapping(mapping, moving_pred)
+        # Compute IoU between fixed_pred and registered_moving_pred
+        intersection = np.logical_and(fixed_pred > 0, registered_moving_pred > 0)
+        union = np.logical_or(fixed_pred > 0, registered_moving_pred > 0)
+        iou = np.sum(intersection) / np.sum(union)
 
-    # Compute IoU between fixed_pred and registered_moving_pred
-    intersection = np.logical_and(fixed_pred > 0, registered_moving_pred > 0)
-    union = np.logical_or(fixed_pred > 0, registered_moving_pred > 0)
-    iou = np.sum(intersection) / np.sum(union)
-
-    logger.debug(f'DIFFEOMORPHIC - IoU: {iou}')
-    with open(os.path.join(args.output_dir, args.output_file), 'w') as f:
-        f.write(f'IoU: {iou}\n')
+        logger.debug(f'DIFFEOMORPHIC - IoU: {iou}')
+        with open(os.path.join(args.output_dir, args.output_file), 'w') as f:
+            f.write(f'IoU: {iou}\n')
 
 if __name__ == "__main__":
     main()   
