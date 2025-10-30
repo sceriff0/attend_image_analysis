@@ -1,11 +1,11 @@
 process quantification{
-    cpus 48
+    cpus 8
     maxRetries = 3
     memory 250.GB
     time 48.h
     publishDir "${params.outdir}/${patient_id}/quantification", mode: 'copy'
-    //clusterOptions = params.use_gpu ? '--gres=gpu:nvidia_h200:1' : null
-    container "docker://yinxiu/attend_quant:v0.0"
+    clusterOptions = params.use_gpu ? '--gres=gpu:nvidia_h200:1' : null
+    container "docker://bolt3x/attend_image_analysis:quantification_gpu"
     tag "quantification"
 
     input:

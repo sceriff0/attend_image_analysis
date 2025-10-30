@@ -48,7 +48,7 @@ def save_pickle(obj, path):
 def import_images(path):
     """Import image and metadata"""
     img = AICSImage(path)
-    pixel_microns = img.physical_pixel_sizes
+    pixel_microns = img.get_physical_pixel_size()
     dims = img.dims
     order = img.dims.order
     shape = img.shape
@@ -107,9 +107,9 @@ def gpu_extract_features(
     flat_image = channel_gpu.ravel()
     
     # Use CuPy bincount for efficient computation
-    max_label = int(mask_filtered.max()) + 1
-    sum_per_label = cp.bincount(flat_mask, weights=flat_image, minlength=max_label)
-    count_per_label = cp.bincount(flat_mask, minlength=max_label)
+    #max_label = int(mask_filtered.max()) + 1
+    sum_per_label = cp.bincount(flat_mask, weights=flat_image)#, minlength=max_label)
+    count_per_label = cp.bincount(flat_mask)#, minlength=max_label)
     
     # Compute means
     with cp.errstate(divide='ignore', invalid='ignore'):
@@ -203,10 +203,10 @@ def parse_args():
         "--mask_file", required=True, help="Path to segmentation mask .npy file"
     )
     parser.add_argument(
-        "--outdir", required=True, help="Output directory to save quantification results"
+        "--positions_file", required=True, help="Path to crop positions .pkl file"
     )
     parser.add_argument(
-        "--positions_file", required=True, help="Path to crop positions .pkl file"
+        "--outdir", required=True, help="Output directory to save quantification results"
     )
     return parser.parse_args()
 
@@ -257,7 +257,7 @@ def main():
         mask_file=args.mask_file,
         outdir=args.outdir,
         patient_id=args.patient_id,
-        size_cutoff=args.size_cutoff,
+        size_cutoff=0,
     )
     
     end_time = time.time()
