@@ -48,11 +48,20 @@ def save_pickle(obj, path):
 def import_images(path):
     """Import image and metadata"""
     img = AICSImage(path)
-    pixel_microns = img.get_physical_pixel_size()
+
+    # Handle pixel size across versions
+    try:
+        pixel_microns = img.physical_pixel_sizes
+    except AttributeError:
+        pixel_microns = img.get_physical_pixel_size()
+
+    # Handle dims across versions
     dims = img.dims
-    order = img.dims.order
+    order = dims if isinstance(dims, str) else dims.order
+
     shape = img.shape
     series = img.scenes
+
     return img, pixel_microns
 
 
