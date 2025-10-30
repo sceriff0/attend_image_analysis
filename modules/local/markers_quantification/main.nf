@@ -21,7 +21,7 @@ process quantification{
             ln -s \$(readlink -f \$file) tmp/\$(basename \$file)
         done
 
-        quantification.py \
+        quantification_gpu.py \
         --patient_id ${patient_id} \
         --indir tmp \
         --mask_file ${mask_file} \
