@@ -125,7 +125,7 @@ def compute_diffeomorphic_mapping_dipy(
     radius = int(20 * scale_factor)
     
     # Scale sigma_diff with square root of scale factor (empirically better)
-    sigma_diff = int(20 * scale_factor)
+    sigma_diff = int(20 * np.sqrt(scale_factor))
     
     # Define the metric and create the Symmetric Diffeomorphic Registration object
     metric = CCMetric(2, sigma_diff=sigma_diff, radius=radius)
