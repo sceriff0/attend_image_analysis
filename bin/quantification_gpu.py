@@ -57,10 +57,10 @@ def import_images(path):
 
     # Handle dims across versions
     dims = img.dims
-    order = dims if isinstance(dims, str) else dims.order
+    #order = dims if isinstance(dims, str) else dims.order
 
-    shape = img.shape
-    series = img.scenes
+    #shape = img.shape
+    #series = img.scenesavailable_scenes
 
     return img, pixel_microns
 
