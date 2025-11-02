@@ -79,7 +79,7 @@ def _parse_args():
 def main():
     args = _parse_args()
 
-    if args.use_gpu:
+    if False:
         from utils.mapping import compute_diffeomorphic_mapping_dipy, apply_mapping
     else:
         from utils.mapping_no_gpu import compute_diffeomorphic_mapping_dipy, apply_mapping
