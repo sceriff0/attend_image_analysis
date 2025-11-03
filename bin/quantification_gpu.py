@@ -123,9 +123,11 @@ def gpu_extract_features(
     count_per_label = cp.bincount(flat_mask)#, minlength=max_label)
     
     # Compute means
-    with cp.errstate(divide='ignore', invalid='ignore'):
-        means = cp.true_divide(sum_per_label, count_per_label)
-        means = cp.nan_to_num(means, nan=0.0)
+    # Note: cp.errstate was removed in newer CuPy versions
+    # Using cp.where to avoid division by zero instead
+    means = cp.where(count_per_label != 0,
+                     sum_per_label / count_per_label,
+                     0.0)
     
     # Extract mean values for valid labels
     mean_values = cp.array([means[int(label)] if label < len(means) else 0 
