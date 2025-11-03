@@ -109,7 +109,9 @@ def gpu_extract_features(
     )
     
     # Convert to pandas DataFrame
-    props_df = pd.DataFrame(props).set_index("label", drop=False)
+    props_cpu = {k: (v.get() if isinstance(v, cp.ndarray) else v) for k, v in props.items()}
+    props_df = pd.DataFrame(props_cpu).set_index("label", drop=False)
+
     
     # Calculate mean intensities using GPU
     flat_mask = mask_filtered.ravel()
