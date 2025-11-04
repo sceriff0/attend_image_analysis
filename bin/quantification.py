@@ -78,12 +78,12 @@ def load_channel_crop(file, crop_positions):
 def import_images(path):
         ### Importing DAPI channel
         img = AICSImage(path)
-        pixel_microns = img.physical_pixel_sizes
+        pixel_microns = img.get_physical_pixel_size()
         # print(f"{pixel_microns = }")
-        dims = img.dims  # returns a Dimensions object
-        order = img.dims.order  # returns string "TCZYX"
-        shape = img.shape  # returns tuple of dimension sizes in TCZYX order
-        series = img.scenes
+        #dims = img.dims  # returns a Dimensions object
+        #order = img.dims.order  # returns string "TCZYX"
+        #shape = img.shape  # returns tuple of dimension sizes in TCZYX order
+        #series = img.scenes
         # print(f"{dims = }, {order = }, {shape = }, {series = }")
 
         return img, pixel_microns
