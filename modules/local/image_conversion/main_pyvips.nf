@@ -28,7 +28,7 @@ process conversion {
     # Set number of threads for pyvips
     export VIPS_CONCURRENCY=${task.cpus}
 
-    python3 convert_image_pyvips.py \
+    convert_image_pyvips.py \
         "${image}" \
         "${image.baseName}.ome.tiff" \
         --tile-size ${params.tilex} \
