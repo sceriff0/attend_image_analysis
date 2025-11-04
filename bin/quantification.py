@@ -78,7 +78,7 @@ def load_channel_crop(file, crop_positions):
 def import_images(path):
         ### Importing DAPI channel
         img = AICSImage(path)
-        pixel_microns = img.get_physical_pixel_size()
+        pixel_microns = img.physical_pixel_sizes
         # print(f"{pixel_microns = }")
         #dims = img.dims  # returns a Dimensions object
         #order = img.dims.order  # returns string "TCZYX"
