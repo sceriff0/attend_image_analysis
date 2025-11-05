@@ -80,10 +80,10 @@ def import_images(path):
         img = AICSImage(path)
         pixel_microns = img.physical_pixel_sizes
         # print(f"{pixel_microns = }")
-        dims = img.dims  # returns a Dimensions object
-        order = img.dims.order  # returns string "TCZYX"
-        shape = img.shape  # returns tuple of dimension sizes in TCZYX order
-        series = img.scenes
+        #dims = img.dims  # returns a Dimensions object
+        #order = img.dims.order  # returns string "TCZYX"
+        #shape = img.shape  # returns tuple of dimension sizes in TCZYX order
+        #series = img.scenes
         # print(f"{dims = }, {order = }, {shape = }, {series = }")
 
         return img, pixel_microns

@@ -48,11 +48,20 @@ def save_pickle(obj, path):
 def import_images(path):
     """Import image and metadata"""
     img = AICSImage(path)
-    pixel_microns = img.get_physical_pixel_size()
+
+    # Handle pixel size across versions
+    try:
+        pixel_microns = img.physical_pixel_sizes
+    except AttributeError:
+        pixel_microns = img.get_physical_pixel_size()
+
+    # Handle dims across versions
     dims = img.dims
-    order = img.dims.order
-    shape = img.shape
-    series = img.scenes
+    #order = dims if isinstance(dims, str) else dims.order
+
+    #shape = img.shape
+    #series = img.scenesavailable_scenes
+
     return img, pixel_microns
 
 
@@ -100,7 +109,9 @@ def gpu_extract_features(
     )
     
     # Convert to pandas DataFrame
-    props_df = pd.DataFrame(props).set_index("label", drop=False)
+    props_cpu = {k: (v.get() if isinstance(v, cp.ndarray) else v) for k, v in props.items()}
+    props_df = pd.DataFrame(props_cpu).set_index("label", drop=False)
+
     
     # Calculate mean intensities using GPU
     flat_mask = mask_filtered.ravel()
@@ -112,9 +123,11 @@ def gpu_extract_features(
     count_per_label = cp.bincount(flat_mask)#, minlength=max_label)
     
     # Compute means
-    with cp.errstate(divide='ignore', invalid='ignore'):
-        means = cp.true_divide(sum_per_label, count_per_label)
-        means = cp.nan_to_num(means, nan=0.0)
+    # Note: cp.errstate was removed in newer CuPy versions
+    # Using cp.where to avoid division by zero instead
+    means = cp.where(count_per_label != 0,
+                     sum_per_label / count_per_label,
+                     0.0)
     
     # Extract mean values for valid labels
     mean_values = cp.array([means[int(label)] if label < len(means) else 0 

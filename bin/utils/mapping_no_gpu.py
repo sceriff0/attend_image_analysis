@@ -24,7 +24,7 @@ def apply_mapping(mapping, x, method="dipy"):
 
     # Apply the mapping based on the selected method
     if method == "dipy":
-        mapped = mapping.transform(x).get()
+        mapped = mapping.transform(x)
     elif method == "cv2":
         height, width = x.shape[:2]
         mapped = cv2.warpAffine(x, mapping, (width, height))
