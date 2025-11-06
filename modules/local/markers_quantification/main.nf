@@ -5,7 +5,7 @@ process quantification{
     time 48.h
     publishDir "${params.outdir}/${patient_id}/quantification", mode: 'copy'
     clusterOptions = params.use_gpu ? '--gres=gpu:nvidia_h200:1' : null
-    container "docker://yinxiu/attend_quant:v0.0" //"docker://bolt3x/attend_image_analysis:quantification_gpu"
+    container "docker://bolt3x/attend_image_analysis:quantification_gpu" //"docker://yinxiu/attend_quant:v0.0" 
     tag "quantification"
 
     input:
@@ -21,7 +21,7 @@ process quantification{
             ln -s \$(readlink -f \$file) tmp/\$(basename \$file)
         done
 
-        quantification.py \
+        quantification_gpu.py \
         --patient_id ${patient_id} \
         --indir tmp \
         --mask_file ${mask_file} \
