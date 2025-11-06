@@ -224,7 +224,7 @@ if __name__ == "__main__":
                 end_time = time.time()
                 logger.info(f"Transformation took {end_time - start_time:.2f} seconds")
 
-            reconstructed = reconstruct_image_from_fovs(fov_stack, positions, image.shape)
+            reconstructed = reconstruct_image_from_fovs(transformed, positions, image.shape)
 
             assert reconstructed.shape == image.shape, "Shape mismatch!"
 
