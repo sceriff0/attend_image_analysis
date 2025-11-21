@@ -129,7 +129,7 @@ def compute_diffeomorphic_mapping_dipy(
     
     # Define the metric and create the Symmetric Diffeomorphic Registration object
     metric = CCMetric(2, sigma_diff=sigma_diff, radius=radius)
-    sdr = SymmetricDiffeomorphicRegistration(metric, opt_tol=1e-08, inv_tol=1e-08)
+    sdr = SymmetricDiffeomorphicRegistration(metric, opt_tol=1e-12, inv_tol=1e-12)
 
     # Perform the diffeomorphic registration using the pre-alignment from affine registration
     mapping = sdr.optimize(y_gpu, x_gpu)
